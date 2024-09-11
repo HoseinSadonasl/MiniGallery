@@ -20,6 +20,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.minigallery.ui.navigation.MiniGalleryDestinations
+import com.hotaku.minigallery.ui.screens.albums.AlbumsScreen
+import com.hotaku.minigallery.ui.screens.home.HomeScreen
+import com.hotaku.minigallery.ui.screens.settings.SettingsScreen
 import com.hotaku.minigallery.ui.theme.MiniGalleryTheme
 
 class MainActivity : ComponentActivity() {
@@ -63,9 +66,9 @@ class MainActivity : ComponentActivity() {
                     layoutType = customNavSuiteType,
                 ) {
                     when (currentDestination) {
-                        MiniGalleryDestinations.HOME -> Text(stringResource(currentDestination.label))
-                        MiniGalleryDestinations.ALBUMS -> Text(stringResource(currentDestination.label))
-                        MiniGalleryDestinations.SETTINGS -> Text(stringResource(currentDestination.label))
+                        MiniGalleryDestinations.HOME -> HomeScreen()
+                        MiniGalleryDestinations.ALBUMS -> AlbumsScreen()
+                        MiniGalleryDestinations.SETTINGS -> SettingsScreen()
                     }
                 }
             }

@@ -3,4 +3,7 @@
     <string name="mini_gallery_destinations_home">Home</string>
     <string name="mini_gallery_destinations_all_media">All Media</string>
     <string name="mini_gallery_destinations_settings">Settings</string>
+    <string name="home_screen_top_app_bar_title">All Media</string>
+    <string name="albums_screen_top_app_bar_title">Albums</string>
+    <string name="settings_screen_top_app_bar_title">Settings</string>
 </resources>

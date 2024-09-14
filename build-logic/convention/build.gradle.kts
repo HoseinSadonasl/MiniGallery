@@ -47,5 +47,9 @@ gradlePlugin {
             id = "minigallery.android.library"
             implementationClass = "AndroidLibraryConventionPlugin"
         }
+        register("miniGalleryJvmlibraryConvention") {
+            id = "minigallery.jvm.library"
+            implementationClass = "JvmLibraryConventionPlugin"
+        }
     }
 }

@@ -19,6 +19,15 @@ tasks.withType<KotlinCompile>().configureEach {
 dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
+    compileOnly(libs.compose.gradle.plugin)
+    compileOnly(libs.ksp.gradle.plugin)
+    compileOnly(libs.androidx.room.gradle.plugin)
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17.toString()
+    }
 }
 
 gradlePlugin {
@@ -46,6 +55,10 @@ gradlePlugin {
         register("miniGallerylibraryConvention") {
             id = "minigallery.android.library"
             implementationClass = "AndroidLibraryConventionPlugin"
+        }
+        register("miniGalleryRoomConvention") {
+            id = "minigallery.android.room"
+            implementationClass = "AndroidRoomConventionPlugin"
         }
         register("miniGalleryJvmlibraryConvention") {
             id = "minigallery.jvm.library"

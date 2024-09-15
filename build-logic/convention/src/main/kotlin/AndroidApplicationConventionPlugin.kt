@@ -1,5 +1,4 @@
 import com.android.build.api.dsl.ApplicationExtension
-import com.hotaku.minigallery.configureComposeAndroid
 import com.hotaku.minigallery.configureKotlinAndroid
 import com.hotaku.minigallery.libs
 import org.gradle.api.Plugin
@@ -22,7 +21,7 @@ class AndroidApplicationConventionPlugin: Plugin<Project> {
                         useSupportLibrary = true
                     }
                 }
-                configureKotlinAndroid(libs, this)
+                configureKotlinAndroid(this)
             }
         }
     }

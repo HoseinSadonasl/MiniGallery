@@ -1,3 +1,4 @@
+import com.android.build.gradle.api.AndroidBasePlugin
 import com.hotaku.minigallery.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -7,12 +8,16 @@ class AndroidHiltConventionPlugin: Plugin<Project> {
 
     override fun apply(target: Project) {
         with(target) {
-            apply {
-                plugin("com.google.dagger.hilt.android")
+            with(pluginManager) {
+                apply("dagger.hilt.android.plugin")
+                apply("com.google.devtools.ksp")
             }
+
             dependencies {
-                add("implementation", libs.findLibrary("hilt-android").get())
-                add("implementation", libs.findLibrary("hilt-ksp").get())
+               add("implementation", libs.findLibrary("hilt.android").get())
+               add("ksp", libs.findLibrary("hilt.compiler").get())
+               add("testImplementation", libs.findLibrary("hilt.android.test").get())
+               add("kspTest", libs.findLibrary("hilt.compiler").get())
             }
 
         }

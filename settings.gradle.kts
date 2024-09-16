@@ -22,3 +22,14 @@ dependencyResolutionManagement {
 
 rootProject.name = "MiniGallery"
 include(":app")
+include(":feature:home")
+include(":feature:albums")
+include(":libraries:core-ui")
+include(":libraries:navigation")
+include(":libraries:designsystem")
+include(":media:media-domain")
+include(":media:media-data")
+include(":core:database")
+include(":media:media-datasource")
+include(":core:datastore")
+include(":core:common")

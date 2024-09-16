@@ -10,11 +10,10 @@ class AndroidLibraryComposeConventionPlugin: Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             apply {
-                plugin("minihallery.android.library")
+                plugin("minigallery.android.library")
                 plugin("org.jetbrains.kotlin.plugin.compose")
             }
             extensions.configure<LibraryExtension> {
-                defaultConfig.targetSdk = libs.findVersion("targetSdk").get().toString().toInt()
                 configureComposeAndroid(this)
             }
         }

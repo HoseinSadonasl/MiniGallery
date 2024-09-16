@@ -1,5 +1,6 @@
 import com.android.build.gradle.LibraryExtension
 import com.hotaku.minigallery.configureKotlinAndroid
+import com.hotaku.minigallery.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -13,6 +14,7 @@ class AndroidLibraryConventionPlugin: Plugin<Project> {
                 plugin("org.jetbrains.kotlin.android")
             }
             extensions.configure<LibraryExtension> {
+                defaultConfig.targetSdk = libs.findVersion("targetSdk").get().toString().toInt()
                 configureKotlinAndroid(this)
             }
         }

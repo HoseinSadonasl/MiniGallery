@@ -1,3 +1,4 @@
+import androidx.room.gradle.RoomExtension
 import com.google.devtools.ksp.gradle.KspExtension
 import com.hotaku.minigallery.libs
 import org.gradle.api.Plugin
@@ -18,11 +19,14 @@ class AndroidRoomConventionPlugin : Plugin<Project> {
                 arg("room.generateKotlin", "true")
             }
 
+
+            extensions.configure<RoomExtension> {
+                schemaDirectory("$projectDir/schemas")
+            }
+
             dependencies {
                 add("implementation", libs.findLibrary("room.runtime").get())
                 add("implementation", libs.findLibrary("room.ktx").get())
-                add("implementation", libs.findLibrary("room.paging").get())
-                add("testImplementation", libs.findLibrary("room.testing").get())
                 add("ksp", libs.findLibrary("room.compiler").get())
             }
         }

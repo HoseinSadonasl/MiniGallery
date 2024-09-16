@@ -42,7 +42,7 @@ gradlePlugin {
         }
         register("miniGalleryFeatureConvention") {
             id = "minigallery.android.feature"
-            implementationClass = "AndroidFeatureConverntionPlugin"
+            implementationClass = "AndroidFeatureConventionPlugin"
         }
         register("miniGalleryHiltConvention") {
             id = "minigallery.android.hilt"

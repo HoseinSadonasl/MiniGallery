@@ -8,14 +8,13 @@ class AndroidFeatureConventionPlugin: Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             apply {
-                plugin("minigallery.android.library")
-                plugin("minigallery.android.hilt")
-                plugin("minigallery.android.compose")
+                plugin("minigallery.android.library.compose")
             }
 
             dependencies {
                 add("implementation", libs.findLibrary("androidx.core.ktx").get())
                 add("implementation", libs.findLibrary("androidx.lifecycle.runtime.ktx").get())
+                add("implementation", libs.findLibrary("androidx-lifecycle-runtime-compose").get())
                 add("implementation", libs.findLibrary("androidx.activity.compose").get())
                 add("implementation", libs.findLibrary("androidx.compose.bom").get())
                 add("implementation", libs.findLibrary("androidx.ui").get())

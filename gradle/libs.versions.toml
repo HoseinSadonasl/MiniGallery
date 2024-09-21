@@ -34,13 +34,20 @@ paging = "3.3.2"
 mockk = "1.13.12"
 truth = "1.4.4"
 roomGradlePlugin = "2.6.1"
+ktlint = "12.1.1"
+robolectric = "4.12.2"
+androidxTestCore = "1.6.1"
+androidxTestRules = "1.6.1"
+androidxTestExt = "1.2.1"
+androidxUiAutomator = "2.3.0"
+androidxTestRunner = "1.6.2"
+androidxEspresso = "3.6.1"
 
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
@@ -92,10 +99,22 @@ paging-common = { group = "androidx.paging", name = "paging-common", version.ref
 
 # mockk
 mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
-mockk-agent = { group = "io.mockk", name = "agent", version.ref = "mockk" }
+mockk-agent = { group = "io.mockk", name = "mockk-agent", version.ref = "mockk" }
 
 # truth
 google-truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
+
+# robolectric
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
+
+# androidx test
+androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
+androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxEspresso" }
+androidx-test-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "androidxUiAutomator" }
+androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
+androidx-test-ext = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "androidxTestExt" }
+androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
+
 
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -115,6 +134,7 @@ androidx-room = { id = "androidx.room", version.ref = "room" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "devToolsKsp" }
+gradle-ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 
 # miniGalleryplugins
 minigallery-android-application = { id = "minigallery.android.application", version = "unspecified" }
@@ -125,4 +145,7 @@ minigallery-android-library-compose = { id = "minigallery.android.library.compos
 minigallery-android-library = { id = "minigallery.android.library", version = "unspecified" }
 minigallery-android-room = { id = "minigallery.android.room", version = "unspecified" }
 minigallery-jvm-library = { id = "minigallery.jvm.library", version = "unspecified" }
+minigallery-test-library = { id = "minigallery.test.library", version = "unspecified" }
+minigallery-test-android = { id = "minigallery.test.android", version = "unspecified" }
+minigallery-test-hilt = { id = "minigallery.test.hilt", version = "unspecified" }
 

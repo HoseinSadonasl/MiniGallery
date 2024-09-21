@@ -64,5 +64,17 @@ gradlePlugin {
             id = "minigallery.jvm.library"
             implementationClass = "JvmLibraryConventionPlugin"
         }
+        register("miniGalleryTestConvention") {
+            id = "minigallery.test.library"
+            implementationClass = "TestConventionPlugin"
+        }
+        register("miniGalleryAndroidLibraryTestConvention") {
+            id = "minigallery.test.android"
+            implementationClass = "AndroidTestConventionPlugin"
+        }
+        register("miniGalleryHiltTestConvention") {
+            id = "minigallery.test.hilt"
+            implementationClass = "AndroidHiltTestConventionPlugin"
+        }
     }
 }

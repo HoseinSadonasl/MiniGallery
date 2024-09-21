@@ -9,7 +9,7 @@ android {
 
 dependencies {
 
-    libs.paging.compose
-    libs.coil.compose
+    implementation(libs.paging.compose)
+    implementation(libs.coil.compose)
 
 }

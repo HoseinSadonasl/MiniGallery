@@ -34,7 +34,7 @@ class AndroidApplicationComposeConventionPlugin: Plugin<Project> {
                 val bom = libs.findLibrary("androidx.compose.bom").get()
                 add("androidTestImplementation", platform(bom))
                 add("androidTestImplementation", libs.findLibrary("androidx.junit").get())
-                add("androidTestImplementation", libs.findLibrary("androidx.espresso.core").get())
+                add("androidTestImplementation", libs.findLibrary("androidx.test.espresso.core").get())
                 add("androidTestImplementation", libs.findLibrary("androidx.ui.test.junit4").get())
 
                 add("debugImplementation", libs.findLibrary("androidx.ui.tooling").get())

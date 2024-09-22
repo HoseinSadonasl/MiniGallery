@@ -29,22 +29,13 @@ class AndroidApplicationComposeConventionPlugin: Plugin<Project> {
                 add("implementation", libs.findLibrary("androidx.ui.tooling.preview").get())
                 add("implementation", libs.findLibrary("androidx.material3").get())
 
-                add("testImplementation", libs.findLibrary("junit").get())
-
-                val bom = libs.findLibrary("androidx.compose.bom").get()
-                add("androidTestImplementation", platform(bom))
-                add("androidTestImplementation", libs.findLibrary("androidx.junit").get())
-                add("androidTestImplementation", libs.findLibrary("androidx.test.espresso.core").get())
-                add("androidTestImplementation", libs.findLibrary("androidx.ui.test.junit4").get())
-
                 add("debugImplementation", libs.findLibrary("androidx.ui.tooling").get())
                 add("debugImplementation", libs.findLibrary("androidx.ui.tooling.preview").get())
 
-                add("debugImplementation", libs.findLibrary("navigation.compose").get())
-                add("debugImplementation", libs.findLibrary("hilt.navigation.compose").get())
+                add("implementation", libs.findLibrary("navigation.compose").get())
+                add("implementation", libs.findLibrary("hilt.navigation.compose").get())
 
             }
-
         }
     }
 }

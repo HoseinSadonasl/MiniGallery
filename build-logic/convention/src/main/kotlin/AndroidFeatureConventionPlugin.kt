@@ -22,13 +22,13 @@ class AndroidFeatureConventionPlugin: Plugin<Project> {
                 add("implementation", libs.findLibrary("androidx.ui.tooling").get())
                 add("implementation", libs.findLibrary("androidx.ui.tooling.preview").get())
                 add("implementation", libs.findLibrary("androidx.material3").get())
-                add("implementation", libs.findLibrary("coil.compose").get())
 
                 add("debugImplementation", libs.findLibrary("androidx.ui.tooling").get())
                 add("debugImplementation", libs.findLibrary("androidx.ui.tooling.preview").get())
-                add("debugImplementation", libs.findLibrary("navigation.compose").get())
-                add("debugImplementation", libs.findLibrary("hilt.navigation.compose").get())
 
+                add("implementation", libs.findLibrary("navigation.compose").get())
+                add("implementation", libs.findLibrary("hilt.navigation.compose").get())
+                add("implementation", libs.findLibrary("coil.compose").get())
             }
         }
     }

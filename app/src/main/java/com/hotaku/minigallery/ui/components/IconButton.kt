@@ -15,18 +15,19 @@ import androidx.compose.ui.unit.dp
 fun MinimalIconButton(
     modifier: Modifier = Modifier,
     icon: ImageVector,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     IconButton(
-        modifier = Modifier
-            .padding(4.dp)
-            .clip(shape = MaterialTheme.shapes.extraLarge)
-            .background(MaterialTheme.colorScheme.surfaceContainerHighest),
-        onClick = onClick
+        modifier =
+            Modifier
+                .padding(4.dp)
+                .clip(shape = MaterialTheme.shapes.extraLarge)
+                .background(MaterialTheme.colorScheme.surfaceContainerHighest),
+        onClick = onClick,
     ) {
         Icon(
             imageVector = icon,
-            contentDescription = null
+            contentDescription = null,
         )
     }
 }

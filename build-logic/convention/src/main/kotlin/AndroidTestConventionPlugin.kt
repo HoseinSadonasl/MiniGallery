@@ -15,7 +15,7 @@ class AndroidTestConventionPlugin : Plugin<Project> {
             dependencies {
                 val bom = libs.findLibrary("androidx.compose.bom").get()
                 add("androidTestImplementation", platform(bom))
-                add("androidTestImplementation", libs.findLibrary("junit4").get())
+                add("androidTestImplementation", libs.findLibrary("junit").get())
                 add("androidTestImplementation", libs.findLibrary("androidx.junit").get())
                 add("androidTestImplementation", libs.findLibrary("androidx.test.espresso.core").get())
                 add("androidTestImplementation", libs.findLibrary("androidx-ui-test-manifest").get())

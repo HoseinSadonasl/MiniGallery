@@ -21,7 +21,6 @@ import com.hotaku.minigallery.ui.utils.content.imagesRetriever
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
-
     val context = LocalContext.current
     var images = remember { mutableListOf<Image>() }
 
@@ -39,14 +38,13 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     ) {
         LazyVerticalStaggeredGrid(
             columns = StaggeredGridCells.Fixed(3),
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             items(images) { image: Image ->
-                Column(
-                ) {
+                Column {
                     AsyncImage(
                         model = image.uri,
-                        contentDescription = null
+                        contentDescription = null,
                     )
                     image.imageName?.let { Text(text = it) }
                 }

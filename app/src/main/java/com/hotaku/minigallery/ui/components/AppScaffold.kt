@@ -22,14 +22,15 @@ fun AppScaffold(
     Scaffold(
         topBar = topAppBar?.let { { topAppBar() } } ?: {},
         snackbarHost = snackbarHostState?.let { { SnackbarHost(hostState = snackbarHostState) } } ?: {},
-        floatingActionButton = floatingActionButton?.let { { floatingActionButton() } } ?: {}
+        floatingActionButton = floatingActionButton?.let { { floatingActionButton() } } ?: {},
     ) { paddingValues ->
         Box(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-                .then(modifier),
-            contentAlignment = contentAlignment
+            modifier =
+                Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()
+                    .then(modifier),
+            contentAlignment = contentAlignment,
         ) { content() }
     }
 }

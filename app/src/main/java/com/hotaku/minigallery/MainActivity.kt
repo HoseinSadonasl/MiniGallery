@@ -32,18 +32,21 @@ class MainActivity : ComponentActivity() {
         setContent {
             var currentDestination by rememberSaveable { mutableStateOf(MiniGalleryDestinations.HOME) }
             val adaptiveInfo = currentWindowAdaptiveInfo()
-            val customNavSuiteType = with(adaptiveInfo) {
-                if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED) {
-                    NavigationSuiteType.NavigationRail
-                } else {
-                    NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
+            val customNavSuiteType =
+                with(adaptiveInfo) {
+                    if (windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED) {
+                        NavigationSuiteType.NavigationRail
+                    } else {
+                        NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(adaptiveInfo)
+                    }
                 }
-            }
-            val myNavigationSuiteItemColors = NavigationSuiteDefaults.itemColors(
-                navigationBarItemColors = NavigationBarItemDefaults.colors(
-                    indicatorColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                ),
-            )
+            val myNavigationSuiteItemColors =
+                NavigationSuiteDefaults.itemColors(
+                    navigationBarItemColors =
+                        NavigationBarItemDefaults.colors(
+                            indicatorColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        ),
+                )
 
             MiniGalleryTheme {
                 NavigationSuiteScaffold(
@@ -54,7 +57,7 @@ class MainActivity : ComponentActivity() {
                                 icon = {
                                     Icon(
                                         imageVector = destination.icon,
-                                        contentDescription = stringResource(currentDestination.label)
+                                        contentDescription = stringResource(currentDestination.label),
                                     )
                                 },
                                 label = { Text(text = stringResource(destination.label)) },
@@ -70,8 +73,6 @@ class MainActivity : ComponentActivity() {
                         MiniGalleryDestinations.ALBUMS -> AlbumsScreen()
                         MiniGalleryDestinations.SETTINGS -> SettingsScreen()
                     }
-                }
-            }
-        }
+                } } }
     }
 }

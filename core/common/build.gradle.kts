@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.minigallery.android.library)
     alias(libs.plugins.minigallery.android.hilt)
+    alias(libs.plugins.minigallery.test.library)
 }
 
 android {
@@ -10,7 +11,4 @@ android {
 dependencies {
 
     implementation(libs.androidx.core.ktx)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-
 }

@@ -10,7 +10,7 @@ import com.hotaku.minigallery.R
 
 enum class MiniGalleryDestinations(
     @StringRes val label: Int,
-    val icon: ImageVector
+    val icon: ImageVector,
 ) {
     HOME(R.string.mini_gallery_destinations_home, Icons.Default.Home),
     ALBUMS(R.string.mini_gallery_destinations_all_media, Icons.AutoMirrored.Default.List),

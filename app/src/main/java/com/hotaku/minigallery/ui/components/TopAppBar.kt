@@ -1,6 +1,5 @@
 package com.hotaku.minigallery.ui.components
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
@@ -21,24 +20,25 @@ fun MiniGalleryTopBar(
     modifier: Modifier = Modifier,
     title: String,
     onNavClick: (() -> Unit)? = null,
-    actions: @Composable (RowScope.() -> Unit)? = null
+    actions: @Composable (RowScope.() -> Unit)? = null,
 ) {
     TopAppBar(
         title = {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
             )
         },
-        navigationIcon = onNavClick?.let {
-            {
-                MinimalIconButton(
-                    icon = Icons.AutoMirrored.Rounded.ArrowBack,
-                    onClick = onNavClick
-                )
-            }
-        } ?: {},
-        actions = actions ?: {}
+        navigationIcon =
+            onNavClick?.let {
+                {
+                    MinimalIconButton(
+                        icon = Icons.AutoMirrored.Rounded.ArrowBack,
+                        onClick = onNavClick,
+                    )
+                }
+            } ?: {},
+        actions = actions ?: {},
     )
 }
 
@@ -46,7 +46,7 @@ fun MiniGalleryTopBar(
 @Composable
 private fun MiniGalleryTopBarPreview() {
     MiniGalleryTheme(
-        darkTheme = true
+        darkTheme = true,
     ) {
         MiniGalleryTopBar(
             title = "Sample title",
@@ -54,13 +54,13 @@ private fun MiniGalleryTopBarPreview() {
             actions = {
                 MinimalIconButton(
                     icon = Icons.Rounded.Star,
-                    onClick = {}
+                    onClick = {},
                 )
                 MinimalIconButton(
                     icon = Icons.Rounded.Home,
-                    onClick = {}
+                    onClick = {},
                 )
-            }
+            },
         )
     }
 }

@@ -17,6 +17,5 @@ fun AlbumsScreen(modifier: Modifier = Modifier) {
             )
         },
     ) {
-
     }
 }

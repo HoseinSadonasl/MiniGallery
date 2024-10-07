@@ -42,6 +42,7 @@ androidxTestExt = "1.2.1"
 androidxUiAutomator = "2.3.0"
 androidxTestRunner = "1.6.2"
 androidxEspresso = "3.6.1"
+javaxInject = "1"
 
 
 [libraries]
@@ -63,6 +64,8 @@ androidx-compose-material3-adaptive-navigation = { group = "androidx.compose.mat
 androidx-compose-material3-adaptive-layout = { group = "androidx.compose.material3.adaptive", name = "adaptive-layout", version.ref = "material3-adaptive" }
 androidx-compose-material3-adaptive-navigation-suite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite", version.ref = "adaptiveNavigationSuite" }
 
+javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "javaxInject" }
+
 # coil
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 
@@ -76,10 +79,12 @@ navigation-compose = { group = "androidx.navigation", name = "navigation-compose
 preferences-data-store = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "preferencesDataStore" }
 
 # coroutines
+coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutinesAndroid" }
 coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutinesAndroid" }
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesAndroid" }
 
 # hilt
+hilt-core = { group = "com.google.dagger", name = "hilt-core", version.ref = "hilt" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 hilt-android-test = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
@@ -98,6 +103,7 @@ paging-compose = { group = "androidx.paging", name = "paging-compose", version.r
 paging-common = { group = "androidx.paging", name = "paging-common", version.ref = "paging" }
 
 # mockk
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 mockk-android = { group = "io.mockk", name = "mockk-android", version.ref = "mockk" }
 mockk-agent = { group = "io.mockk", name = "mockk-agent", version.ref = "mockk" }
 
@@ -145,6 +151,7 @@ minigallery-android-library-compose = { id = "minigallery.android.library.compos
 minigallery-android-library = { id = "minigallery.android.library", version = "unspecified" }
 minigallery-android-room = { id = "minigallery.android.room", version = "unspecified" }
 minigallery-jvm-library = { id = "minigallery.jvm.library", version = "unspecified" }
+minigallery-kotlin-library = { id = "minigallery.kotlin.library", version = "unspecified" }
 minigallery-test-library = { id = "minigallery.test.library", version = "unspecified" }
 minigallery-test-android = { id = "minigallery.test.android", version = "unspecified" }
 minigallery-test-hilt = { id = "minigallery.test.hilt", version = "unspecified" }

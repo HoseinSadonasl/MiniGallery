@@ -20,6 +20,8 @@ dependencyResolutionManagement {
     }
 }
 
+gradle.startParameter.excludedTaskNames.addAll(listOf(":build-logic:convention:testClasses"))
+
 rootProject.name = "MiniGallery"
 include(":app")
 include(":feature:home")

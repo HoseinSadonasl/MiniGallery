@@ -22,7 +22,6 @@ class TestConventionPlugin : Plugin<Project> {
                 add("testImplementation", libs.findLibrary("mockk.agent").get())
                 add("testImplementation", libs.findLibrary("google.truth").get())
                 add("testImplementation", libs.findLibrary("coroutines.test").get())
-                add("testImplementation", libs.findLibrary("robolectric").get())
             }
         }
     }

@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.hotaku.designsystem"
+    namespace = "com.hotaku.libraries.designsystem"
 }
 
 dependencies {

@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.hotaku.core"
+    namespace = "com.hotaku.libraries.core_ui"
 }
 
 dependencies {

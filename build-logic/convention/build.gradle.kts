@@ -64,6 +64,10 @@ gradlePlugin {
             id = "minigallery.jvm.library"
             implementationClass = "JvmLibraryConventionPlugin"
         }
+        register("miniGalleryKotlinlibraryConvention") {
+            id = "minigallery.kotlin.library"
+            implementationClass = "KotlinLibraryConventionPlugin"
+        }
         register("miniGalleryTestConvention") {
             id = "minigallery.test.library"
             implementationClass = "TestConventionPlugin"

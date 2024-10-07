@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.hotaku.media_datasource"
+    namespace = "com.hotaku.media.media_datasource"
 }
 
 dependencies {

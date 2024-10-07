@@ -1,13 +1,10 @@
 plugins {
-    alias(libs.plugins.minigallery.android.library)
-    alias(libs.plugins.minigallery.android.hilt)
-    alias(libs.plugins.minigallery.test.library)
-}
-
-android {
-    namespace = "com.hotaku.domain"
+    alias(libs.plugins.minigallery.kotlin.library)
 }
 
 dependencies {
-
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.google.truth)
+    testImplementation(libs.coroutines.test)
 }

@@ -30,7 +30,6 @@ android {
 dependencies {
     implementation(project(":feature:home"))
     implementation(project(":feature:albums"))
-    implementation(project(":libraries:core-ui"))
     implementation(project(":libraries:navigation"))
     implementation(project(":libraries:designsystem"))
     implementation(project(":media:media-domain"))
@@ -55,5 +54,4 @@ dependencies {
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
-
 }

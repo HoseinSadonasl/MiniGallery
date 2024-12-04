@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.hotaku.database"
+    namespace = "com.hotaku.core.database"
 }
 
 dependencies {

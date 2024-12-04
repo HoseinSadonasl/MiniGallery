@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.hotaku.datastore"
+    namespace = "com.hotaku.core.datastore"
 }
 
 dependencies {

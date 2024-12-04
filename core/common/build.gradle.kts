@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.hotaku.common"
+    namespace = "com.hotaku.core.common"
 }
 
 dependencies {

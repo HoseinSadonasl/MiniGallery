@@ -7,6 +7,4 @@ android {
 }
 
 dependencies {
-
-
 }

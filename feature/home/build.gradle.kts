@@ -13,5 +13,4 @@ dependencies {
 
     implementation(libs.paging.compose)
     implementation(libs.coil.compose)
-
 }

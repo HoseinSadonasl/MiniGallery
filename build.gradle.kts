@@ -16,9 +16,9 @@ plugins {
 allprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
     configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
-        version.set("0.50.0")
         android.set(true)
         ignoreFailures = false
+        debug.set(true)
         reporters {
             reporter(ReporterType.PLAIN)
         }

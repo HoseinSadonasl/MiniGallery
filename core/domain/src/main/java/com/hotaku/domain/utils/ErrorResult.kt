@@ -1,3 +1,14 @@
 package com.hotaku.domain.utils
 
-interface ErrorResult
+sealed class ErrorResult {
+    data object UnknownError : ErrorResult()
+
+    data class LocalError(
+        val message: String,
+    ) : ErrorResult()
+
+    data class ApiError(
+        val code: Int = -1,
+        val message: String,
+    ) : ErrorResult()
+}

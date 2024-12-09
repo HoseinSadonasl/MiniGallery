@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun MinimalIconButton(
-    modifier: Modifier = Modifier,
     icon: ImageVector,
     onClick: () -> Unit,
 ) {

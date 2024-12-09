@@ -73,6 +73,8 @@ class MainActivity : ComponentActivity() {
                         MiniGalleryDestinations.ALBUMS -> AlbumsScreen()
                         MiniGalleryDestinations.SETTINGS -> SettingsScreen()
                     }
-                } } }
+                }
+            }
+        }
     }
 }

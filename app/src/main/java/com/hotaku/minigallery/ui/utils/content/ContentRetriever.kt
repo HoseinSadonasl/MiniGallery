@@ -46,7 +46,11 @@ suspend fun Context.imagesRetriever(order: String? = null): List<Image> =
                         imageDateAdded = curser.getString(imageDateAdded),
                         imageDateTaken = curser.getString(imageDateTaken),
                         imageDateModified = curser.getString(imageDateModified),
-                        uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, curser.getLong(imageId)),
+                        uri =
+                            ContentUris.withAppendedId(
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                curser.getLong(imageId),
+                            ),
                     ),
                 )
             }

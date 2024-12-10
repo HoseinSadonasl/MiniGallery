@@ -22,6 +22,7 @@ allprojects {
     configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
         android.set(true)
         ignoreFailures = false
+        verbose = true
         debug.set(true)
         reporters {
             reporter(ReporterType.PLAIN)

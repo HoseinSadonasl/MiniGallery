@@ -15,4 +15,5 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(projects.core.domain)
     implementation(projects.media.mediaDomain)
+    implementation(projects.core.common)
 }

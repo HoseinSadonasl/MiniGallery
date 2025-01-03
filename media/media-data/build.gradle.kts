@@ -16,4 +16,5 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.media.mediaDomain)
     implementation(projects.core.common)
+    implementation(libs.paging.common)
 }

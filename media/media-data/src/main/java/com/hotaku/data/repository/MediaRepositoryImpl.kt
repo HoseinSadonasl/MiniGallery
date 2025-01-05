@@ -4,11 +4,11 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.hotaku.data.datasource.MediaDataSource
 import com.hotaku.data.mapper.MapMediaAsDomain
+import com.hotaku.data.worker.SyncUtils.synchronize
 import com.hotaku.data.worker.SyncWorker
 import com.hotaku.domain.utils.DataResult
 import com.hotaku.domain.utils.Error
@@ -28,13 +28,7 @@ internal class MediaRepositoryImpl
         private val workManager: WorkManager,
     ) : MediaRepository {
         override suspend fun synchronizeMedia(): Flow<DataResult<Int, Error>> {
-            workManager.apply {
-                enqueueUniqueWork(
-                    SYNC_WORK_NAME,
-                    ExistingWorkPolicy.REPLACE,
-                    SyncWorker.initializeSynchronizer,
-                )
-            }
+            workManager.synchronize()
             return workManager.getWorkInfosByTagLiveData(SyncWorker.SYNC_MEDIA_WORKER_TAG).value?.asFlow()
                 ?.map { workInfo ->
                     when (workInfo.state) {
@@ -78,8 +72,6 @@ internal class MediaRepositoryImpl
             ).flow.map { data -> data.map { mediaData -> mediaAsDomain.map(mediaData) } }
 
         companion object {
-            private const val SYNC_WORK_NAME = "SyncAllMedia"
-
             private const val INITIAL_LOAD_SIZE = 40
             private const val PAGE_SIZE = 30
         }

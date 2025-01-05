@@ -10,6 +10,7 @@ android {
 
 dependencies {
 
+    implementation(projects.media.mediaData)
     implementation(libs.androidx.core.ktx)
     testImplementation(libs.junit)
 }

@@ -19,24 +19,24 @@ class DataResultTest {
 
     @Test
     fun `should return UnkownErrorwhen data result broken because of unknown reason`() {
-        val errorResult = DataResult.Error(error = ErrorResult.UnknownError)
-        assertThat(errorResult.error).isInstanceOf(ErrorResult.UnknownError::class.java)
+        val failureResult = DataResult.Failure(error = ErrorResult.UnknownError)
+        assertThat(failureResult.error).isInstanceOf(ErrorResult.UnknownError::class.java)
     }
 
     @Test
     fun `should return ApiError when api response return error`() {
-        val apiError =
-            DataResult.Error(error = ErrorResult.ApiError(code = 404, message = "Not Found"))
-        assertThat(apiError.error).isInstanceOf(ErrorResult.ApiError::class.java)
-        assertThat(apiError.error.code).isEqualTo(404)
-        assertThat(apiError.error.message).isEqualTo("Not Found")
+        val apiFailure =
+            DataResult.Failure(error = ErrorResult.ApiError(code = 404, message = "Not Found"))
+        assertThat(apiFailure.error).isInstanceOf(ErrorResult.ApiError::class.java)
+        assertThat(apiFailure.error.code).isEqualTo(404)
+        assertThat(apiFailure.error.message).isEqualTo("Not Found")
     }
 
     @Test
     fun `should return LocalError when operation unsuccessful`() {
-        val localError =
-            DataResult.Error(error = ErrorResult.LocalError(message = "Database Error"))
-        assertThat(localError.error).isInstanceOf(ErrorResult.LocalError::class.java)
-        assertThat(localError.error.message).isEqualTo("Database Error")
+        val localFailure =
+            DataResult.Failure(error = ErrorResult.LocalError(message = "Database Error"))
+        assertThat(localFailure.error).isInstanceOf(ErrorResult.LocalError::class.java)
+        assertThat(localFailure.error.message).isEqualTo("Database Error")
     }
 }

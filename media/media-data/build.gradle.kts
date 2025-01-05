@@ -17,4 +17,5 @@ dependencies {
     implementation(projects.media.mediaDomain)
     implementation(projects.core.common)
     implementation(libs.paging.common)
+    implementation(libs.androidx.work)
 }

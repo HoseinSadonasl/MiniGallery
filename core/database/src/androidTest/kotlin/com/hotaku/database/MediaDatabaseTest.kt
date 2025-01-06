@@ -39,7 +39,9 @@ class MediaDatabaseTest {
             val mediaList =
                 listOf(
                     fakeMediaEntity(
+                        mediaName = "SampleName1",
                         millis = now.toString(),
+                        mimeType = "Image",
                     ),
                 )
 
@@ -49,15 +51,71 @@ class MediaDatabaseTest {
 
             Truth.assertThat(savedMediaList).isEqualTo(mediaList)
         }
+
+    @Test
+    fun get_all_media_with_specified_mimeType_from_database() =
+        runTest {
+            val mediaList =
+                listOf(
+                    fakeMediaEntity(
+                        mediaId = "100",
+                        mediaName = "SampleName1",
+                        millis = now.toString(),
+                        mimeType = "Image",
+                    ),
+                    fakeMediaEntity(
+                        mediaId = "200",
+                        mediaName = "SampleName2",
+                        millis = now.toString(),
+                        mimeType = "Video",
+                    ),
+                )
+
+            dao.insertAll(media = mediaList)
+
+            val savedMediaList = dao.getAll(mimeType = "Image")
+
+            Truth.assertThat(savedMediaList.first().mimeType).isEqualTo("Image")
+        }
+
+    @Test
+    fun get_all_media_with_specified_query_from_database() =
+        runTest {
+            val mediaList =
+                listOf(
+                    fakeMediaEntity(
+                        mediaId = "100",
+                        mediaName = "SampleName1",
+                        millis = now.toString(),
+                        mimeType = "Image",
+                    ),
+                    fakeMediaEntity(
+                        mediaId = "200",
+                        mediaName = "SampleName2",
+                        millis = now.toString(),
+                        mimeType = "Video",
+                    ),
+                )
+
+            dao.insertAll(media = mediaList)
+
+            val savedMediaList = dao.getAll(query = "SampleName1")
+
+            Truth.assertThat(savedMediaList.first().displayName).isEqualTo("SampleName1")
+        }
 }
 
-private fun fakeMediaEntity(millis: String): MediaEntity =
-    MediaEntity(
-        mediaId = "id",
-        path = "sample/path",
-        displayName = "media",
-        mimeType = "image",
-        dateAdded = millis,
-        dateModified = millis,
-        size = "1024",
-    )
+private fun fakeMediaEntity(
+    mediaId: String = "100",
+    mediaName: String,
+    millis: String,
+    mimeType: String,
+) = MediaEntity(
+    mediaId = mediaId,
+    path = "sample/path",
+    displayName = mediaName,
+    mimeType = mimeType,
+    dateAdded = millis,
+    dateModified = millis,
+    size = "1024",
+)

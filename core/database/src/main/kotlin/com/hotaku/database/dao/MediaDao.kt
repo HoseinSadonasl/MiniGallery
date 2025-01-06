@@ -10,6 +10,9 @@ interface MediaDao {
     @Upsert
     fun insertAll(media: List<MediaEntity>)
 
-    @Query("SELECT * FROM media")
-    fun getAll(): List<MediaEntity>
+    @Query("SELECT * FROM media WHERE (displayName = :query OR :query is NULL) AND (mimeType = :mimeType OR :mimeType is NULL)")
+    fun getAll(
+        query: String? = null,
+        mimeType: String? = null,
+    ): List<MediaEntity>
 }

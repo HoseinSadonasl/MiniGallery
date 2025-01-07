@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.minigallery.android.library)
     alias(libs.plugins.minigallery.android.hilt)
     alias(libs.plugins.minigallery.android.room)
+    alias(libs.plugins.minigallery.test.library)
 }
 
 android {
@@ -9,8 +10,8 @@ android {
 }
 
 dependencies {
-
+    implementation(projects.core.common)
+    implementation(projects.core.database)
     implementation(projects.media.mediaData)
     implementation(libs.androidx.core.ktx)
-    testImplementation(libs.junit)
 }

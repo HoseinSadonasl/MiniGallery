@@ -14,4 +14,5 @@ dependencies {
     implementation(projects.core.database)
     implementation(projects.media.mediaData)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.paging.runtime)
 }

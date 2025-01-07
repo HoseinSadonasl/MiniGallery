@@ -39,6 +39,13 @@ class MediaDatabaseTest {
             val mediaList =
                 listOf(
                     fakeMediaEntity(
+                        mediaId = "100",
+                        mediaName = "SampleName1",
+                        millis = now.toString(),
+                        mimeType = "Image",
+                    ),
+                    fakeMediaEntity(
+                        mediaId = "101",
                         mediaName = "SampleName1",
                         millis = now.toString(),
                         mimeType = "Image",
@@ -47,9 +54,9 @@ class MediaDatabaseTest {
 
             dao.insertAll(media = mediaList)
 
-            val savedMediaList = dao.getAll()
+            val savedMediaList = dao.getAll(limit = 1, offset = 0)
 
-            Truth.assertThat(savedMediaList).isEqualTo(mediaList)
+            Truth.assertThat(savedMediaList).isEqualTo(listOf(mediaList.first()))
         }
 
     @Test
@@ -73,7 +80,7 @@ class MediaDatabaseTest {
 
             dao.insertAll(media = mediaList)
 
-            val savedMediaList = dao.getAll(mimeType = "Image")
+            val savedMediaList = dao.getAll(mimeType = "Image", limit = 1, offset = 0)
 
             Truth.assertThat(savedMediaList.first().mimeType).isEqualTo("Image")
         }
@@ -99,7 +106,7 @@ class MediaDatabaseTest {
 
             dao.insertAll(media = mediaList)
 
-            val savedMediaList = dao.getAll(query = "SampleName1")
+            val savedMediaList = dao.getAll(query = "SampleName1", limit = 1, offset = 0)
 
             Truth.assertThat(savedMediaList.first().displayName).isEqualTo("SampleName1")
         }

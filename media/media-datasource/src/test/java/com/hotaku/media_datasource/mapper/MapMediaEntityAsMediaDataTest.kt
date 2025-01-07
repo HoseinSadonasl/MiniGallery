@@ -7,7 +7,7 @@ import org.junit.Before
 import org.junit.Test
 import java.time.Instant
 
-class MapMediaEntityAsMediaDataTest {
+internal class MapMediaEntityAsMediaDataTest {
     private var instant: Instant? = null
     private lateinit var mapMediaEntityAsMediaData: MapMediaEntityAsMediaData
 

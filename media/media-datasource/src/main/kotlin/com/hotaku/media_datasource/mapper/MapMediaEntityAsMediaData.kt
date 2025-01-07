@@ -4,7 +4,7 @@ import com.hotaku.common.mapper.Mapper
 import com.hotaku.data.model.MediaData
 import com.hotaku.database.entity.MediaEntity
 
-class MapMediaEntityAsMediaData : Mapper<MediaEntity, MediaData> {
+internal class MapMediaEntityAsMediaData : Mapper<MediaEntity, MediaData> {
     override fun map(from: MediaEntity): MediaData {
         with(from) {
             return MediaData(

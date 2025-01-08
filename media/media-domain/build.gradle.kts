@@ -9,4 +9,5 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.google.truth)
     testImplementation(libs.coroutines.test)
+    testImplementation(libs.cash.turbine)
 }

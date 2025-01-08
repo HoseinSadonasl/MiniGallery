@@ -29,8 +29,9 @@ class AndroidTestConventionPlugin : Plugin<Project> {
                     libs.findLibrary("androidx-ui-test-manifest").get()
                 )
                 add("androidTestImplementation", libs.findLibrary("androidx-ui-test-junit4").get())
-                add("testImplementation", libs.findLibrary("robolectric").get())
+                add("androidTestImplementation", libs.findLibrary("robolectric").get())
                 add("androidTestImplementation", libs.findLibrary("google.truth").get())
+                add("androidTestImplementation", libs.findLibrary("cash.turbine").get())
             }
         }
     }

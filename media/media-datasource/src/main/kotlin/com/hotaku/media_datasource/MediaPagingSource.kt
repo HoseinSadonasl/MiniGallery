@@ -5,6 +5,8 @@ import androidx.paging.PagingState
 import com.hotaku.data.model.MediaData
 import com.hotaku.database.dao.MediaDao
 import com.hotaku.media_datasource.mapper.MapMediaEntityAsMediaData
+import java.io.IOException
+import java.net.UnknownHostException
 
 internal class MediaPagingSource(
     private val mapMediaEntityAsMediaData: MapMediaEntityAsMediaData,
@@ -34,7 +36,9 @@ internal class MediaPagingSource(
                 prevKey = page.minus(1).takeIf { page > 0 },
                 nextKey = page.plus(1).takeIf { media.isNotEmpty() },
             )
-        } catch (exception: Exception) {
+        } catch (exception: IOException) {
+            LoadResult.Error(exception)
+        } catch (exception: UnknownHostException) {
             LoadResult.Error(exception)
         }
     }

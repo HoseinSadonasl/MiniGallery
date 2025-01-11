@@ -25,7 +25,13 @@ internal class ProviderRepositoryImpl
                 val result = providerDataSource.getMedia()
                 when {
                     result.isFailure -> {
-                        emit(DataResult.Failure(ErrorResult.LocalError(message = result.exceptionOrNull()?.localizedMessage.orEmpty())))
+                        emit(
+                            DataResult.Failure(
+                                ErrorResult.LocalError(
+                                    message = result.exceptionOrNull()?.localizedMessage.orEmpty(),
+                                ),
+                            ),
+                        )
                     }
 
                     result.isSuccess -> {

@@ -4,19 +4,11 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import androidx.work.WorkInfo
-import androidx.work.WorkManager
 import com.hotaku.data.datasource.MediaDataSource
 import com.hotaku.data.mapper.MapMediaAsDomain
-import com.hotaku.data.worker.SyncUtils.synchronize
-import com.hotaku.data.worker.SyncWorker
-import com.hotaku.domain.utils.DataResult
-import com.hotaku.domain.utils.Error
-import com.hotaku.domain.utils.ErrorResult
 import com.hotaku.media_domain.model.Media
 import com.hotaku.media_domain.repository.MediaRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -25,34 +17,7 @@ internal class MediaRepositoryImpl
     constructor(
         private val mediaDataSource: MediaDataSource,
         private val mediaAsDomain: MapMediaAsDomain,
-        private val workManager: WorkManager,
     ) : MediaRepository {
-        override suspend fun synchronizeMedia(): Flow<DataResult<Int, Error>> {
-            workManager.synchronize()
-            return workManager.getWorkInfosByTagLiveData(SyncWorker.SYNC_MEDIA_WORKER_TAG).value?.asFlow()
-                ?.map { workInfo ->
-                    when (workInfo.state) {
-                        WorkInfo.State.RUNNING, WorkInfo.State.ENQUEUED, WorkInfo.State.BLOCKED -> {
-                            DataResult.Loading
-                        }
-
-                        WorkInfo.State.SUCCEEDED -> {
-                            DataResult.Success(
-                                data =
-                                    workInfo.outputData.getInt(
-                                        SyncWorker.MEDIA_COUNT,
-                                        0,
-                                    ),
-                            )
-                        }
-
-                        WorkInfo.State.FAILED, WorkInfo.State.CANCELLED -> {
-                            DataResult.Failure(ErrorResult.UnknownError)
-                        }
-                    }
-                } ?: emptyList<DataResult<Int, ErrorResult>>().asFlow()
-        }
-
         override fun getMedia(
             mimeType: String?,
             query: String?,

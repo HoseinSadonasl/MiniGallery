@@ -11,8 +11,8 @@ import java.net.UnknownHostException
 internal class MediaPagingSource(
     private val mapMediaEntityAsMediaData: MapMediaEntityAsMediaData,
     private val mediaDao: MediaDao,
-    private val mimeType: String?,
-    private val query: String?,
+    private val mimeType: String,
+    private val query: String,
 ) : PagingSource<Int, MediaData>() {
     override fun getRefreshKey(state: PagingState<Int, MediaData>): Int? =
         state.anchorPosition?.let { anchorPosition ->
@@ -26,8 +26,8 @@ internal class MediaPagingSource(
         return try {
             val media =
                 mediaDao.getAll(
-                    query = query,
-                    mimeType = mimeType,
+                    query = query.takeIf { it.isNotEmpty() },
+                    mimeType = mimeType.takeIf { it.isNotEmpty() },
                     limit = params.loadSize,
                     offset = page * params.loadSize,
                 ).map { mapMediaEntityAsMediaData.map(it) }

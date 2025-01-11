@@ -14,8 +14,8 @@ internal class MediaDataSourceImpl
         private val mediaDao: MediaDao,
     ) : MediaDataSource {
         override fun getMedia(
-            mimeType: String?,
-            query: String?,
+            mimeType: String,
+            query: String,
         ): PagingSource<Int, MediaData> =
             MediaPagingSource(
                 mapMediaEntityAsMediaData = mapMediaEntityAsMediaData,

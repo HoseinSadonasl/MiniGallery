@@ -19,8 +19,8 @@ internal class MediaRepositoryImpl
         private val mediaAsDomain: MapMediaAsDomain,
     ) : MediaRepository {
         override fun getMedia(
-            mimeType: String?,
-            query: String?,
+            mimeType: String,
+            query: String,
         ): Flow<PagingData<Media>> =
             Pager(
                 config =

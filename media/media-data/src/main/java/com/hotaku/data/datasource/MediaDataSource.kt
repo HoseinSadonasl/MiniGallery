@@ -5,7 +5,7 @@ import com.hotaku.data.model.MediaData
 
 interface MediaDataSource {
     fun getMedia(
-        mimeType: String? = null,
-        query: String? = null,
+        mimeType: String,
+        query: String,
     ): PagingSource<Int, MediaData>
 }

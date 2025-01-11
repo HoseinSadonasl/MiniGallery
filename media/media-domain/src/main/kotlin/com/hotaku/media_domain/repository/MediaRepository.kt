@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface MediaRepository {
     fun getMedia(
-        mimeType: String? = null,
-        query: String? = null,
+        mimeType: String,
+        query: String,
     ): Flow<PagingData<Media>>
 }

@@ -1,13 +1,13 @@
 package com.hotaku.data.repository
 
-import com.google.common.truth.Truth
+import app.cash.turbine.test
+import com.google.common.truth.Truth.assertThat
 import com.hotaku.domain.utils.DataResult
 import com.hotaku.domain.utils.ErrorResult
 import com.hotaku.media_domain.repository.ProviderRepository
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -24,16 +24,20 @@ class ProviderRepositoryImplTest {
     fun updateDatabase_atBegining_shouldEmitDataResultLoading() =
         runTest {
             coEvery { providerRepository.updateMediaDatabase() } returns flowOf(DataResult.Loading)
-            val updating = providerRepository.updateMediaDatabase().last()
-            Truth.assertThat(updating).isEqualTo(DataResult.Loading)
+            providerRepository.updateMediaDatabase().test {
+                assertThat(awaitItem()).isEqualTo(DataResult.Loading)
+                awaitComplete()
+            }
         }
 
     @Test
     fun updateDatabase_ifSucceed_shouldEmitDataResultSuccessWithDataCount() =
         runTest {
             coEvery { providerRepository.updateMediaDatabase() } returns flowOf(DataResult.Success(1))
-            val successUpdate = providerRepository.updateMediaDatabase().last()
-            Truth.assertThat(successUpdate).isEqualTo(DataResult.Success(1))
+            providerRepository.updateMediaDatabase().test {
+                assertThat(awaitItem()).isEqualTo(DataResult.Success(1))
+                awaitComplete()
+            }
         }
 
     @Test
@@ -45,8 +49,10 @@ class ProviderRepositoryImplTest {
                         ErrorResult.LocalError("Error"),
                     ),
                 )
-            val failureUpdate = providerRepository.updateMediaDatabase().last()
-            Truth.assertThat(failureUpdate)
-                .isEqualTo(DataResult.Failure(ErrorResult.LocalError("Error")))
+            providerRepository.updateMediaDatabase().test {
+                assertThat(awaitItem())
+                    .isEqualTo(DataResult.Failure(ErrorResult.LocalError("Error")))
+                awaitComplete()
+            }
         }
 }

@@ -21,7 +21,7 @@ class ProviderRepositoryImplTest {
     }
 
     @Test
-    fun update_database_return_loading() =
+    fun updateDatabase_atBegining_shouldEmitDataResultLoading() =
         runTest {
             coEvery { providerRepository.updateMediaDatabase() } returns flowOf(DataResult.Loading)
             val updating = providerRepository.updateMediaDatabase().last()
@@ -29,7 +29,7 @@ class ProviderRepositoryImplTest {
         }
 
     @Test
-    fun update_database_success_and_return_media_count() =
+    fun updateDatabase_ifSucceed_shouldEmitDataResultSuccessWithDataCount() =
         runTest {
             coEvery { providerRepository.updateMediaDatabase() } returns flowOf(DataResult.Success(1))
             val successUpdate = providerRepository.updateMediaDatabase().last()
@@ -37,7 +37,7 @@ class ProviderRepositoryImplTest {
         }
 
     @Test
-    fun update_database_error_and_return_error_messaget() =
+    fun updateDatabase_ifFailed_shouldEmitDataResultFailureWithMessage() =
         runTest {
             coEvery { providerRepository.updateMediaDatabase() } returns
                 flowOf(

@@ -3,6 +3,7 @@ package com.hotaku.data.repository
 import com.google.common.truth.Truth
 import com.hotaku.domain.utils.DataResult
 import com.hotaku.domain.utils.ErrorResult
+import com.hotaku.media_domain.repository.ProviderRepository
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
@@ -12,7 +13,7 @@ import org.junit.Before
 import org.junit.Test
 
 class ProviderRepositoryImplTest {
-    private lateinit var providerRepository: ProviderRepositoryImpl
+    private lateinit var providerRepository: ProviderRepository
 
     @Before
     fun setUp() {

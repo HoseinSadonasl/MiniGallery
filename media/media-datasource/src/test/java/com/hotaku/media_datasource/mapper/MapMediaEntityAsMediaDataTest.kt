@@ -18,7 +18,7 @@ internal class MapMediaEntityAsMediaDataTest {
     }
 
     @Test
-    fun map_media_entity_as_media_data_return_correct_data() {
+    fun mapMediaEntityAsMediaData_shouldReturnCorrectData() {
         val mediaEntity = fakeMediaEntity(millis = instant!!.toEpochMilli().toString())
         val mappedMedia = mapMediaEntityAsMediaData.map(mediaEntity)
         Truth.assertThat(mappedMedia).isEqualTo(fakeMediaData(instant!!.toEpochMilli()))

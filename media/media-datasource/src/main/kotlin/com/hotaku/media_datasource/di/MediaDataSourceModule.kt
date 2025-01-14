@@ -18,10 +18,6 @@ import javax.inject.Singleton
 internal object MediaDataSourceModule {
     @Provides
     @Singleton
-    fun providesMapMediaEntityAsMediaData(): MapMediaEntityAsMediaData = MapMediaEntityAsMediaData()
-
-    @Provides
-    @Singleton
     fun providesMediaDataSource(
         mapMediaEntityAsMediaData: MapMediaEntityAsMediaData,
         mediaDao: MediaDao,

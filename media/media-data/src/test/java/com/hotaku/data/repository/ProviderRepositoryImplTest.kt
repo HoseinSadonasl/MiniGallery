@@ -33,9 +33,15 @@ class ProviderRepositoryImplTest {
     @Test
     fun updateDatabase_ifSucceed_shouldEmitDataResultSuccessWithDataCount() =
         runTest {
-            coEvery { providerRepository.updateMediaDatabase() } returns flowOf(DataResult.Success(1))
+            val eceptedData = 20
+            coEvery { providerRepository.updateMediaDatabase() } returns
+                flowOf(
+                    DataResult.Success(
+                        eceptedData,
+                    ),
+                )
             providerRepository.updateMediaDatabase().test {
-                assertThat(awaitItem()).isEqualTo(DataResult.Success(1))
+                assertThat(awaitItem()).isEqualTo(DataResult.Success(eceptedData))
                 awaitComplete()
             }
         }
@@ -43,15 +49,41 @@ class ProviderRepositoryImplTest {
     @Test
     fun updateDatabase_ifFailed_shouldEmitDataResultFailureWithMessage() =
         runTest {
+            val exceptedError = "An Error"
             coEvery { providerRepository.updateMediaDatabase() } returns
                 flowOf(
                     DataResult.Failure(
-                        ErrorResult.LocalError("Error"),
+                        ErrorResult.LocalError(exceptedError),
                     ),
                 )
             providerRepository.updateMediaDatabase().test {
-                assertThat(awaitItem())
-                    .isEqualTo(DataResult.Failure(ErrorResult.LocalError("Error")))
+                assertThat(awaitItem()).isEqualTo(
+                    DataResult.Failure(
+                        ErrorResult.LocalError(
+                            exceptedError,
+                        ),
+                    ),
+                )
+                awaitComplete()
+            }
+        }
+
+    @Test
+    fun updateDatabase_ifFailed_shouldEmitDataResultFailureWithUnknownError() =
+        runTest {
+            val exceptedErrorResult = ErrorResult.UnknownError
+            coEvery { providerRepository.updateMediaDatabase() } returns
+                flowOf(
+                    DataResult.Failure(
+                        exceptedErrorResult,
+                    ),
+                )
+            providerRepository.updateMediaDatabase().test {
+                assertThat(awaitItem()).isEqualTo(
+                    DataResult.Failure(
+                        exceptedErrorResult,
+                    ),
+                )
                 awaitComplete()
             }
         }

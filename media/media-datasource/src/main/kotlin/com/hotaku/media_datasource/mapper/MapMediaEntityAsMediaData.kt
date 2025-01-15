@@ -15,6 +15,7 @@ internal class MapMediaEntityAsMediaData
                     path = path,
                     displayName = displayName,
                     mimeType = mimeType,
+                    duration = duration,
                     dateAdded = dateAdded.toLong(),
                     dateModified = dateModified.toLong(),
                     size = size.toLong(),

@@ -15,6 +15,7 @@ internal class MapMediaAsData
                     path = path,
                     displayName = displayName,
                     mimeType = mimeType,
+                    duration = duration,
                     dateAdded = dateAdded,
                     dateModified = dateModified,
                     size = size,

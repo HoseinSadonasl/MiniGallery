@@ -10,6 +10,7 @@ data class MediaEntity(
     val path: String,
     val displayName: String,
     val mimeType: String,
+    val duration: String,
     val dateAdded: String,
     val dateModified: String,
     val size: String,

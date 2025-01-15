@@ -12,7 +12,7 @@ internal class MapMediaAsData
             with(from) {
                 return MediaData(
                     mediaId = mediaId,
-                    path = path,
+                    uriString = uriString,
                     displayName = displayName,
                     mimeType = mimeType,
                     duration = duration,

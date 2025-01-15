@@ -26,7 +26,7 @@ internal class MediaMapperTest {
     private fun getMedia() =
         Media(
             mediaId = 1,
-            path = "path",
+            uriString = "path",
             displayName = "Hosein Sadon",
             mimeType = "image/*",
             dateAdded = timeInMillis,
@@ -37,7 +37,7 @@ internal class MediaMapperTest {
     private fun getMediaData() =
         MediaData(
             mediaId = 1,
-            path = "path",
+            uriString = "path",
             displayName = "Hosein Sadon",
             mimeType = "image/*",
             dateAdded = timeInMillis,

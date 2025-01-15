@@ -2,7 +2,7 @@ package com.hotaku.data.model
 
 data class MediaData(
     val mediaId: Long,
-    val path: String,
+    val uriString: String,
     val displayName: String,
     val mimeType: String,
     val duration: String,

@@ -12,7 +12,7 @@ internal class MapMediaAsDomain
             with(from) {
                 return Media(
                     mediaId = mediaId,
-                    path = path,
+                    uriString = uriString,
                     displayName = displayName,
                     mimeType = mimeType,
                     duration = duration,

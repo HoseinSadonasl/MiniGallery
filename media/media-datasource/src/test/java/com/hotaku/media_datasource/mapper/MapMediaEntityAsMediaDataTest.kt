@@ -39,7 +39,7 @@ private fun fakeMediaEntity(millis: String) =
 private fun fakeMediaData(millis: Long) =
     MediaData(
         mediaId = 100,
-        path = "sample/path",
+        uriString = "sample/path",
         displayName = "mediaName",
         mimeType = "Image",
         dateAdded = millis,

@@ -28,9 +28,10 @@ internal class MapMediaEntityAsMediaDataTest {
 private fun fakeMediaEntity(millis: String) =
     MediaEntity(
         mediaId = "100",
-        path = "sample/path",
+        uriString = "sample/path",
         displayName = "mediaName",
         mimeType = "Image",
+        duration = "60",
         dateAdded = millis,
         dateModified = millis,
         size = "1024",
@@ -42,6 +43,7 @@ private fun fakeMediaData(millis: Long) =
         uriString = "sample/path",
         displayName = "mediaName",
         mimeType = "Image",
+        duration = "60",
         dateAdded = millis,
         dateModified = millis,
         size = 1024,

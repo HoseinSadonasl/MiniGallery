@@ -119,9 +119,10 @@ private fun fakeMediaEntity(
     mimeType: String,
 ) = MediaEntity(
     mediaId = mediaId,
-    path = "sample/path",
+    uriString = "sample/path",
     displayName = mediaName,
     mimeType = mimeType,
+    duration = "60",
     dateAdded = millis,
     dateModified = millis,
     size = "1024",

@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 data class MediaEntity(
     @PrimaryKey
     val mediaId: String,
-    val path: String,
+    val uriString: String,
     val displayName: String,
     val mimeType: String,
     val duration: String,

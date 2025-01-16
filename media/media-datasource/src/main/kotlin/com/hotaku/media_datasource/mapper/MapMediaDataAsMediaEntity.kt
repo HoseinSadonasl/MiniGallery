@@ -12,7 +12,7 @@ internal class MapMediaDataAsMediaEntity
             with(from) {
                 return MediaEntity(
                     mediaId = mediaId.toString(),
-                    path = uriString,
+                    uriString = uriString,
                     displayName = displayName,
                     mimeType = mimeType,
                     duration = duration,

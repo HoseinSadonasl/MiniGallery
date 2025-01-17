@@ -13,7 +13,10 @@ class AndroidTestConventionPlugin : Plugin<Project> {
                 defaultConfig {
                     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                 }
-                testOptions.unitTests.isIncludeAndroidResources = true
+                testOptions.unitTests {
+                    isIncludeAndroidResources = true
+                    isReturnDefaultValues = true
+                }
             }
             dependencies {
                 val bom = libs.findLibrary("androidx.compose.bom").get()

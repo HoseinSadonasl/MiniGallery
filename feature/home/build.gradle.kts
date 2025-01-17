@@ -11,6 +11,9 @@ android {
 
 dependencies {
 
+    implementation(projects.media.mediaDomain)
+    implementation(projects.core.domain)
+    implementation(projects.core.common)
     implementation(libs.paging.compose)
     implementation(libs.coil.compose)
 }

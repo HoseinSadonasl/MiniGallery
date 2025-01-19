@@ -81,11 +81,10 @@ internal class MediaViewModel
             }
         }
 
-        private fun Error.asUiError(): UiText {
-            return when (val error = this as ErrorResult) {
-                is ErrorResult.ApiError -> UiText.DynamicString(error.message)
+        private fun Error.asUiError(): UiText =
+            when (val error = this as ErrorResult) {
+                is ErrorResult.ApiError -> UiText.DynamicString("${error.message}(${error.code})")
                 is ErrorResult.LocalError -> UiText.DynamicString(error.message)
                 ErrorResult.UnknownError -> UiText.StringResource(R.string.all_unknown_error)
             }
-        }
     }

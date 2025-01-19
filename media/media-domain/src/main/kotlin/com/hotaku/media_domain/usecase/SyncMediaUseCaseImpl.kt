@@ -2,8 +2,10 @@ package com.hotaku.media_domain.usecase
 
 import com.hotaku.domain.utils.DataResult
 import com.hotaku.domain.utils.Error
+import com.hotaku.domain.utils.ErrorResult
 import com.hotaku.domain.utils.executeFlowResult
 import com.hotaku.media_domain.repository.SyncMediaRepository
+import com.hotaku.media_domain.util.SyncDataState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -20,9 +22,16 @@ internal class SyncMediaUseCaseImpl
         override operator fun invoke(): Flow<DataResult<Int, Error>> =
             flow {
                 syncMediaRepository.synchronize().onEach { result ->
-                    if (result is DataResult.Success) {
-                        emit(DataResult.Success(result.data))
+                    when (result) {
+                        SyncDataState.Idle -> Unit
+                        SyncDataState.SyncFailure -> {
+                            emit(DataResult.Failure(ErrorResult.UnknownError))
+                        }
+
+                        is SyncDataState.SyncSuccess -> {
+                            emit(DataResult.Success(result.itemsCount))
+                        }
                     }
-                }.executeFlowResult(coroutineDispatcher = dispatcher)
-            }
+                }
+            }.executeFlowResult(coroutineDispatcher = dispatcher)
     }

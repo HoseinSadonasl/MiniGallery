@@ -1,9 +1,8 @@
 package com.hotaku.media_domain.repository
 
-import com.hotaku.domain.utils.DataResult
-import com.hotaku.domain.utils.Error
+import com.hotaku.media_domain.util.SyncDataState
 import kotlinx.coroutines.flow.Flow
 
 interface SyncMediaRepository {
-    fun synchronize(): Flow<DataResult<Int, Error>>
+    fun synchronize(): Flow<SyncDataState>
 }

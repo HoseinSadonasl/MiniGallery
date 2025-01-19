@@ -21,7 +21,6 @@ internal class ProviderRepositoryImpl
     ) : ProviderRepository {
         override suspend fun updateMediaDatabase(): Flow<DataResult<Int, Error>> =
             flow {
-                emit(DataResult.Loading)
                 val result = providerDataSource.getMedia()
                 when {
                     result.isFailure -> {

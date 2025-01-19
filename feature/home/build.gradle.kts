@@ -14,6 +14,7 @@ dependencies {
     implementation(projects.media.mediaDomain)
     implementation(projects.core.domain)
     implementation(projects.core.common)
+    implementation(projects.core.ui)
     implementation(libs.paging.compose)
     implementation(libs.coil.compose)
 }

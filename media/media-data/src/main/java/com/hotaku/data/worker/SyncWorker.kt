@@ -29,7 +29,7 @@ class SyncWorker
                 val updateResult = providerRepository.updateMediaDatabase().last()
                 return@withContext if (updateResult is DataResult.Success) {
                     Result.success(
-                        workDataOf(MEDIA_COUNT to updateResult.data),
+                        workDataOf(MEDIA_COUNT_KEY to updateResult.data),
                     )
                 } else {
                     Result.failure()
@@ -38,7 +38,7 @@ class SyncWorker
 
         companion object {
             const val SYNC_MEDIA_WORKER_TAG = "SyncMediaWorkerTag"
-            const val MEDIA_COUNT = "MediaCount"
+            const val MEDIA_COUNT_KEY = "MediaCount"
             private val syncConstraints
                 get() =
                     Constraints.Builder()

@@ -11,7 +11,7 @@ internal class GetMediaUseCaseImpl
     constructor(
         private val mediaRepository: MediaRepository,
     ) : GetMediaUseCase {
-        override suspend fun invoke(
+        override operator fun invoke(
             mimeType: String,
             query: String,
         ): Flow<PagingData<Media>> =

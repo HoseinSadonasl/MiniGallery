@@ -5,5 +5,5 @@ import com.hotaku.domain.utils.Error
 import kotlinx.coroutines.flow.Flow
 
 interface SyncMediaRepository {
-    suspend fun synchronize(): Flow<DataResult<Int, Error>>
+    fun synchronize(): Flow<DataResult<Int, Error>>
 }

@@ -18,7 +18,7 @@ internal class SyncMediaRepositoryImpl
     constructor(
         private val workManager: WorkManager,
     ) : SyncMediaRepository {
-        override suspend fun synchronize(): Flow<DataResult<Int, Error>> {
+        override fun synchronize(): Flow<DataResult<Int, Error>> {
             workManager.synchronize()
             return workManager.getWorkInfosByTagLiveData(SyncWorker.SYNC_MEDIA_WORKER_TAG).value?.asFlow()
                 ?.map { workInfo ->

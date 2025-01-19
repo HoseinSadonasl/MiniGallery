@@ -17,7 +17,7 @@ internal class SyncMediaUseCaseImpl
         private val syncMediaRepository: SyncMediaRepository,
         private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
     ) : SyncMediaUseCase {
-        override suspend operator fun invoke(): Flow<DataResult<Int, Error>> =
+        override operator fun invoke(): Flow<DataResult<Int, Error>> =
             flow {
                 syncMediaRepository.synchronize().onEach { result ->
                     if (result is DataResult.Success) {

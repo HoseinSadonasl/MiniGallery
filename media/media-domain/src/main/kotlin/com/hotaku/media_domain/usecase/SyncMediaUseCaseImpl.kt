@@ -25,7 +25,7 @@ internal class SyncMediaUseCaseImpl
                     when (result) {
                         SyncDataState.Idle -> Unit
                         SyncDataState.SyncFailure -> {
-                            emit(DataResult.Failure(ErrorResult.UnknownError))
+                            emit(DataResult.Failure(ErrorResult.LocalError.SYNC_DATA_ERROR))
                         }
 
                         is SyncDataState.SyncSuccess -> {

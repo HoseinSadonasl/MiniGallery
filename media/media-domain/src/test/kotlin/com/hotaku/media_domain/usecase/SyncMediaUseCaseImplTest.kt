@@ -28,33 +28,14 @@ class SyncMediaUseCaseImplTest {
     @Test
     fun invoke_whenSynchronizeFails_shouldEmitLocalErrorResult() =
         runTest {
-            val expectedError = "An Error"
-            val expectedResult = ErrorResult.LocalError(expectedError)
-            coEvery { syncMediaUseCase.invoke() } returns flowOf(DataResult.Failure(error = expectedResult))
+            val expectedErrorResult = ErrorResult.LocalError.SYNC_DATA_ERROR
+            coEvery { syncMediaUseCase.invoke() } returns flowOf(DataResult.Failure(error = expectedErrorResult))
 
             syncMediaUseCase.invoke().test {
                 val result = awaitItem()
                 assertThat(result).isInstanceOf(DataResult.Failure::class.java)
                 val failureResult = (result as DataResult.Failure).error
-                assertThat(failureResult).isInstanceOf(ErrorResult.LocalError::class.java)
-                assertThat((failureResult as ErrorResult.LocalError).message).isEqualTo(
-                    expectedError,
-                )
-                awaitComplete()
-            }
-        }
-
-    @Test
-    fun invoke_whenSynchronizeFails_shouldEmitUnknownErrorResult() =
-        runTest {
-            val expectedResult = ErrorResult.UnknownError
-            coEvery { syncMediaUseCase.invoke() } returns flowOf(DataResult.Failure(error = expectedResult))
-
-            syncMediaUseCase.invoke().test {
-                val result = awaitItem()
-                assertThat(result).isInstanceOf(DataResult.Failure::class.java)
-                val failureResult = (result as DataResult.Failure).error
-                assertThat(failureResult).isInstanceOf(ErrorResult.UnknownError::class.java)
+                assertThat(failureResult).isEqualTo(expectedErrorResult)
                 awaitComplete()
             }
         }

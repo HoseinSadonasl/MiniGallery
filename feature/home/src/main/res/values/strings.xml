@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="all_unknown_error">Unknown error</string>
+    <string name="all_disk_full">Disk is full</string>
+    <string name="all_io_error">An IO error occurred</string>
+    <string name="all_sync_error">Sync data error</string>
 </resources>

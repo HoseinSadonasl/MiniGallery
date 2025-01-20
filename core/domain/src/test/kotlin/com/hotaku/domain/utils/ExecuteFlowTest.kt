@@ -40,7 +40,7 @@ class ExecuteFlowTest {
     @Test
     fun executeFlow_return_flow_with_error_result() =
         runTest {
-            val errorResult = DataResult.Failure(error = ErrorResult.LocalError(message = "An Error"))
+            val errorResult = DataResult.Failure(error = ErrorResult.LocalError.IO)
             coEvery { dataToTest.invoke(any()) } returns flowOf(errorResult)
 
             dataToTest.invoke(errorResult).executeFlowResult().test {

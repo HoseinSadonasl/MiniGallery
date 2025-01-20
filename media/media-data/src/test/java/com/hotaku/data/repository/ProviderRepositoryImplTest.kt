@@ -47,41 +47,19 @@ class ProviderRepositoryImplTest {
         }
 
     @Test
-    fun updateDatabase_ifFailed_shouldEmitDataResultFailureWithMessage() =
+    fun updateDatabase_ifFailed_shouldEmitDataResultFailure() =
         runTest {
-            val exceptedError = "An Error"
+            val exceptedError = ErrorResult.LocalError.IO
             coEvery { providerRepository.updateMediaDatabase() } returns
                 flowOf(
                     DataResult.Failure(
-                        ErrorResult.LocalError(exceptedError),
+                        exceptedError,
                     ),
                 )
             providerRepository.updateMediaDatabase().test {
                 assertThat(awaitItem()).isEqualTo(
                     DataResult.Failure(
-                        ErrorResult.LocalError(
-                            exceptedError,
-                        ),
-                    ),
-                )
-                awaitComplete()
-            }
-        }
-
-    @Test
-    fun updateDatabase_ifFailed_shouldEmitDataResultFailureWithUnknownError() =
-        runTest {
-            val exceptedErrorResult = ErrorResult.UnknownError
-            coEvery { providerRepository.updateMediaDatabase() } returns
-                flowOf(
-                    DataResult.Failure(
-                        exceptedErrorResult,
-                    ),
-                )
-            providerRepository.updateMediaDatabase().test {
-                assertThat(awaitItem()).isEqualTo(
-                    DataResult.Failure(
-                        exceptedErrorResult,
+                        exceptedError,
                     ),
                 )
                 awaitComplete()

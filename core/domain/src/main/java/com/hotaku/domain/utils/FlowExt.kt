@@ -16,7 +16,7 @@ fun <T> Flow<DataResult<T, Error>>.executeFlowResult(coroutineDispatcher: Corout
     }.flowOn(coroutineDispatcher)
 
 private fun Throwable.asException(): Error =
-    when (val exception = this as Exception) {
-        is IOException -> ErrorResult.LocalError(exception.localizedMessage)
-        else -> ErrorResult.UnknownError
+    when (this as Exception) {
+        is IOException -> ErrorResult.LocalError.IO
+        else -> ErrorResult.LocalError.UNKNOWN
     }

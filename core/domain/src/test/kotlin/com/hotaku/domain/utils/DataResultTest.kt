@@ -18,12 +18,6 @@ class DataResultTest {
     }
 
     @Test
-    fun `should return UnkownErrorwhen data result broken because of unknown reason`() {
-        val failureResult = DataResult.Failure(error = ErrorResult.UnknownError)
-        assertThat(failureResult.error).isInstanceOf(ErrorResult.UnknownError::class.java)
-    }
-
-    @Test
     fun `should return ApiError when api response return error`() {
         val apiFailure =
             DataResult.Failure(error = ErrorResult.ApiError(code = 404, message = "Not Found"))
@@ -35,8 +29,8 @@ class DataResultTest {
     @Test
     fun `should return LocalError when operation unsuccessful`() {
         val localFailure =
-            DataResult.Failure(error = ErrorResult.LocalError(message = "Database Error"))
+            DataResult.Failure(error = ErrorResult.LocalError.IO)
         assertThat(localFailure.error).isInstanceOf(ErrorResult.LocalError::class.java)
-        assertThat(localFailure.error.message).isEqualTo("Database Error")
+        assertThat(localFailure.error).isEqualTo(ErrorResult.LocalError.IO)
     }
 }

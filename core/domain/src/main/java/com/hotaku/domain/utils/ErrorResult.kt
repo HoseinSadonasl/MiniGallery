@@ -1,11 +1,13 @@
 package com.hotaku.domain.utils
 
 sealed interface ErrorResult : Error {
-    data object UnknownError : ErrorResult
-
-    data class LocalError(
-        val message: String,
-    ) : ErrorResult
+    enum class LocalError : ErrorResult {
+        UNKNOWN,
+        SYNC_DATA_ERROR,
+        READ_DATA_ERROR,
+        IO,
+        DISK_FULL,
+    }
 
     data class ApiError(
         val code: Int = -1,

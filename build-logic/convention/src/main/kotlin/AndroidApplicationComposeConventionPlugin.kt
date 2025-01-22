@@ -6,7 +6,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 
-class AndroidApplicationComposeConventionPlugin: Plugin<Project> {
+class AndroidApplicationComposeConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         with(target) {
@@ -28,6 +28,8 @@ class AndroidApplicationComposeConventionPlugin: Plugin<Project> {
                 add("implementation", libs.findLibrary("androidx.ui.tooling").get())
                 add("implementation", libs.findLibrary("androidx.ui.tooling.preview").get())
                 add("implementation", libs.findLibrary("androidx.material3").get())
+                add("implementation", libs.findLibrary("androidx.work").get())
+                add("implementation", libs.findLibrary("hilt.work").get())
 
                 add("debugImplementation", libs.findLibrary("androidx.ui.tooling").get())
                 add("debugImplementation", libs.findLibrary("androidx.ui.tooling.preview").get())

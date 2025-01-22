@@ -1,6 +1,8 @@
 package com.hotaku.data.di
 
-import androidx.work.WorkManager
+import android.content.Context
+import com.hotaku.common.di.Dispatcher
+import com.hotaku.common.di.MiniGalleryDispatchers
 import com.hotaku.data.datasource.MediaDataSource
 import com.hotaku.data.datasource.ProviderDataSource
 import com.hotaku.data.datasource.UpdateMediaDbDataSource
@@ -14,7 +16,9 @@ import com.hotaku.media_domain.repository.SyncMediaRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
 @Module
@@ -22,9 +26,13 @@ import javax.inject.Singleton
 internal object DataModule {
     @Provides
     @Singleton
-    fun providesSyncMediaRepository(workManager: WorkManager): SyncMediaRepository =
+    fun providesSyncMediaRepository(
+        @ApplicationContext context: Context,
+        @Dispatcher(MiniGalleryDispatchers.IO) coroutineDispatcher: CoroutineDispatcher,
+    ): SyncMediaRepository =
         SyncMediaRepositoryImpl(
-            workManager = workManager,
+            context = context,
+            coroutineDispatcher = coroutineDispatcher,
         )
 
     @Provides

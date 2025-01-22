@@ -4,7 +4,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 
-class AndroidHiltConventionPlugin: Plugin<Project> {
+class AndroidHiltConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         with(target) {
@@ -14,8 +14,9 @@ class AndroidHiltConventionPlugin: Plugin<Project> {
             }
 
             dependencies {
-               add("implementation", libs.findLibrary("hilt.android").get())
-               add("ksp", libs.findLibrary("hilt.compiler").get())
+                add("implementation", libs.findLibrary("hilt.android").get())
+                add("ksp", libs.findLibrary("hilt.compiler").get())
+                add("ksp", libs.findLibrary("hilt.ext.compiler").get())
             }
 
         }

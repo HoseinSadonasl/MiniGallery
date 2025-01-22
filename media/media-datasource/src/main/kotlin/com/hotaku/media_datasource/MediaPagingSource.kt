@@ -5,6 +5,9 @@ import androidx.paging.PagingState
 import com.hotaku.data.model.MediaData
 import com.hotaku.database.dao.MediaDao
 import com.hotaku.media_datasource.mapper.MapMediaEntityAsMediaData
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.net.UnknownHostException
 
@@ -13,6 +16,7 @@ internal class MediaPagingSource(
     private val mediaDao: MediaDao,
     private val mimeType: String,
     private val query: String,
+    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : PagingSource<Int, MediaData>() {
     override fun getRefreshKey(state: PagingState<Int, MediaData>): Int? =
         state.anchorPosition?.let { anchorPosition ->
@@ -23,23 +27,25 @@ internal class MediaPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MediaData> {
         val page = params.key ?: START_PAGE_KEY
 
-        return try {
-            val media =
-                mediaDao.getAll(
-                    query = query.takeIf { it.isNotEmpty() },
-                    mimeType = mimeType.takeIf { it.isNotEmpty() },
-                    limit = params.loadSize,
-                    offset = page * params.loadSize,
-                ).map { mapMediaEntityAsMediaData.map(it) }
-            LoadResult.Page(
-                data = media,
-                prevKey = page.minus(1).takeIf { page > 0 },
-                nextKey = page.plus(1).takeIf { media.isNotEmpty() },
-            )
-        } catch (exception: IOException) {
-            LoadResult.Error(exception)
-        } catch (exception: UnknownHostException) {
-            LoadResult.Error(exception)
+        return withContext(coroutineDispatcher) {
+            try {
+                val media =
+                    mediaDao.getAll(
+                        query = query.takeIf { it.isNotEmpty() },
+                        mimeType = mimeType.takeIf { it.isNotEmpty() },
+                        limit = params.loadSize,
+                        offset = page * params.loadSize,
+                    ).map { mapMediaEntityAsMediaData.map(it) }
+                LoadResult.Page(
+                    data = media,
+                    prevKey = page.minus(1).takeIf { page > 0 },
+                    nextKey = page.plus(1).takeIf { media.isNotEmpty() },
+                )
+            } catch (exception: IOException) {
+                LoadResult.Error(exception)
+            } catch (exception: UnknownHostException) {
+                LoadResult.Error(exception)
+            }
         }
     }
 

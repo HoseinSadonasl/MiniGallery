@@ -14,6 +14,7 @@ plugins {
     alias(libs.plugins.google.devtools.ksp) apply false
     alias(libs.plugins.ktlint.gradle) apply false
     alias(libs.plugins.detekt.gradle) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
 }
 
 allprojects {

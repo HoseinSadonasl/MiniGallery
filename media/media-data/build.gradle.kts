@@ -18,4 +18,5 @@ dependencies {
     implementation(projects.core.common)
     implementation(libs.paging.common)
     implementation(libs.androidx.work)
+    implementation(libs.hilt.work)
 }

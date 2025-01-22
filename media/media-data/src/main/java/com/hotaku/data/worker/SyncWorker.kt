@@ -1,31 +1,35 @@
 package com.hotaku.data.worker
 
 import android.content.Context
+import androidx.hilt.work.HiltWorker
+import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import com.hotaku.common.di.Dispatcher
+import com.hotaku.common.di.MiniGalleryDispatchers
 import com.hotaku.domain.utils.DataResult
 import com.hotaku.media_domain.repository.ProviderRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 
-class SyncWorker
+@HiltWorker
+internal class SyncWorker
     @AssistedInject
     constructor(
         @Assisted appContext: Context,
         @Assisted workerParams: WorkerParameters,
         private val providerRepository: ProviderRepository,
-        private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+        @Dispatcher(MiniGalleryDispatchers.IO) private val coroutineDispatcher: CoroutineDispatcher,
     ) : CoroutineWorker(appContext, workerParams) {
         override suspend fun doWork(): Result =
-            withContext(dispatcher) {
+            withContext(coroutineDispatcher) {
                 val updateResult = providerRepository.updateMediaDatabase().last()
                 return@withContext if (updateResult is DataResult.Success) {
                     Result.success(
@@ -48,7 +52,7 @@ class SyncWorker
                 get() =
                     OneTimeWorkRequestBuilder<SyncWorker>()
                         .setBackoffCriteria(
-                            androidx.work.BackoffPolicy.LINEAR,
+                            BackoffPolicy.LINEAR,
                             1,
                             TimeUnit.MINUTES,
                         )

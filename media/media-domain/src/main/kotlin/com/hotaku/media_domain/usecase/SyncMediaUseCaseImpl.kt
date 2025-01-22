@@ -6,8 +6,6 @@ import com.hotaku.domain.utils.ErrorResult
 import com.hotaku.domain.utils.executeFlowResult
 import com.hotaku.media_domain.repository.SyncMediaRepository
 import com.hotaku.media_domain.util.SyncDataState
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
@@ -17,7 +15,6 @@ internal class SyncMediaUseCaseImpl
     @Inject
     constructor(
         private val syncMediaRepository: SyncMediaRepository,
-        private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
     ) : SyncMediaUseCase {
         override operator fun invoke(): Flow<DataResult<Int, Error>> =
             flow {
@@ -33,5 +30,5 @@ internal class SyncMediaUseCaseImpl
                         }
                     }
                 }
-            }.executeFlowResult(coroutineDispatcher = dispatcher)
+            }.executeFlowResult()
     }

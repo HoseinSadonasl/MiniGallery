@@ -12,15 +12,17 @@ fun ContentResolver.queryMedia(
     projection: Array<String>? = null,
     selection: String? = null,
     selectionArgs: Array<String>? = null,
-    sortOrder: String? = MediaQueries.SORT_MEDIA_BY_DATE_MODIFIED,
-): Result<Cursor> =
-    query(
-        uri,
-        projection,
-        selection,
-        selectionArgs,
-        sortOrder,
-    )?.use { it }?.runCatching { this } ?: Result.failure(Throwable())
+    sortOrder: String? = MediaQueries.SORT_MEDIA_BY_DATE_ADDED,
+): Result<List<MediaData>> =
+    runCatching {
+        query(
+            uri,
+            projection,
+            selection,
+            selectionArgs,
+            sortOrder,
+        )?.use { it.processCursor() }.orEmpty()
+    }
 
 fun Cursor.processCursor(): List<MediaData> {
     val mediaList = mutableListOf<MediaData>()

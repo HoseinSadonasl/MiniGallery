@@ -1,13 +1,9 @@
 package com.hotaku.data.repository
 
-import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.hotaku.domain.utils.DataResult
-import com.hotaku.domain.utils.ErrorResult
 import com.hotaku.media_domain.repository.ProviderRepository
 import io.mockk.coEvery
 import io.mockk.mockk
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -21,48 +17,32 @@ class ProviderRepositoryImplTest {
     }
 
     @Test
-    fun updateDatabase_atBegining_shouldEmitDataResultLoading() =
+    fun updateDatabase_ifSucceed_shouldReturnSuccessWithDataCount() =
         runTest {
-            coEvery { providerRepository.updateMediaDatabase() } returns flowOf(DataResult.Loading)
-            providerRepository.updateMediaDatabase().test {
-                assertThat(awaitItem()).isEqualTo(DataResult.Loading)
-                awaitComplete()
-            }
+            val expectedData = 20
+            val expectedResult = Result.success(expectedData)
+
+            coEvery { providerRepository.updateMediaDatabase() } returns expectedResult
+
+            val actualResult = providerRepository.updateMediaDatabase()
+
+            assertThat(actualResult).isEqualTo(expectedResult)
+            assertThat(actualResult.isSuccess).isTrue()
+            assertThat(actualResult.getOrNull()).isEqualTo(expectedData)
         }
 
     @Test
-    fun updateDatabase_ifSucceed_shouldEmitDataResultSuccessWithDataCount() =
+    fun updateDatabase_ifFailed_shouldReturnFailureWithError() =
         runTest {
-            val eceptedData = 20
-            coEvery { providerRepository.updateMediaDatabase() } returns
-                flowOf(
-                    DataResult.Success(
-                        eceptedData,
-                    ),
-                )
-            providerRepository.updateMediaDatabase().test {
-                assertThat(awaitItem()).isEqualTo(DataResult.Success(eceptedData))
-                awaitComplete()
-            }
-        }
+            val expectedError = Throwable("Error")
+            val expectedResult = Result.failure<Int>(expectedError)
 
-    @Test
-    fun updateDatabase_ifFailed_shouldEmitDataResultFailure() =
-        runTest {
-            val exceptedError = ErrorResult.LocalError.IO
-            coEvery { providerRepository.updateMediaDatabase() } returns
-                flowOf(
-                    DataResult.Failure(
-                        exceptedError,
-                    ),
-                )
-            providerRepository.updateMediaDatabase().test {
-                assertThat(awaitItem()).isEqualTo(
-                    DataResult.Failure(
-                        exceptedError,
-                    ),
-                )
-                awaitComplete()
-            }
+            coEvery { providerRepository.updateMediaDatabase() } returns expectedResult
+
+            val actualResult = providerRepository.updateMediaDatabase()
+
+            assertThat(actualResult).isEqualTo(expectedResult)
+            assertThat(actualResult.isFailure).isTrue()
+            assertThat(actualResult.exceptionOrNull()).isEqualTo(expectedError)
         }
 }

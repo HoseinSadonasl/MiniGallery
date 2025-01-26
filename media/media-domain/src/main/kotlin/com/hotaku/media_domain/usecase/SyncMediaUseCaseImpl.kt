@@ -7,8 +7,7 @@ import com.hotaku.domain.utils.executeFlowResult
 import com.hotaku.media_domain.repository.SyncMediaRepository
 import com.hotaku.media_domain.util.SyncDataState
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 internal class SyncMediaUseCaseImpl
@@ -17,17 +16,22 @@ internal class SyncMediaUseCaseImpl
         private val syncMediaRepository: SyncMediaRepository,
     ) : SyncMediaUseCase {
         override operator fun invoke(): Flow<DataResult<Int, Error>> =
-            flow {
-                syncMediaRepository.synchronize().onEach { result ->
-                    when (result) {
-                        SyncDataState.Idle -> Unit
-                        SyncDataState.SyncFailure -> {
-                            emit(DataResult.Failure(ErrorResult.LocalError.SYNC_DATA_ERROR))
-                        }
+            syncMediaRepository.synchronize().map { result ->
+                when (result) {
+                    SyncDataState.Idle -> {
+                        DataResult.Success(0)
+                    }
 
-                        is SyncDataState.SyncSuccess -> {
-                            emit(DataResult.Success(result.itemsCount))
-                        }
+                    SyncDataState.Syncing -> {
+                        DataResult.Loading
+                    }
+
+                    SyncDataState.SyncFailure -> {
+                        DataResult.Failure(ErrorResult.LocalError.SYNC_DATA_ERROR)
+                    }
+
+                    is SyncDataState.SyncSuccess -> {
+                        DataResult.Success(result.itemsCount)
                     }
                 }
             }.executeFlowResult()

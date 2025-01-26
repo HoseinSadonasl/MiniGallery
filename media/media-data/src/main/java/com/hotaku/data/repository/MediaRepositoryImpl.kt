@@ -27,6 +27,7 @@ internal class MediaRepositoryImpl
                     PagingConfig(
                         initialLoadSize = INITIAL_LOAD_SIZE,
                         pageSize = PAGE_SIZE,
+                        enablePlaceholders = false,
                     ),
                 pagingSourceFactory = {
                     mediaDataSource.getMedia(
@@ -38,6 +39,6 @@ internal class MediaRepositoryImpl
 
         companion object {
             private const val INITIAL_LOAD_SIZE = 40
-            private const val PAGE_SIZE = 30
+            private const val PAGE_SIZE = 40
         }
     }

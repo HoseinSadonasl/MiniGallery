@@ -3,12 +3,13 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 
-class AndroidFeatureConventionPlugin: Plugin<Project> {
+class AndroidFeatureConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         with(target) {
-            apply {
-                plugin("minigallery.android.library.compose")
+            pluginManager.apply {
+                apply("minigallery.android.library.compose")
+                apply("org.jetbrains.kotlin.plugin.serialization")
             }
 
             dependencies {
@@ -22,6 +23,7 @@ class AndroidFeatureConventionPlugin: Plugin<Project> {
                 add("implementation", libs.findLibrary("androidx.ui.tooling").get())
                 add("implementation", libs.findLibrary("androidx.ui.tooling.preview").get())
                 add("implementation", libs.findLibrary("androidx.material3").get())
+                add("implementation", libs.findLibrary("kotlinx.serialization.json").get())
 
                 add("debugImplementation", libs.findLibrary("androidx.ui.tooling").get())
                 add("debugImplementation", libs.findLibrary("androidx.ui.tooling.preview").get())

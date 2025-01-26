@@ -11,13 +11,13 @@ interface MediaDao {
     fun insertAll(media: List<MediaEntity>)
 
     @Query(
-        "SELECT * FROM media " +
-            "WHERE (displayName = :query OR :query is NULL) " +
-            "AND (mimeType = :mimeType OR :mimeType is NULL) " +
-            "ORDER BY dateAdded DESC " +
+        "SELECT * FROM media \n" +
+            "WHERE (displayName LIKE '%' || :query || '%' OR :query IS NULL) " +
+            "AND (mimeType = :mimeType OR :mimeType IS NULL) " +
+            "ORDER BY dateModified DESC " +
             "LIMIT :limit OFFSET :offset",
     )
-    fun getAll(
+    suspend fun getAll(
         query: String? = null,
         mimeType: String? = null,
         limit: Int,

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="minigallery_notification_channel_name">MiniGallery Notifications</string>
+    <string name="minigallery_sync_notification_title">Synchronizing...</string>
+</resources>

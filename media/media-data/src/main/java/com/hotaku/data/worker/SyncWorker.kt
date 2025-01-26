@@ -6,16 +6,17 @@ import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.hotaku.common.di.Dispatcher
 import com.hotaku.common.di.MiniGalleryDispatchers
-import com.hotaku.domain.utils.DataResult
 import com.hotaku.media_domain.repository.ProviderRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 
@@ -23,40 +24,47 @@ import java.util.concurrent.TimeUnit
 internal class SyncWorker
     @AssistedInject
     constructor(
-        @Assisted appContext: Context,
+        @Assisted private val appContext: Context,
         @Assisted workerParams: WorkerParameters,
         private val providerRepository: ProviderRepository,
         @Dispatcher(MiniGalleryDispatchers.IO) private val coroutineDispatcher: CoroutineDispatcher,
     ) : CoroutineWorker(appContext, workerParams) {
         override suspend fun doWork(): Result =
             withContext(coroutineDispatcher) {
-                val updateResult = providerRepository.updateMediaDatabase().last()
-                return@withContext if (updateResult is DataResult.Success) {
-                    Result.success(
-                        workDataOf(MEDIA_COUNT_KEY to updateResult.data),
-                    )
-                } else {
+                return@withContext try {
+                    providerRepository.updateMediaDatabase().getOrNull()?.let {
+                        Result.success(
+                            workDataOf(MEDIA_COUNT_KEY to it),
+                        )
+                    } ?: Result.failure()
+                } catch (exception: Exception) {
+                    exception.printStackTrace()
                     Result.failure()
                 }
             }
 
         companion object {
-            const val SYNC_MEDIA_WORKER_TAG = "SyncMediaWorkerTag"
             const val MEDIA_COUNT_KEY = "MediaCount"
             private val syncConstraints
                 get() =
                     Constraints.Builder()
                         .setRequiresStorageNotLow(true)
                         .build()
-            val initializeSynchronizer
+            private val initializeSynchronizerWorkRequest
                 get() =
                     OneTimeWorkRequestBuilder<SyncWorker>()
                         .setBackoffCriteria(
                             BackoffPolicy.LINEAR,
-                            1,
-                            TimeUnit.MINUTES,
+                            30,
+                            TimeUnit.SECONDS,
                         )
                         .setConstraints(syncConstraints)
                         .build()
+
+            fun WorkManager.synchronizeAndReturnResultFlow(): Flow<WorkInfo?> {
+                val syncWorkRequest = initializeSynchronizerWorkRequest
+                enqueue(syncWorkRequest)
+                return getWorkInfoByIdFlow(syncWorkRequest.id)
+            }
         }
     }

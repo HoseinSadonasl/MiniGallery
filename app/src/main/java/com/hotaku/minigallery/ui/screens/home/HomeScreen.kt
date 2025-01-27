@@ -12,12 +12,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.hotaku.minigallery.R
 import com.hotaku.minigallery.ui.components.AppScaffold
 import com.hotaku.minigallery.ui.components.MiniGalleryTopBar
 import com.hotaku.minigallery.ui.utils.content.Image
-import com.hotaku.minigallery.ui.utils.content.imagesRetriever
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
@@ -25,7 +24,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     var images = remember { mutableListOf<Image>() }
 
     LaunchedEffect(true) {
-        images = context.imagesRetriever().toMutableList()
+//        images = context.imagesRetriever().toMutableList()
     }
 
     AppScaffold(

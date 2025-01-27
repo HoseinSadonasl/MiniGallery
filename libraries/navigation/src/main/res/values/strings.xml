@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="navigation_route_title_all_media">All Media</string>
+    <string name="navigation_route_title_albums">Albums</string>
+</resources>

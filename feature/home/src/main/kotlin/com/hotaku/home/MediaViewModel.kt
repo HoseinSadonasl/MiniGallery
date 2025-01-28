@@ -58,9 +58,27 @@ internal class MediaViewModel
 
         fun onAction(action: HomeScreenActions) {
             when (action) {
-                HomeScreenActions.UpdateMedia -> updateMedia()
+                HomeScreenActions.OnUpdateMedia -> updateMedia()
+                HomeScreenActions.OnHideSyncSection -> setyncSectionStateFalse()
+                HomeScreenActions.OnNoMedia -> setNoMediaTrue()
                 is HomeScreenActions.OnMimeTypeChange -> setMimeType(action.mimeType)
                 is HomeScreenActions.OnQueryChange -> setQuery(action.query)
+            }
+        }
+
+        private fun setNoMediaTrue() {
+            viewModelScope.launch {
+                homeScreenViewModelState.update {
+                    it.copy(noMedia = true)
+                }
+            }
+        }
+
+        private fun setyncSectionStateFalse() {
+            viewModelScope.launch {
+                homeScreenViewModelState.update {
+                    it.copy(shoSyncSection = false)
+                }
             }
         }
 

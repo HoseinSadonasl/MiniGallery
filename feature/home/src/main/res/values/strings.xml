@@ -6,4 +6,6 @@
     <string name="all_sync_error">Sync data error</string>
     <string name="home_screen_state_synchronizing">Synchronizing...</string>
     <string name="home_screen_media_sync_state_media_added">%1$s media added</string>
+    <string name="home_screen_no_media">No media</string>
+    <string name="home_screen_an_error_occurred">An error occurred</string>
 </resources>

@@ -1,57 +1,74 @@
 package com.hotaku.home
 
+import android.content.Context
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
-import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
-import com.hotaku.designsystem.theme.LocalMiniGalleryColors
 import com.hotaku.feature.home.R
 import com.hotaku.home.components.MediaSyncLabel
 import com.hotaku.home.model.MediaUi
 import com.hotaku.ui.UiState
+import com.hotaku.ui.UiText
 import com.hotaku.ui.asString
+import com.hotaku.ui.conposables.AnimatedPlaceHolderBox
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
-import kotlin.reflect.KFunction1
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun HomeScreen(
     modifier: Modifier = Modifier,
     mediaViewModel: MediaViewModel = hiltViewModel(),
-    onShowSnackBar: suspend () -> Unit,
+    onShowSnackBar: suspend (String) -> Unit,
 ) {
     val screenState by mediaViewModel.homeScreenUiState.collectAsStateWithLifecycle()
-    val synchronizeState by mediaViewModel.synchronizeUiState.collectAsStateWithLifecycle()
 
     HomeScreen(
         modifier = modifier,
         screenState = screenState,
         mediaPagingItems = mediaViewModel.mediaUiState,
-        synchronizeState = synchronizeState,
+        synchronizeState = mediaViewModel.synchronizeUiState,
         onAction = mediaViewModel::onAction,
+        onShowSnackBar = { onShowSnackBar(it) },
     )
 }
 
@@ -60,53 +77,51 @@ private fun HomeScreen(
     modifier: Modifier = Modifier,
     screenState: HomeScreenUiState,
     mediaPagingItems: StateFlow<PagingData<MediaUi>>,
-    synchronizeState: UiState<Int>,
-    onAction: KFunction1<HomeScreenActions, Unit>,
+    synchronizeState: StateFlow<UiState<Int>>,
+    onAction: (HomeScreenActions) -> Unit,
+    onShowSnackBar: suspend (String) -> Unit,
 ) {
-    val localColors = LocalMiniGalleryColors.current
+    val synchronize: UiState<Int> by synchronizeState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(synchronize) {
+        if (synchronize is UiState.Success) {
+            delay(5000)
+            onAction(HomeScreenActions.OnHideSyncSection)
+        }
+    }
 
     HomeScreenScaffolfd(
         modifier = modifier,
-        topBar = {
-        },
-        bottomBar = {
-        },
-        snackbarHost = {
-        },
         content = {
-            when (synchronizeState) {
-                is UiState.Failure -> {
-                    MediaSyncLabel(
-                        backgroundColor = localColors.red,
-                        icon = Icons.Default.Warning,
-                        label = synchronizeState.error.asString(),
-                    )
-                }
-
-                is UiState.Loading -> {
-                    MediaSyncLabel(
-                        backgroundColor = localColors.yellow,
-                        isSyncing = true,
-                        label = stringResource(R.string.home_screen_state_synchronizing),
-                    )
-                }
-
-                is UiState.Success -> {
-                    MediaSyncLabel(
-                        backgroundColor = localColors.yellow,
-                        isSyncing = true,
-                        icon = Icons.Default.Done,
-                        label =
-                            stringResource(
-                                R.string.home_screen_media_sync_state_media_added,
-                                synchronizeState.data,
-                            ),
-                    )
-                }
+            AnimatedVisibility(screenState.shoSyncSection) {
+                SyncSection(synchronize)
             }
-            MediaGridLazyList(
-                mediaPagingItems = mediaPagingItems,
-            )
+
+            if (screenState.noMedia) {
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .background(Color.Blue),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(.7f),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text(
+                            text = stringResource(R.string.home_screen_no_media),
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    }
+                }
+            } else {
+                MediaGridLazyList(
+                    mediaPagingItems = mediaPagingItems,
+                    onNoMedia = { onAction(it) },
+                    onShowSnackBar = { onShowSnackBar(it) },
+                )
+            }
         },
     )
 }
@@ -114,16 +129,9 @@ private fun HomeScreen(
 @Composable
 private fun HomeScreenScaffolfd(
     modifier: Modifier = Modifier,
-    topBar: @Composable () -> Unit,
-    bottomBar: @Composable () -> Unit,
-    snackbarHost: @Composable () -> Unit,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Scaffold(
-        topBar = topBar,
-        bottomBar = bottomBar,
-        snackbarHost = snackbarHost,
-    ) { padding ->
+    Scaffold { padding ->
         Column(
             modifier =
                 modifier
@@ -136,35 +144,118 @@ private fun HomeScreenScaffolfd(
 }
 
 @Composable
-private fun MediaGridLazyList(
-    modifier: Modifier = Modifier,
-    mediaPagingItems: StateFlow<PagingData<MediaUi>>,
-    state: LazyStaggeredGridState = rememberLazyStaggeredGridState(),
+private fun SyncSection(
+    synchronizeState: UiState<Int>,
 ) {
-    val items: LazyPagingItems<MediaUi> = mediaPagingItems.collectAsLazyPagingItems()
+    when (synchronizeState) {
+        is UiState.Failure -> {
+            MediaSyncLabel(
+                icon = Icons.Default.Warning,
+                label = synchronizeState.error.asString(),
+            )
+        }
 
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Adaptive(100.dp),
-        modifier = modifier,
-        verticalItemSpacing = 4.dp,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        state = state,
-    ) {
-        mediaItems(items)
+        is UiState.Loading -> {
+            MediaSyncLabel(
+                isSyncing = true,
+                label = stringResource(R.string.home_screen_state_synchronizing),
+            )
+        }
+
+        is UiState.Success -> {
+            MediaSyncLabel(
+                icon = Icons.Default.Done,
+                label =
+                    stringResource(
+                        R.string.home_screen_media_sync_state_media_added,
+                        synchronizeState.data,
+                    ),
+            )
+        }
     }
 }
 
-private fun LazyStaggeredGridScope.mediaItems(items: LazyPagingItems<MediaUi>) {
+@Composable
+private fun MediaGridLazyList(
+    modifier: Modifier = Modifier,
+    mediaPagingItems: StateFlow<PagingData<MediaUi>>,
+    state: LazyGridState = rememberLazyGridState(),
+    onShowSnackBar: suspend (String) -> Unit,
+    onNoMedia: (HomeScreenActions) -> Unit,
+) {
+    val context: Context = LocalContext.current
+    val coroutineScope: CoroutineScope = rememberCoroutineScope()
+    val items: LazyPagingItems<MediaUi> = mediaPagingItems.collectAsLazyPagingItems()
+    val loadState: LoadState = items.loadState.refresh
+
+//    if (items.itemCount == 0) onNoMedia(HomeScreenActions.OnNoMedia)
+
+    LazyVerticalGrid(
+        modifier = modifier.fillMaxSize(),
+        columns = GridCells.Adaptive(100.dp),
+        verticalArrangement = Arrangement.spacedBy(2.dp),
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
+        contentPadding = PaddingValues(2.dp),
+        state = state,
+    ) {
+        when (loadState) {
+            LoadState.Loading -> {
+                items(30) {
+                    AnimatedPlaceHolderBox()
+                }
+            }
+
+            is LoadState.Error -> {
+                val errorMessage: String? = loadState.error.localizedMessage
+                coroutineScope.showLoadingError(
+                    onShowSnackBar = onShowSnackBar,
+                    message = errorMessage,
+                    context = context,
+                )
+            }
+
+            else -> {
+                mediaItems(items)
+            }
+        }
+    }
+}
+
+private fun CoroutineScope.showLoadingError(
+    onShowSnackBar: suspend (String) -> Unit,
+    message: String?,
+    context: Context,
+) {
+    launch {
+        onShowSnackBar(
+            message ?: UiText.StringResource(R.string.home_screen_an_error_occurred)
+                .asString(context = context),
+        )
+    }
+}
+
+private fun LazyGridScope.mediaItems(items: LazyPagingItems<MediaUi>) {
     items.takeIf { it.itemCount > 0 }?.let { pagingItems ->
         items(
             count = pagingItems.itemCount,
-            key = { pagingItems[it]?.mediaId ?: it },
+            key = { it },
         ) { item ->
-            AsyncImage(
-                modifier = Modifier.clip(MaterialTheme.shapes.medium),
-                model = pagingItems[item]?.uriString,
-                contentDescription = null,
-            )
+            Surface(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .background(Color.Gray)
+                        .aspectRatio(1f),
+            ) {
+                AsyncImage(
+                    modifier =
+                        Modifier
+                            .fillMaxSize(),
+                    model = pagingItems[item]?.uriString,
+                    contentScale = ContentScale.Crop,
+                    contentDescription = null,
+                )
+            }
         }
     }
 }

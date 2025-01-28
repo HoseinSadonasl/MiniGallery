@@ -11,6 +11,7 @@ android {
 
 dependencies {
 
+    implementation(projects.libraries.designsystem)
     implementation(libs.paging.compose)
     implementation(libs.coil.compose)
 }

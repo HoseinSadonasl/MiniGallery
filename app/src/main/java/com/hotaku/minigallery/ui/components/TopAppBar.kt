@@ -10,7 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,12 +40,10 @@ fun MiniGalleryTopBar(
     )
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 private fun MiniGalleryTopBarPreview() {
-    MiniGalleryTheme(
-        darkTheme = true,
-    ) {
+    MiniGalleryTheme {
         MiniGalleryTopBar(
             title = "Sample title",
             onNavClick = {},

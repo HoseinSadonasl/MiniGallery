@@ -4,15 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.hotaku.designsystem.theme.Colors
 import com.hotaku.designsystem.theme.LocalMiniGalleryColors
 import com.hotaku.designsystem.theme.MiniGalleryTheme
-import com.hotaku.navigation.SuiteNav
+import com.hotaku.navigation.AppSuiteNav
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -21,15 +19,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val navHostController = rememberNavController()
+            val navHostController: NavHostController = rememberNavController()
             MiniGalleryTheme {
                 CompositionLocalProvider(LocalMiniGalleryColors provides Colors()) {
-                    Scaffold { padding ->
-                        SuiteNav(
-                            modifier = Modifier.padding(padding),
-                            navHostController = navHostController,
-                        )
-                    }
+                    AppSuiteNav(
+                        navHostController = navHostController,
+                    )
                 }
             }
         }

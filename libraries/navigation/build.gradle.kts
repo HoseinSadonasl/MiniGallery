@@ -10,4 +10,5 @@ dependencies {
     implementation(projects.feature.home)
     implementation(libs.navigation.compose)
     implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
+    implementation(libs.androidx.ui.tooling.preview.android)
 }

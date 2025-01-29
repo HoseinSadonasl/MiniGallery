@@ -6,11 +6,11 @@ import com.hotaku.data.datasource.ProviderDataSource
 import com.hotaku.data.datasource.UpdateMediaDbDataSource
 import com.hotaku.data.mapper.MapMediaAsDomain
 import com.hotaku.data.repository.MediaRepositoryImpl
-import com.hotaku.data.repository.ProviderRepositoryImpl
 import com.hotaku.data.repository.SyncMediaRepositoryImpl
+import com.hotaku.data.repository.UpdateLocalLocalMediaRepositoryImpl
 import com.hotaku.media_domain.repository.MediaRepository
-import com.hotaku.media_domain.repository.ProviderRepository
 import com.hotaku.media_domain.repository.SyncMediaRepository
+import com.hotaku.media_domain.repository.UpdateLocalMediaRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,8 +46,8 @@ internal object DataModule {
     fun providesProviderRepository(
         updateMediaDbDataSource: UpdateMediaDbDataSource,
         providerDataSource: ProviderDataSource,
-    ): ProviderRepository =
-        ProviderRepositoryImpl(
+    ): UpdateLocalMediaRepository =
+        UpdateLocalLocalMediaRepositoryImpl(
             updateMediaDbDataSource = updateMediaDbDataSource,
             providerDataSource = providerDataSource,
         )

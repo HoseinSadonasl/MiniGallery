@@ -12,7 +12,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.hotaku.common.di.Dispatcher
 import com.hotaku.common.di.MiniGalleryDispatchers
-import com.hotaku.media_domain.repository.ProviderRepository
+import com.hotaku.media_domain.repository.UpdateLocalMediaRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineDispatcher
@@ -26,13 +26,13 @@ internal class SyncWorker
     constructor(
         @Assisted private val appContext: Context,
         @Assisted workerParams: WorkerParameters,
-        private val providerRepository: ProviderRepository,
+        private val updateLocalMediaRepository: UpdateLocalMediaRepository,
         @Dispatcher(MiniGalleryDispatchers.IO) private val coroutineDispatcher: CoroutineDispatcher,
     ) : CoroutineWorker(appContext, workerParams) {
         override suspend fun doWork(): Result =
             withContext(coroutineDispatcher) {
                 return@withContext try {
-                    providerRepository.updateMediaDatabase().getOrNull()?.let {
+                    updateLocalMediaRepository.update().getOrNull()?.let {
                         Result.success(
                             workDataOf(MEDIA_COUNT_KEY to it),
                         )

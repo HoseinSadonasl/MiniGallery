@@ -1,19 +1,19 @@
 package com.hotaku.data.repository
 
 import com.google.common.truth.Truth.assertThat
-import com.hotaku.media_domain.repository.ProviderRepository
+import com.hotaku.media_domain.repository.UpdateLocalMediaRepository
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 
-class ProviderRepositoryImplTest {
-    private lateinit var providerRepository: ProviderRepository
+class UpdateLocalMediaRepositoryImplTest {
+    private lateinit var updateLocalMediaRepository: UpdateLocalMediaRepository
 
     @Before
     fun setUp() {
-        providerRepository = mockk()
+        updateLocalMediaRepository = mockk()
     }
 
     @Test
@@ -22,9 +22,9 @@ class ProviderRepositoryImplTest {
             val expectedData = 20
             val expectedResult = Result.success(expectedData)
 
-            coEvery { providerRepository.updateMediaDatabase() } returns expectedResult
+            coEvery { updateLocalMediaRepository.update() } returns expectedResult
 
-            val actualResult = providerRepository.updateMediaDatabase()
+            val actualResult = updateLocalMediaRepository.update()
 
             assertThat(actualResult).isEqualTo(expectedResult)
             assertThat(actualResult.isSuccess).isTrue()
@@ -37,9 +37,9 @@ class ProviderRepositoryImplTest {
             val expectedError = Throwable("Error")
             val expectedResult = Result.failure<Int>(expectedError)
 
-            coEvery { providerRepository.updateMediaDatabase() } returns expectedResult
+            coEvery { updateLocalMediaRepository.update() } returns expectedResult
 
-            val actualResult = providerRepository.updateMediaDatabase()
+            val actualResult = updateLocalMediaRepository.update()
 
             assertThat(actualResult).isEqualTo(expectedResult)
             assertThat(actualResult.isFailure).isTrue()

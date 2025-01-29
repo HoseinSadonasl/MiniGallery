@@ -28,5 +28,5 @@ interface MediaDao {
     suspend fun getAllUris(): List<String>
 
     @Query("DELETE FROM media WHERE uriString IN (:uris)")
-    suspend fun deleteByUris(uris: List<String>)
+    fun deleteByUris(uris: List<String>)
 }

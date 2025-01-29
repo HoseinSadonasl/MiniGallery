@@ -12,7 +12,11 @@ internal class UpdateMediaDataSourceImpl
         private val mediaDao: MediaDao,
         private val mapMediaDataAsMediaEntity: MapMediaDataAsMediaEntity,
     ) : UpdateMediaDbDataSource {
-        override suspend fun saveMedia(media: List<MediaData>) {
+        override suspend fun getMediaStringUris(): List<String> = mediaDao.getAllUris()
+
+        override fun deleteNoExistMedia(uris: List<String>) = mediaDao.deleteByUris(uris)
+
+        override fun insertMediaToDatabase(media: List<MediaData>) {
             media.map { mapMediaDataAsMediaEntity.map(it) }.also {
                 mediaDao.insertAll(it)
             }

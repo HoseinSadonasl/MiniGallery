@@ -23,4 +23,10 @@ interface MediaDao {
         limit: Int,
         offset: Int,
     ): List<MediaEntity>
+
+    @Query("SELECT uriString FROM media")
+    suspend fun getAllUris(): List<String>
+
+    @Query("DELETE FROM media WHERE uriString IN (:uris)")
+    suspend fun deleteByUris(uris: List<String>)
 }

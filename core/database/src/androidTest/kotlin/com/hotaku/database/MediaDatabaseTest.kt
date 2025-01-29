@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SmallTest
 import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import com.hotaku.database.dao.MediaDao
 import com.hotaku.database.entity.MediaEntity
 import kotlinx.coroutines.test.runTest
@@ -109,6 +110,64 @@ class MediaDatabaseTest {
             val savedMediaList = dao.getAll(query = "SampleName1", limit = 1, offset = 0)
 
             Truth.assertThat(savedMediaList.first().displayName).isEqualTo("SampleName1")
+        }
+
+    @Test
+    fun getAllUris_shouldReturnAllExistingUrils() =
+        runTest {
+            val mediaList =
+                listOf(
+                    fakeMediaEntity(
+                        mediaId = "100",
+                        mediaName = "SampleName1",
+                        millis = now.toString(),
+                        mimeType = "Image",
+                    ),
+                    fakeMediaEntity(
+                        mediaId = "200",
+                        mediaName = "SampleName2",
+                        millis = now.toString(),
+                        mimeType = "Video",
+                    ),
+                )
+
+            dao.insertAll(media = mediaList)
+
+            val exceptedUris = mediaList.map { it.uriString }
+
+            val existingUris = dao.getAllUris()
+
+            assertThat(existingUris).isEqualTo(exceptedUris)
+        }
+
+    @Test
+    fun deleteBtUris_deleteMediasByGivenUris() =
+        runTest {
+            val mediaList =
+                listOf(
+                    fakeMediaEntity(
+                        mediaId = "100",
+                        mediaName = "SampleName1",
+                        millis = now.toString(),
+                        mimeType = "Image",
+                    ),
+                    fakeMediaEntity(
+                        mediaId = "200",
+                        mediaName = "SampleName2",
+                        millis = now.toString(),
+                        mimeType = "Video",
+                    ),
+                )
+
+            dao.insertAll(media = mediaList)
+
+            val urisToDelete = mediaList.map { it.uriString }
+
+            dao.deleteByUris(urisToDelete)
+
+            val existingUris = dao.getAllUris()
+
+            assertThat(existingUris).isEmpty()
         }
 }
 

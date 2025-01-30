@@ -23,12 +23,14 @@ import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.window.core.layout.WindowWidthSizeClass
-import com.hotaku.home.navigation.HomeScreenGraph
-import com.hotaku.home.navigation.HomeScreenGraph.homeScreenGraph
+import com.hotaku.home.navigation.HomeGraph
+import com.hotaku.home.navigation.HomeGraph.homeScreenGraph
 
 @Composable
 fun AppSuiteNav(
     navHostController: NavHostController,
+    permissionState: Boolean,
+    onRequestPermissions: () -> Unit,
 ) {
     val snackbarHostState: SnackbarHostState by remember { mutableStateOf(SnackbarHostState()) }
     var selectedDestination: AppDestinations by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
@@ -48,7 +50,7 @@ fun AppSuiteNav(
     LaunchedEffect(selectedDestination) {
         when (selectedDestination) {
             AppDestinations.HOME -> {
-                navHostController.navigate(HomeScreenGraph)
+                navHostController.navigate(HomeGraph)
             }
 
             AppDestinations.ALBUMS -> {
@@ -82,14 +84,17 @@ fun AppSuiteNav(
             NavHost(
                 modifier = Modifier.padding(paddingValues),
                 navController = navHostController,
-                startDestination = HomeScreenGraph,
+                startDestination = HomeGraph,
             ) {
                 homeScreenGraph(
+                    navHostController = navHostController,
                     onShowSnackBar = { message ->
                         snackbarHostState.showSnackbar(
                             message = message,
                         )
                     },
+                    permissionState = permissionState,
+                    onRequestPermissions = onRequestPermissions,
                 )
             }
         }

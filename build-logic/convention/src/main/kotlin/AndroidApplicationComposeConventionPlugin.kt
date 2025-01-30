@@ -37,6 +37,8 @@ class AndroidApplicationComposeConventionPlugin : Plugin<Project> {
                 add("implementation", libs.findLibrary("navigation.compose").get())
                 add("implementation", libs.findLibrary("hilt.navigation.compose").get())
 
+                add("implementation", libs.findLibrary("splash.api").get())
+
             }
         }
     }

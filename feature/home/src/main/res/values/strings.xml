@@ -8,4 +8,6 @@
     <string name="home_screen_media_sync_state_media_added">%1$s media added</string>
     <string name="home_screen_no_media">No media</string>
     <string name="home_screen_an_error_occurred">An error occurred</string>
+    <string name="permissions_screen_message">Hi! MiniGallery needs access to your photos and media to work. Please grant media permissions if you\'d like to use it. Thanks!</string>
+    <string name="permissions_screen_grant_permissions_button_text">Grant permissions</string>
 </resources>

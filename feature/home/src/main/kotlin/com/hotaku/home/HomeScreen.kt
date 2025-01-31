@@ -60,11 +60,9 @@ internal fun HomeScreen(
     mediaViewModel: MediaViewModel = hiltViewModel(),
     onShowSnackBar: suspend (String) -> Unit,
 ) {
-    val screenState by mediaViewModel.homeScreenUiState.collectAsStateWithLifecycle()
-
     HomeScreen(
         modifier = modifier,
-        screenState = screenState,
+        screenState = mediaViewModel.homeScreenUiState,
         mediaPagingItems = mediaViewModel.mediaUiState,
         synchronizeState = mediaViewModel.synchronizeUiState,
         onAction = mediaViewModel::onAction,
@@ -75,12 +73,13 @@ internal fun HomeScreen(
 @Composable
 private fun HomeScreen(
     modifier: Modifier = Modifier,
-    screenState: HomeScreenUiState,
+    screenState: StateFlow<HomeScreenUiState>,
     mediaPagingItems: StateFlow<PagingData<MediaUi>>,
     synchronizeState: StateFlow<UiState<Int>>,
     onAction: (HomeScreenActions) -> Unit,
     onShowSnackBar: suspend (String) -> Unit,
 ) {
+    val state: HomeScreenUiState by screenState.collectAsStateWithLifecycle()
     val synchronize: UiState<Int> by synchronizeState.collectAsStateWithLifecycle()
 
     LaunchedEffect(synchronize) {
@@ -93,11 +92,11 @@ private fun HomeScreen(
     HomeScreenScaffolfd(
         modifier = modifier,
         content = {
-            AnimatedVisibility(screenState.shoSyncSection) {
+            AnimatedVisibility(state.shoSyncSection) {
                 SyncSection(synchronize)
             }
 
-            if (screenState.noMedia) {
+            if (state.noMedia) {
                 Box(
                     modifier =
                         Modifier

@@ -25,6 +25,7 @@ import androidx.navigation.compose.NavHost
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.home.navigation.HomeGraph
 import com.hotaku.home.navigation.HomeGraph.homeScreenGraph
+import com.hotaku.home.navigation.HomeScreenRoute
 
 @Composable
 fun AppSuiteNav(
@@ -50,7 +51,9 @@ fun AppSuiteNav(
     LaunchedEffect(selectedDestination) {
         when (selectedDestination) {
             AppDestinations.HOME -> {
-                navHostController.navigate(HomeGraph)
+                if (selectedDestination != AppDestinations.HOME) {
+                    navHostController.navigate(HomeScreenRoute)
+                }
             }
 
             AppDestinations.ALBUMS -> {

@@ -13,7 +13,7 @@ import kotlinx.serialization.Serializable
 internal object PermissionsScreenRoute
 
 @Serializable
-internal object HomeScreenRoute
+object HomeScreenRoute
 
 @Serializable
 object HomeGraph {

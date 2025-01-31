@@ -45,7 +45,7 @@ class MainActivity : ComponentActivity() {
 
         // Access media permissions to request (if permissions was granted it will be empty)
         val permissions: List<String> = PermissionUtils.permissionsToRequest(this)
-        addPermissionsTorequest(permissions)
+        if (permissions.isNotEmpty()) addPermissionsTorequest(permissions)
 
         splashScreen.setKeepOnScreenCondition { false }
         setContent {

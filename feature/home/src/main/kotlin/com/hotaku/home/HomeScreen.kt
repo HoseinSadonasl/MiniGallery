@@ -63,7 +63,7 @@ internal fun HomeScreen(
     HomeScreen(
         modifier = modifier,
         screenState = mediaViewModel.homeScreenUiState,
-        mediaPagingItems = mediaViewModel.mediaUiState,
+        pagingMediaItemsState = mediaViewModel.mediaUiState,
         synchronizeState = mediaViewModel.synchronizeUiState,
         onAction = mediaViewModel::onAction,
         onShowSnackBar = { onShowSnackBar(it) },
@@ -74,16 +74,19 @@ internal fun HomeScreen(
 private fun HomeScreen(
     modifier: Modifier = Modifier,
     screenState: StateFlow<HomeScreenUiState>,
-    mediaPagingItems: StateFlow<PagingData<MediaUi>>,
+    pagingMediaItemsState: StateFlow<PagingData<MediaUi>>,
     synchronizeState: StateFlow<UiState<Int>>,
     onAction: (HomeScreenActions) -> Unit,
     onShowSnackBar: suspend (String) -> Unit,
 ) {
     val state: HomeScreenUiState by screenState.collectAsStateWithLifecycle()
     val synchronize: UiState<Int> by synchronizeState.collectAsStateWithLifecycle()
+    val pagingMediaItems: LazyPagingItems<MediaUi> =
+        pagingMediaItemsState.collectAsLazyPagingItems()
 
     LaunchedEffect(synchronize) {
         if (synchronize is UiState.Success) {
+            pagingMediaItems.refresh()
             delay(5000)
             onAction(HomeScreenActions.OnHideSyncSection)
         }
@@ -116,7 +119,7 @@ private fun HomeScreen(
                 }
             } else {
                 MediaGridLazyList(
-                    mediaPagingItems = mediaPagingItems,
+                    pagingMediaItems = pagingMediaItems,
                     onNoMedia = { onAction(it) },
                     onShowSnackBar = { onShowSnackBar(it) },
                 )
@@ -177,15 +180,14 @@ private fun SyncSection(
 @Composable
 private fun MediaGridLazyList(
     modifier: Modifier = Modifier,
-    mediaPagingItems: StateFlow<PagingData<MediaUi>>,
+    pagingMediaItems: LazyPagingItems<MediaUi>,
     state: LazyGridState = rememberLazyGridState(),
     onShowSnackBar: suspend (String) -> Unit,
     onNoMedia: (HomeScreenActions) -> Unit,
 ) {
     val context: Context = LocalContext.current
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
-    val items: LazyPagingItems<MediaUi> = mediaPagingItems.collectAsLazyPagingItems()
-    val loadState: LoadState = items.loadState.refresh
+    val loadState: LoadState = pagingMediaItems.loadState.refresh
 
 //    if (items.itemCount == 0) onNoMedia(HomeScreenActions.OnNoMedia)
 
@@ -214,7 +216,7 @@ private fun MediaGridLazyList(
             }
 
             else -> {
-                mediaItems(items)
+                mediaItems(pagingMediaItems)
             }
         }
     }

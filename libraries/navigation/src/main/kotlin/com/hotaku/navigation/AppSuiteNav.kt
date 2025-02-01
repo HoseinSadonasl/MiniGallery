@@ -1,7 +1,7 @@
 package com.hotaku.navigation
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -19,7 +19,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.window.core.layout.WindowWidthSizeClass
@@ -33,6 +36,7 @@ fun AppSuiteNav(
     permissionState: Boolean,
     onRequestPermissions: () -> Unit,
 ) {
+    val direction: LayoutDirection = LocalLayoutDirection.current
     val snackbarHostState: SnackbarHostState by remember { mutableStateOf(SnackbarHostState()) }
     var selectedDestination: AppDestinations by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
 
@@ -81,11 +85,19 @@ fun AppSuiteNav(
         layoutType = layoutType,
     ) {
         Scaffold(
-            modifier = Modifier.statusBarsPadding(),
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         ) { paddingValues ->
             NavHost(
-                modifier = Modifier.padding(paddingValues),
+                modifier =
+                    Modifier.consumeWindowInsets(
+                        paddingValues =
+                            PaddingValues(
+                                start = paddingValues.calculateLeftPadding(direction),
+                                top = 0.dp,
+                                end = paddingValues.calculateRightPadding(direction),
+                                bottom = 0.dp,
+                            ),
+                    ),
                 navController = navHostController,
                 startDestination = HomeGraph,
             ) {

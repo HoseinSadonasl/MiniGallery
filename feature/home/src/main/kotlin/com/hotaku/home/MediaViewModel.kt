@@ -60,16 +60,16 @@ internal class MediaViewModel
             when (action) {
                 HomeScreenActions.OnUpdateMedia -> updateMedia()
                 HomeScreenActions.OnHideSyncSection -> setyncSectionStateFalse()
-                HomeScreenActions.OnNoMedia -> setNoMediaTrue()
                 is HomeScreenActions.OnMimeTypeChange -> setMimeType(action.mimeType)
                 is HomeScreenActions.OnQueryChange -> setQuery(action.query)
+                is HomeScreenActions.OnScrolled -> setScrollState(action.isScrolled)
             }
         }
 
-        private fun setNoMediaTrue() {
+        private fun setScrollState(scrolled: Boolean) {
             viewModelScope.launch {
                 homeScreenViewModelState.update {
-                    it.copy(noMedia = true)
+                    it.copy(isScrolled = scrolled)
                 }
             }
         }

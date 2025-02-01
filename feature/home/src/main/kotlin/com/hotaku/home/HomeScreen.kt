@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,19 +19,23 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,12 +46,15 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import com.hotaku.feature.home.R
+import com.hotaku.home.components.DecorationImage
 import com.hotaku.home.components.MediaSyncLabel
 import com.hotaku.home.model.MediaUi
 import com.hotaku.ui.UiState
 import com.hotaku.ui.UiText
 import com.hotaku.ui.asString
 import com.hotaku.ui.conposables.AnimatedPlaceHolderBox
+import com.hotaku.ui.conposables.DynamicTopAppBarScaffold
+import com.hotaku.ui.modifiers.dynamicPaddingConsume
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
@@ -70,6 +76,7 @@ internal fun HomeScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeScreen(
     modifier: Modifier = Modifier,
@@ -92,56 +99,66 @@ private fun HomeScreen(
         }
     }
 
-    HomeScreenScaffolfd(
+    DynamicTopAppBarScaffold(
         modifier = modifier,
-        content = {
-            AnimatedVisibility(state.shoSyncSection) {
-                SyncSection(synchronize)
-            }
-
-            if (state.noMedia) {
-                Box(
+        show = !state.isScrolled,
+        topAppBar = {
+            TopAppBar(
+                title = {
+                    Text(stringResource(R.string.home_screentop_bar_title_all_media))
+                },
+            )
+        },
+        content = { paddingValues ->
+            Box(
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                if (synchronize is UiState.Success && pagingMediaItems.itemCount == 0) {
+                    NoMedia()
+                } else {
+                    MediaGridLazyList(
+                        modifier =
+                            Modifier
+                                .dynamicPaddingConsume(
+                                    consume = state.isScrolled,
+                                    paddingValues = paddingValues,
+                                )
+                                .fillMaxSize(),
+                        pagingMediaItems = pagingMediaItems,
+                        onScrolled = { scrolled ->
+                            onAction(HomeScreenActions.OnScrolled(isScrolled = scrolled))
+                        },
+                        onShowSnackBar = { onShowSnackBar(it) },
+                    )
+                }
+                AnimatedVisibility(
+                    visible = state.shoSyncSection,
                     modifier =
                         Modifier
-                            .fillMaxSize()
-                            .background(Color.Blue),
-                    contentAlignment = Alignment.Center,
+                            .padding(vertical = 128.dp)
+                            .align(Alignment.TopCenter),
                 ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(.7f),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Text(
-                            text = stringResource(R.string.home_screen_no_media),
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-                    }
+                    SyncSection(synchronize)
                 }
-            } else {
-                MediaGridLazyList(
-                    pagingMediaItems = pagingMediaItems,
-                    onNoMedia = { onAction(it) },
-                    onShowSnackBar = { onShowSnackBar(it) },
-                )
             }
         },
     )
 }
 
 @Composable
-private fun HomeScreenScaffolfd(
-    modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit,
-) {
-    Scaffold { padding ->
-        Column(
-            modifier =
-                modifier
-                    .padding(padding)
-                    .fillMaxSize(),
-        ) {
-            content()
-        }
+private fun NoMedia() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        DecorationImage(
+            image = painterResource(id = R.drawable.no_media_illustration),
+        )
+        Text(
+            text = stringResource(R.string.home_screen_no_media),
+            style = MaterialTheme.typography.bodyLarge,
+        )
     }
 }
 
@@ -181,23 +198,29 @@ private fun SyncSection(
 private fun MediaGridLazyList(
     modifier: Modifier = Modifier,
     pagingMediaItems: LazyPagingItems<MediaUi>,
-    state: LazyGridState = rememberLazyGridState(),
+    onScrolled: (Boolean) -> Unit,
     onShowSnackBar: suspend (String) -> Unit,
-    onNoMedia: (HomeScreenActions) -> Unit,
 ) {
     val context: Context = LocalContext.current
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
     val loadState: LoadState = pagingMediaItems.loadState.refresh
 
-//    if (items.itemCount == 0) onNoMedia(HomeScreenActions.OnNoMedia)
+    val lazyGridState: LazyGridState = rememberLazyGridState()
+    val scrolled by remember {
+        derivedStateOf { lazyGridState.firstVisibleItemIndex > 0 }
+    }
+
+    LaunchedEffect(scrolled) {
+        onScrolled(scrolled)
+    }
 
     LazyVerticalGrid(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier,
         columns = GridCells.Adaptive(100.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
         horizontalArrangement = Arrangement.spacedBy(2.dp),
         contentPadding = PaddingValues(2.dp),
-        state = state,
+        state = lazyGridState,
     ) {
         when (loadState) {
             LoadState.Loading -> {

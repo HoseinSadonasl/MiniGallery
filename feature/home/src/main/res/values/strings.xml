@@ -11,4 +11,5 @@
     <string name="permissions_screen_message">Hi! MiniGallery needs access to your photos and media to work. Please grant media permissions if you\'d like to use it. Thanks!</string>
     <string name="permissions_screen_grant_permissions_button_text">Grant permissions</string>
     <string name="home_screentop_bar_title_all_media">All Media</string>
+    <string name="home_screen_search_media">Search media</string>
 </resources>

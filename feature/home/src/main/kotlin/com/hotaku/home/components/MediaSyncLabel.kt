@@ -33,7 +33,7 @@ internal fun MediaSyncLabel(
     Row(
         modifier =
             modifier
-                .fillMaxWidth(.6f)
+                .fillMaxWidth()
                 .clip(MaterialTheme.shapes.large)
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(8.dp),
@@ -64,7 +64,7 @@ internal fun MediaSyncLabel(
     }
 }
 
-@PreviewLightDark()
+@PreviewLightDark
 @Composable
 private fun MediaSyncLabelPreview() {
     MiniGalleryTheme {

@@ -63,6 +63,16 @@ internal class MediaViewModel
                 is HomeScreenActions.OnMimeTypeChange -> setMimeType(action.mimeType)
                 is HomeScreenActions.OnQueryChange -> setQuery(action.query)
                 is HomeScreenActions.OnScrolled -> setScrollState(action.isScrolled)
+                HomeScreenActions.OnCollepseSearch -> setSearchExpanded(false)
+                HomeScreenActions.OnExpandSearch -> setSearchExpanded(true)
+            }
+        }
+
+        private fun setSearchExpanded(expand: Boolean) {
+            viewModelScope.launch {
+                homeScreenViewModelState.update {
+                    it.copy(isSearchExpanded = expand)
+                }
             }
         }
 
@@ -77,7 +87,7 @@ internal class MediaViewModel
         private fun setyncSectionStateFalse() {
             viewModelScope.launch {
                 homeScreenViewModelState.update {
-                    it.copy(shoSyncSection = false)
+                    it.copy(showSyncSection = false)
                 }
             }
         }

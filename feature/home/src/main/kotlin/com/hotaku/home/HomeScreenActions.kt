@@ -10,4 +10,8 @@ sealed interface HomeScreenActions {
     data object OnHideSyncSection : HomeScreenActions
 
     data class OnScrolled(val isScrolled: Boolean) : HomeScreenActions
+
+    data object OnExpandSearch : HomeScreenActions
+
+    data object OnCollepseSearch : HomeScreenActions
 }

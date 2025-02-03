@@ -25,7 +25,7 @@ fun DecorationImage(
     Box(
         modifier =
             modifier
-                .fillMaxWidth(.7f),
+                .fillMaxWidth(.6f),
         contentAlignment = Alignment.Center,
     ) {
         Box(

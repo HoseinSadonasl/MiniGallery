@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyGridState
@@ -35,6 +36,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -43,6 +47,7 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
+import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.feature.home.R
 import com.hotaku.home.components.DecorationImage
 import com.hotaku.home.components.MediaSyncLabel
@@ -158,7 +163,7 @@ private fun HomeScreen(
 @Composable
 private fun NoMedia() {
     Column(
-        modifier = Modifier,
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -166,9 +171,27 @@ private fun NoMedia() {
             image = painterResource(id = R.drawable.no_media_illustration),
         )
         Text(
+            modifier = Modifier.padding(16.dp),
             text = stringResource(R.string.home_screen_no_media),
-            style = MaterialTheme.typography.bodyLarge,
+            style =
+                MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                ),
         )
+        Text(
+            modifier = Modifier.fillMaxWidth(.7f),
+            text = stringResource(R.string.home_screen_no_media_full_message),
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
+        )
+    }
+}
+
+@Preview()
+@Composable
+private fun NoMediaPreview() {
+    MiniGalleryTheme {
+        NoMedia()
     }
 }
 

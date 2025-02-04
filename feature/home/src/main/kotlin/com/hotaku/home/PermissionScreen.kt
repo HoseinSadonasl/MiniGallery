@@ -3,7 +3,6 @@ package com.hotaku.home
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -11,13 +10,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.feature.home.R
-import com.hotaku.home.components.DecorationImage
+import com.hotaku.home.components.ScreenMessage
 
 @Composable
 internal fun PermissionsScreen(
@@ -46,17 +43,9 @@ private fun PermissionsScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly,
         ) {
-            DecorationImage(
-                image = painterResource(R.drawable.permission_illustration),
-            )
-
-            Text(
-                modifier =
-                    Modifier
-                        .fillMaxWidth(.7f),
-                text = stringResource(R.string.permissions_screen_message),
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center,
+            ScreenMessage(
+                title = stringResource(id = R.string.permissions_screen_message_title),
+                fulMessage = stringResource(id = R.string.permissions_screen_message),
             )
 
             FilledTonalButton(

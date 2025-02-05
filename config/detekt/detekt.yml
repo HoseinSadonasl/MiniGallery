@@ -19,4 +19,4 @@ style:
   DataClassShouldBeImmutable:
     active: false
   UnusedPrivateMember:
-    ignoreAnnotated: [ 'Preview' ]
+    ignoreAnnotated: [ 'Preview',  "PreviewLightDark",]

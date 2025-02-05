@@ -18,6 +18,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 @HiltWorker
@@ -37,7 +38,7 @@ internal class SyncWorker
                             workDataOf(MEDIA_COUNT_KEY to it),
                         )
                     } ?: Result.failure()
-                } catch (exception: Exception) {
+                } catch (exception: IOException) {
                     exception.printStackTrace()
                     Result.failure()
                 }

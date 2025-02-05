@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.feature.home.R
 
@@ -24,8 +26,15 @@ fun ScreenMessage(
     title: String,
     fulMessage: String,
 ) {
+    val adaptiveInfo = currentWindowAdaptiveInfo()
+    val maxWidth =
+        when (adaptiveInfo.windowSizeClass.windowWidthSizeClass) {
+            WindowWidthSizeClass.COMPACT -> 1f
+            WindowWidthSizeClass.MEDIUM -> .5f
+            else -> .3f
+        }
     Column(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(maxWidth),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -43,7 +52,7 @@ fun ScreenMessage(
                 ),
         )
         Text(
-            modifier = Modifier.fillMaxWidth(.7f),
+            modifier = Modifier.fillMaxWidth(.8f),
             text = fulMessage,
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,

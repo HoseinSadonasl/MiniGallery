@@ -2,7 +2,7 @@ package com.hotaku.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.hotaku.libraries.navigation.R
+import com.hotaku.core_feature.navigation.R
 
 enum class AppDestinations(
     @StringRes val title: Int,

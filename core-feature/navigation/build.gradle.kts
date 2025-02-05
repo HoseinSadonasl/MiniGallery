@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.hotaku.libraries.navigation"
+    namespace = "com.hotaku.core_feature.navigation"
 }
 
 dependencies {

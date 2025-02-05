@@ -6,12 +6,12 @@ plugins {
 }
 
 android {
-    namespace = "com.hotaku.libraries.ui"
+    namespace = "com.hotaku.core_feature.ui"
 }
 
 dependencies {
 
-    implementation(projects.libraries.designsystem)
+    implementation(projects.coreFeature.designsystem)
     implementation(libs.paging.compose)
     implementation(libs.coil.compose)
     implementation(libs.androidx.constraintlayout)

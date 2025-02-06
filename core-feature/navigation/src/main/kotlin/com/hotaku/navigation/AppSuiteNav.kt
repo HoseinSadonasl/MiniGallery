@@ -2,13 +2,12 @@ package com.hotaku.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
-import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldLayout
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,13 +17,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.home.navigation.HomeGraph
 import com.hotaku.home.navigation.HomeGraph.homeScreenGraph
@@ -38,7 +37,11 @@ fun AppSuiteNav(
 ) {
     val direction: LayoutDirection = LocalLayoutDirection.current
     val snackbarHostState: SnackbarHostState by remember { mutableStateOf(SnackbarHostState()) }
-    var selectedDestination: AppDestinations by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
+
+    // Any route should annotated with @Parcelize and extends Parcelable interface, so we can
+    // hold them in rememberSavable state holder.
+    var selectedRoute: Any by rememberSaveable { mutableStateOf(HomeScreenRoute) }
+    val navBackStackEntry: NavBackStackEntry? by navHostController.currentBackStackEntryAsState()
 
     val windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo()
     val layoutType: NavigationSuiteType =
@@ -52,66 +55,75 @@ fun AppSuiteNav(
             }
         }
 
-    LaunchedEffect(selectedDestination) {
-        when (selectedDestination) {
-            AppDestinations.HOME -> {
-                if (selectedDestination != AppDestinations.HOME) {
+    LaunchedEffect(key1 = selectedRoute) {
+        when (val route = selectedRoute) {
+            HomeScreenRoute -> {
+                if (route != HomeScreenRoute) {
                     navHostController.navigate(HomeScreenRoute)
                 }
-            }
-
-            AppDestinations.ALBUMS -> {
             }
         }
     }
 
-    NavigationSuiteScaffold(
-        navigationSuiteItems = {
-            AppDestinations.entries.forEach { destination ->
-                item(
-                    selected = selectedDestination == destination,
-                    onClick = {
-                        selectedDestination = destination
-                    },
-                    icon = {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(destination.icon),
-                            contentDescription = destination.name,
-                        )
-                    },
-                )
-            }
+    NavigationSuiteScaffoldLayout(
+        navigationSuite = {
+            MiniGalleryNavigationSuite(
+                layoutType = layoutType,
+                navBackStackEntry = navBackStackEntry,
+                selectedRoute = selectedRoute,
+                onRouteSelected = { route ->
+                    selectedRoute = route
+                },
+            )
         },
         layoutType = layoutType,
-    ) {
-        Scaffold(
-            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        ) { paddingValues ->
-            NavHost(
-                modifier =
-                    Modifier.consumeWindowInsets(
-                        paddingValues =
-                            PaddingValues(
-                                start = paddingValues.calculateLeftPadding(direction),
-                                top = 0.dp,
-                                end = paddingValues.calculateRightPadding(direction),
-                                bottom = 0.dp,
-                            ),
-                    ),
-                navController = navHostController,
-                startDestination = HomeGraph,
-            ) {
-                homeScreenGraph(
+        content = {
+            Scaffold(
+                snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+            ) { paddingValues ->
+                MiniGalleryNavHost(
+                    modifier =
+                        Modifier.consumeWindowInsets(
+                            paddingValues =
+                                PaddingValues(
+                                    start = paddingValues.calculateLeftPadding(direction),
+                                    top = 0.dp,
+                                    end = paddingValues.calculateRightPadding(direction),
+                                    bottom = 0.dp,
+                                ),
+                        ),
                     navHostController = navHostController,
-                    onShowSnackBar = { message ->
-                        snackbarHostState.showSnackbar(
-                            message = message,
-                        )
-                    },
+                    snackbarHostState = snackbarHostState,
                     permissionState = permissionState,
                     onRequestPermissions = onRequestPermissions,
                 )
             }
-        }
+        },
+    )
+}
+
+@Composable
+private fun MiniGalleryNavHost(
+    modifier: Modifier = Modifier,
+    navHostController: NavHostController,
+    snackbarHostState: SnackbarHostState,
+    permissionState: Boolean,
+    onRequestPermissions: () -> Unit,
+) {
+    NavHost(
+        modifier = modifier,
+        navController = navHostController,
+        startDestination = HomeGraph,
+    ) {
+        homeScreenGraph(
+            navHostController = navHostController,
+            onShowSnackBar = { message ->
+                snackbarHostState.showSnackbar(
+                    message = message,
+                )
+            },
+            permissionState = permissionState,
+            onRequestPermissions = onRequestPermissions,
+        )
     }
 }

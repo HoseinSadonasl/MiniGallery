@@ -1,19 +1,27 @@
 package com.hotaku.home.navigation
 
+import android.os.Parcelable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.hotaku.home.HomeScreen
 import com.hotaku.home.PermissionsScreen
+import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.Serializable
 
 // Home routes
 @Serializable
-internal object PermissionsScreenRoute
+@Parcelize
+object HomeScreenRoute : Parcelable
 
 @Serializable
-object HomeScreenRoute
+@Parcelize
+internal object PermissionsScreenRoute : Parcelable
+
+@Serializable
+@Parcelize
+object MediaPreviewScreen : Parcelable
 
 @Serializable
 object HomeGraph {

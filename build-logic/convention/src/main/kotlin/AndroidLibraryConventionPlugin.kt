@@ -12,6 +12,7 @@ class AndroidLibraryConventionPlugin: Plugin<Project> {
             apply {
                 plugin("com.android.library")
                 plugin("org.jetbrains.kotlin.android")
+                plugin("kotlin-parcelize")
             }
             extensions.configure<LibraryExtension> {
                 defaultConfig.targetSdk = libs.findVersion("targetSdk").get().toString().toInt()

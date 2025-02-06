@@ -2,6 +2,7 @@ package com.hotaku.home.mapper
 
 import com.google.common.truth.Truth.assertThat
 import com.hotaku.home.model.MediaUi
+import com.hotaku.home.utils.MediaType
 import com.hotaku.media_domain.model.Media
 import org.junit.Test
 import java.time.Instant
@@ -31,7 +32,7 @@ class MapMediaToMediaUiTest {
                 mediaId = exceptedId,
                 uriString = exceptedUriString,
                 displayName = "Hosein Sadon",
-                mimeType = "image/*",
+                mimeType = MediaType.IMAGE,
                 duration = "60",
                 dateAdded = Instant.ofEpochMilli(exceptedTime),
                 dateModified = Instant.ofEpochMilli(exceptedTime),

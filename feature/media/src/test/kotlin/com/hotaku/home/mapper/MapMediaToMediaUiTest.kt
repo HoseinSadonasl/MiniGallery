@@ -26,6 +26,7 @@ class MapMediaToMediaUiTest {
                 dateAdded = exceptedTime,
                 dateModified = exceptedTime,
                 size = 1024,
+                bucketDisplayName = "sampleBucketDisplayName",
             )
         val expectedModel =
             MediaUi(
@@ -37,6 +38,7 @@ class MapMediaToMediaUiTest {
                 dateAdded = Instant.ofEpochMilli(exceptedTime),
                 dateModified = Instant.ofEpochMilli(exceptedTime),
                 size = 1024,
+                bucketDisplayName = "sampleBucketDisplayName",
             )
 
         val actualMedia = mapMediaToMediaUi.map(domainMediaModel)

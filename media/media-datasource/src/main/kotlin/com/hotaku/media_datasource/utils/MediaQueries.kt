@@ -16,6 +16,7 @@ internal object MediaQueries {
             MediaStore.Files.FileColumns.DATE_TAKEN,
             MediaStore.Files.FileColumns.DATE_MODIFIED,
             MediaStore.Files.FileColumns.SIZE,
+            MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,
         )
 
     const val SORT_MEDIA_BY_DATE_ADDED = MediaStore.Files.FileColumns.DATE_ADDED + " DESC"

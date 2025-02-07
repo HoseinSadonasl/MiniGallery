@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "b6b2845a5252495e2256b04420f25e01",
+    "identityHash": "913af3e371682b732e89385042efb0e9",
     "entities": [
       {
         "tableName": "media",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mediaId` TEXT NOT NULL, `uriString` TEXT NOT NULL, `displayName` TEXT NOT NULL, `mimeType` TEXT NOT NULL, `duration` TEXT NOT NULL, `dateAdded` TEXT NOT NULL, `dateModified` TEXT NOT NULL, `size` TEXT NOT NULL, PRIMARY KEY(`mediaId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mediaId` TEXT NOT NULL, `uriString` TEXT NOT NULL, `displayName` TEXT NOT NULL, `mimeType` TEXT NOT NULL, `duration` TEXT NOT NULL, `dateAdded` TEXT NOT NULL, `dateModified` TEXT NOT NULL, `size` TEXT NOT NULL, `bucketDisplayName` TEXT NOT NULL, PRIMARY KEY(`mediaId`))",
         "fields": [
           {
             "fieldPath": "mediaId",
@@ -55,6 +55,12 @@
             "columnName": "size",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "bucketDisplayName",
+            "columnName": "bucketDisplayName",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -70,7 +76,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b6b2845a5252495e2256b04420f25e01')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '913af3e371682b732e89385042efb0e9')"
     ]
   }
 }

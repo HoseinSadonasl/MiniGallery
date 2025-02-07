@@ -25,8 +25,7 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 rootProject.name = "MiniGallery"
 include(":app")
-include(":feature:home")
-include(":feature:albums")
+include(":feature:media")
 include(":core-feature:navigation")
 include(":core-feature:designsystem")
 include(":media:media-domain")

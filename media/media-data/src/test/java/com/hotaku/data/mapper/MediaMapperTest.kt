@@ -33,6 +33,7 @@ internal class MediaMapperTest {
             dateAdded = timeInMillis,
             dateModified = timeInMillis,
             size = 1024,
+            bucketDisplayName = "sampleBucketDisplayName",
         )
 
     private fun getMediaData() =
@@ -45,5 +46,6 @@ internal class MediaMapperTest {
             dateAdded = timeInMillis,
             dateModified = timeInMillis,
             size = 1024,
+            bucketDisplayName = "sampleBucketDisplayName",
         )
 }

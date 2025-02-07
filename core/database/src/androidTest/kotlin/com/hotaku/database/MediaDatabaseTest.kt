@@ -185,4 +185,5 @@ private fun fakeMediaEntity(
     dateAdded = millis,
     dateModified = millis,
     size = "1024",
+    bucketDisplayName = "sampleBucketDisplayName",
 )

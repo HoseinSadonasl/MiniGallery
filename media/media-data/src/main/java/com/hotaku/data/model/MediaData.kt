@@ -9,4 +9,5 @@ data class MediaData(
     val dateAdded: Long,
     val dateModified: Long,
     val size: Long,
+    val bucketDisplayName: String,
 )

@@ -35,6 +35,7 @@ private fun fakeMediaEntity(millis: String) =
         dateAdded = millis,
         dateModified = millis,
         size = "1024",
+        bucketDisplayName = "sampleBucketDisplayName",
     )
 
 private fun fakeMediaData(millis: Long) =
@@ -47,4 +48,5 @@ private fun fakeMediaData(millis: Long) =
         dateAdded = millis,
         dateModified = millis,
         size = 1024,
+        bucketDisplayName = "sampleBucketDisplayName",
     )

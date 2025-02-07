@@ -14,4 +14,5 @@ data class MediaEntity(
     val dateAdded: String,
     val dateModified: String,
     val size: String,
+    val bucketDisplayName: String,
 )

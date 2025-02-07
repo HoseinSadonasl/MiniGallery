@@ -19,6 +19,7 @@ internal class MapMediaEntityAsMediaData
                     dateAdded = dateAdded.toLong(),
                     dateModified = dateModified.toLong(),
                     size = size.toLong(),
+                    bucketDisplayName = bucketDisplayName,
                 )
             }
         }

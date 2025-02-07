@@ -22,6 +22,7 @@ internal class MapMediaToMediaUi
                     dateAdded = Instant.ofEpochMilli(dateAdded),
                     dateModified = Instant.ofEpochMilli(dateModified),
                     size = size,
+                    bucketDisplayName = bucketDisplayName,
                 )
             }
         }

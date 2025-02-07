@@ -35,6 +35,7 @@ fun Cursor.processCursor(): List<MediaData> {
     val dateAdded = getColumnIndex(MediaStore.Files.FileColumns.DATE_TAKEN)
     val dateModified = getColumnIndex(MediaStore.Files.FileColumns.DATE_MODIFIED)
     val size = getColumnIndex(MediaStore.Files.FileColumns.SIZE)
+    val bucketDisplayName = getColumnIndex(MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME)
 
     while (moveToNext()) {
         val uriString =
@@ -51,6 +52,7 @@ fun Cursor.processCursor(): List<MediaData> {
             dateAdded = getLong(dateAdded),
             dateModified = getLong(dateModified),
             size = getLong(size),
+            bucketDisplayName = getString(bucketDisplayName),
         ).also { mediaList.add(it) }
     }
     return mediaList

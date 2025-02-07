@@ -1,4 +1,4 @@
-package com.hotaku.home
+package com.hotaku.media.screens.media
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,9 +8,9 @@ import androidx.paging.map
 import com.hotaku.domain.utils.DataResult
 import com.hotaku.domain.utils.Error
 import com.hotaku.domain.utils.ErrorResult
-import com.hotaku.feature.home.R
-import com.hotaku.home.mapper.MapMediaToMediaUi
-import com.hotaku.home.model.MediaUi
+import com.hotaku.feature.media.R
+import com.hotaku.media.mapper.MapMediaToMediaUi
+import com.hotaku.media.model.MediaUi
 import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_domain.usecase.SyncMediaUseCase
 import com.hotaku.ui.UiState
@@ -33,8 +33,8 @@ internal class MediaViewModel
         private val syncMediaUseCase: SyncMediaUseCase,
         private val mediaUseCase: GetMediaUseCase,
     ) : ViewModel() {
-        private var homeScreenViewModelState = MutableStateFlow(HomeScreenUiState())
-        val homeScreenUiState: StateFlow<HomeScreenUiState> = homeScreenViewModelState
+        private var mediaScreenViewModelState = MutableStateFlow(MediaUiState())
+        val mediaScreenUiState: StateFlow<MediaUiState> = mediaScreenViewModelState
 
         private var synchronizeViewModelState = MutableStateFlow<UiState<Int>>(UiState.Loading())
         val synchronizeUiState =
@@ -56,21 +56,21 @@ internal class MediaViewModel
                     initialValue = PagingData.empty(),
                 )
 
-        fun onAction(action: HomeScreenActions) {
+        fun onAction(action: MediaScreenActions) {
             when (action) {
-                HomeScreenActions.OnUpdateMedia -> updateMedia()
-                HomeScreenActions.OnHideSyncSection -> setyncSectionStateFalse()
-                is HomeScreenActions.OnMimeTypeChange -> setMimeType(action.mimeType)
-                is HomeScreenActions.OnQueryChange -> setQuery(action.query)
-                is HomeScreenActions.OnScrolled -> setScrollState(action.isScrolled)
-                HomeScreenActions.OnCollepseSearch -> setSearchExpanded(false)
-                HomeScreenActions.OnExpandSearch -> setSearchExpanded(true)
+                MediaScreenActions.OnUpdateMedia -> updateMedia()
+                MediaScreenActions.OnHideSyncSection -> setyncSectionStateFalse()
+                is MediaScreenActions.OnMimeTypeChange -> setMimeType(action.mimeType)
+                is MediaScreenActions.OnQueryChange -> setQuery(action.query)
+                is MediaScreenActions.OnScrolled -> setScrollState(action.isScrolled)
+                MediaScreenActions.OnCollepseSearch -> setSearchExpanded(false)
+                MediaScreenActions.OnExpandSearch -> setSearchExpanded(true)
             }
         }
 
         private fun setSearchExpanded(expand: Boolean) {
             viewModelScope.launch {
-                homeScreenViewModelState.update {
+                mediaScreenViewModelState.update {
                     it.copy(isSearchExpanded = expand)
                 }
             }
@@ -78,7 +78,7 @@ internal class MediaViewModel
 
         private fun setScrollState(scrolled: Boolean) {
             viewModelScope.launch {
-                homeScreenViewModelState.update {
+                mediaScreenViewModelState.update {
                     it.copy(isScrolled = scrolled)
                 }
             }
@@ -86,7 +86,7 @@ internal class MediaViewModel
 
         private fun setyncSectionStateFalse() {
             viewModelScope.launch {
-                homeScreenViewModelState.update {
+                mediaScreenViewModelState.update {
                     it.copy(showSyncSection = false)
                 }
             }
@@ -108,8 +108,8 @@ internal class MediaViewModel
         private fun updateMedia() {
             viewModelScope.launch {
                 mediaUseCase.invoke(
-                    mimeType = homeScreenViewModelState.value.mimeType,
-                    query = homeScreenViewModelState.value.query,
+                    mimeType = mediaScreenViewModelState.value.mimeType,
+                    query = mediaScreenViewModelState.value.query,
                 )
                     .cachedIn(viewModelScope)
                     .collect { pagedMedia ->
@@ -119,13 +119,13 @@ internal class MediaViewModel
         }
 
         private fun setMimeType(mimeType: String) {
-            homeScreenViewModelState.update {
+            mediaScreenViewModelState.update {
                 it.copy(mimeType = mimeType)
             }
         }
 
         private fun setQuery(query: String) {
-            homeScreenViewModelState.update {
+            mediaScreenViewModelState.update {
                 it.copy(query = query)
             }
         }

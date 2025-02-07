@@ -1,4 +1,4 @@
-package com.hotaku.home.components
+package com.hotaku.media.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.designsystem.theme.MiniGalleryTheme
-import com.hotaku.feature.home.R
+import com.hotaku.feature.media.R
 
 @Composable
 fun ScreenMessage(

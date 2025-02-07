@@ -1,4 +1,4 @@
-package com.hotaku.home
+package com.hotaku.media.screens.media
 
 import android.content.Context
 import android.net.Uri
@@ -60,11 +60,11 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import com.hotaku.designsystem.theme.MiniGalleryTheme
-import com.hotaku.feature.home.R
-import com.hotaku.home.components.MediaSyncLabel
-import com.hotaku.home.components.ScreenMessage
-import com.hotaku.home.model.MediaUi
-import com.hotaku.home.utils.MediaType
+import com.hotaku.feature.media.R
+import com.hotaku.media.components.MediaSyncLabel
+import com.hotaku.media.components.ScreenMessage
+import com.hotaku.media.model.MediaUi
+import com.hotaku.media.utils.MediaType
 import com.hotaku.ui.UiState
 import com.hotaku.ui.UiText
 import com.hotaku.ui.asString
@@ -78,14 +78,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun HomeScreen(
+internal fun MediaScreen(
     modifier: Modifier = Modifier,
     mediaViewModel: MediaViewModel = hiltViewModel(),
     onShowSnackBar: suspend (String) -> Unit,
 ) {
-    HomeScreen(
+    MediaScreen(
         modifier = modifier,
-        screenState = mediaViewModel.homeScreenUiState,
+        screenState = mediaViewModel.mediaScreenUiState,
         pagingMediaItemsState = mediaViewModel.mediaUiState,
         synchronizeState = mediaViewModel.synchronizeUiState,
         onAction = mediaViewModel::onAction,
@@ -94,15 +94,15 @@ internal fun HomeScreen(
 }
 
 @Composable
-private fun HomeScreen(
+private fun MediaScreen(
     modifier: Modifier = Modifier,
-    screenState: StateFlow<HomeScreenUiState>,
+    screenState: StateFlow<MediaUiState>,
     pagingMediaItemsState: StateFlow<PagingData<MediaUi>>,
     synchronizeState: StateFlow<UiState<Int>>,
-    onAction: (HomeScreenActions) -> Unit,
+    onAction: (MediaScreenActions) -> Unit,
     onShowSnackBar: suspend (String) -> Unit,
 ) {
-    val state: HomeScreenUiState by screenState.collectAsStateWithLifecycle()
+    val state: MediaUiState by screenState.collectAsStateWithLifecycle()
     val synchronize: UiState<Int> by synchronizeState.collectAsStateWithLifecycle()
     val pagingMediaItems: LazyPagingItems<MediaUi> = pagingMediaItemsState.collectAsLazyPagingItems()
 
@@ -110,19 +110,19 @@ private fun HomeScreen(
 
     BackHandler(state.isSearchExpanded) {
         focusManager.clearFocus()
-        onAction(HomeScreenActions.OnQueryChange(query = ""))
-        onAction(HomeScreenActions.OnCollepseSearch)
+        onAction(MediaScreenActions.OnQueryChange(query = ""))
+        onAction(MediaScreenActions.OnCollepseSearch)
     }
 
     LaunchedEffect(state.query) {
-        onAction(HomeScreenActions.OnUpdateMedia)
+        onAction(MediaScreenActions.OnUpdateMedia)
     }
 
     LaunchedEffect(synchronize) {
         if (synchronize is UiState.Success) {
             pagingMediaItems.refresh()
             delay(3000)
-            onAction(HomeScreenActions.OnHideSyncSection)
+            onAction(MediaScreenActions.OnHideSyncSection)
         }
     }
 
@@ -137,14 +137,14 @@ private fun HomeScreen(
                         expanded = state.isSearchExpanded,
                         onIconClick = {
                             if (state.isSearchExpanded && state.query.isEmpty()) {
-                                onAction(HomeScreenActions.OnCollepseSearch)
+                                onAction(MediaScreenActions.OnCollepseSearch)
                             } else {
-                                onAction(HomeScreenActions.OnExpandSearch)
+                                onAction(MediaScreenActions.OnExpandSearch)
                             }
                         },
                         value = state.query,
                         onValueChange = { query ->
-                            onAction(HomeScreenActions.OnQueryChange(query = query))
+                            onAction(MediaScreenActions.OnQueryChange(query = query))
                         },
                         placeHolderText = stringResource(R.string.home_screen_search_media),
                     )
@@ -164,7 +164,7 @@ private fun HomeScreen(
                     modifier = Modifier.weight(1f),
                     pagingMediaItems = pagingMediaItems,
                     onScrolled = { scrolled ->
-                        onAction(HomeScreenActions.OnScrolled(isScrolled = scrolled))
+                        onAction(MediaScreenActions.OnScrolled(isScrolled = scrolled))
                     },
                     onShowSnackBar = { onShowSnackBar(it) },
                 )

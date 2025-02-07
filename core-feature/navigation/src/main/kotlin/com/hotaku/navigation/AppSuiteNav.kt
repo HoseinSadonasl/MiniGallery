@@ -25,9 +25,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.window.core.layout.WindowWidthSizeClass
-import com.hotaku.home.navigation.HomeGraph
-import com.hotaku.home.navigation.HomeGraph.homeScreenGraph
-import com.hotaku.home.navigation.HomeScreenRoute
+import com.hotaku.media.navigation.MediaGraph
+import com.hotaku.media.navigation.MediaGraph.mediaGraph
+import com.hotaku.media.navigation.MediaScreenRRoute
 
 @Composable
 fun AppSuiteNav(
@@ -40,7 +40,7 @@ fun AppSuiteNav(
 
     // Any route should annotated with @Parcelize and extends Parcelable interface, so we can
     // hold them in rememberSavable state holder.
-    var selectedRoute: Any by rememberSaveable { mutableStateOf(HomeScreenRoute) }
+    var selectedRoute: Any by rememberSaveable { mutableStateOf(MediaScreenRRoute) }
     val navBackStackEntry: NavBackStackEntry? by navHostController.currentBackStackEntryAsState()
 
     val windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo()
@@ -57,9 +57,9 @@ fun AppSuiteNav(
 
     LaunchedEffect(key1 = selectedRoute) {
         when (val route = selectedRoute) {
-            HomeScreenRoute -> {
-                if (route != HomeScreenRoute) {
-                    navHostController.navigate(HomeScreenRoute)
+            MediaScreenRRoute -> {
+                if (route != MediaScreenRRoute) {
+                    navHostController.navigate(MediaScreenRRoute)
                 }
             }
         }
@@ -113,9 +113,9 @@ private fun MiniGalleryNavHost(
     NavHost(
         modifier = modifier,
         navController = navHostController,
-        startDestination = HomeGraph,
+        startDestination = MediaGraph,
     ) {
-        homeScreenGraph(
+        mediaGraph(
             navHostController = navHostController,
             onShowSnackBar = { message ->
                 snackbarHostState.showSnackbar(

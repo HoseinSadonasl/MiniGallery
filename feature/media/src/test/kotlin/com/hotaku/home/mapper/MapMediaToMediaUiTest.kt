@@ -1,8 +1,9 @@
 package com.hotaku.home.mapper
 
 import com.google.common.truth.Truth.assertThat
-import com.hotaku.home.model.MediaUi
-import com.hotaku.home.utils.MediaType
+import com.hotaku.media.mapper.MapMediaToMediaUi
+import com.hotaku.media.model.MediaUi
+import com.hotaku.media.utils.MediaType
 import com.hotaku.media_domain.model.Media
 import org.junit.Test
 import java.time.Instant

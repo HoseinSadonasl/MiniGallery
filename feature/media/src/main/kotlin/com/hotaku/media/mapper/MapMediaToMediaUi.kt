@@ -1,9 +1,9 @@
-package com.hotaku.home.mapper
+package com.hotaku.media.mapper
 
 import com.hotaku.common.mapper.Mapper
-import com.hotaku.home.model.MediaUi
-import com.hotaku.home.utils.MediaType
-import com.hotaku.home.utils.TimeUtils.millisAsFormattedDuration
+import com.hotaku.media.model.MediaUi
+import com.hotaku.media.utils.MediaType
+import com.hotaku.media.utils.TimeUtils.millisAsFormattedDuration
 import com.hotaku.media_domain.model.Media
 import java.time.Instant
 import javax.inject.Inject

@@ -1,6 +1,6 @@
-package com.hotaku.home.model
+package com.hotaku.media.model
 
-import com.hotaku.home.utils.MediaType
+import com.hotaku.media.utils.MediaType
 import java.time.Instant
 
 data class MediaUi(

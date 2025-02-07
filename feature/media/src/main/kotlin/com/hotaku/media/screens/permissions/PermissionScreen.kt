@@ -1,4 +1,4 @@
-package com.hotaku.home
+package com.hotaku.media.screens.permissions
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,17 +13,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.hotaku.designsystem.theme.MiniGalleryTheme
-import com.hotaku.feature.home.R
-import com.hotaku.home.components.ScreenMessage
+import com.hotaku.feature.media.R
+import com.hotaku.media.components.ScreenMessage
 
 @Composable
 internal fun PermissionsScreen(
     modifier: Modifier = Modifier,
     permissionState: Boolean,
     onRequestPermissions: () -> Unit,
-    navigateToHomeScreen: () -> Unit,
+    navigateToMediaScreen: () -> Unit,
 ) {
-    if (permissionState) navigateToHomeScreen()
+    if (permissionState) navigateToMediaScreen()
     PermissionsScreen(
         modifier = modifier,
         onRequestPermissions = { onRequestPermissions() },

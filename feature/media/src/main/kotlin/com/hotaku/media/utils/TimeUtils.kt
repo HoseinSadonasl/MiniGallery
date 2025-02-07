@@ -1,4 +1,4 @@
-package com.hotaku.home.utils
+package com.hotaku.media.utils
 
 import java.util.Locale
 

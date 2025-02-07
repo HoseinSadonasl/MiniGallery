@@ -1,4 +1,4 @@
-package com.hotaku.home.components
+package com.hotaku.media.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

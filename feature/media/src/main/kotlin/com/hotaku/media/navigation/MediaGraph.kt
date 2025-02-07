@@ -1,48 +1,48 @@
-package com.hotaku.home.navigation
+package com.hotaku.media.navigation
 
 import android.os.Parcelable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.hotaku.home.HomeScreen
-import com.hotaku.home.PermissionsScreen
-import kotlinx.android.parcel.Parcelize
+import com.hotaku.media.screens.media.MediaScreen
+import com.hotaku.media.screens.permissions.PermissionsScreen
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
 // Home routes
 @Serializable
 @Parcelize
-object HomeScreenRoute : Parcelable
+object MediaScreenRRoute : Parcelable
+
+@Serializable
+@Parcelize
+object AlbumsScreen : Parcelable
 
 @Serializable
 @Parcelize
 internal object PermissionsScreenRoute : Parcelable
 
 @Serializable
-@Parcelize
-object MediaPreviewScreen : Parcelable
-
-@Serializable
-object HomeGraph {
-    fun NavGraphBuilder.homeScreenGraph(
+object MediaGraph {
+    fun NavGraphBuilder.mediaGraph(
         navHostController: NavHostController,
         onShowSnackBar: suspend (String) -> Unit,
         permissionState: Boolean,
         onRequestPermissions: () -> Unit,
     ) {
-        navigation<HomeGraph>(
-            startDestination = if (permissionState) HomeScreenRoute else PermissionsScreenRoute,
+        navigation<MediaGraph>(
+            startDestination = if (permissionState) MediaScreenRRoute else PermissionsScreenRoute,
         ) {
             composable<PermissionsScreenRoute> {
                 PermissionsScreen(
                     permissionState = permissionState,
                     onRequestPermissions = onRequestPermissions,
-                    navigateToHomeScreen = { navHostController.navigate(HomeScreenRoute) },
+                    navigateToMediaScreen = { navHostController.navigate(MediaScreenRRoute) },
                 )
             }
-            composable<HomeScreenRoute> {
-                HomeScreen(
+            composable<MediaScreenRRoute> {
+                MediaScreen(
                     onShowSnackBar = { onShowSnackBar(it) },
                 )
             }

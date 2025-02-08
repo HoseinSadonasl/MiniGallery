@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,7 +25,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.feature.media.R
 import com.hotaku.media.components.ImageThumbnail
@@ -42,7 +42,11 @@ internal fun AlbumsScreen(
     albumsViewModel: AlbumsViewModel,
     onNavigateWithAlbum: (AlbumUi) -> Unit,
 ) {
-    val albums by albumsViewModel.albumsState.collectAsStateWithLifecycle()
+    val state by albumsViewModel.albumsState.collectAsState()
+
+    LaunchedEffect(state.albums) {
+        println(state.albums.toString())
+    }
 
     LaunchedEffect(albumsViewModel.event) {
         albumsViewModel.event.collectLatest { event ->
@@ -56,7 +60,7 @@ internal fun AlbumsScreen(
 
     AlbumsScreen(
         modifier = modifier,
-        albums = albums,
+        albumsState = state.albums,
         onAction = albumsViewModel::onAction,
     )
 }
@@ -64,7 +68,7 @@ internal fun AlbumsScreen(
 @Composable
 private fun AlbumsScreen(
     modifier: Modifier = Modifier,
-    albums: List<AlbumUi>,
+    albumsState: List<AlbumUi>,
     onAction: (AlbumsScreenActions) -> Unit,
 ) {
     DynamicTopAppBarColumn(
@@ -75,11 +79,9 @@ private fun AlbumsScreen(
             )
         },
     ) {
-        if (albums.isEmpty()) {
-            NoAlbums()
-        } else {
-            AlbumsGridList(albums = albums)
-        }
+        AlbumsGridList(
+            albums = albumsState,
+        )
     }
 }
 

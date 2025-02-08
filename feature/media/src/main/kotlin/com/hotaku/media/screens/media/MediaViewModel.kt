@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -127,15 +126,11 @@ internal class MediaViewModel
 
         private fun updateMedia() {
             viewModelScope.launch {
-                val pagedList =
-                    mediaUseCase.invoke(
-                        mimeType = mediaScreenViewModelState.value.mimeType,
-                        query = mediaScreenViewModelState.value.query,
-                    )
-
-                pagedList.toList()
-
-                pagedList.cachedIn(viewModelScope)
+                mediaUseCase.invoke(
+                    mimeType = mediaScreenViewModelState.value.mimeType,
+                    query = mediaScreenViewModelState.value.query,
+                )
+                    .cachedIn(viewModelScope)
                     .collect { pagedMedia ->
                         mediaViewModelState.value = pagedMedia.map { mapMediaToMediaUi.map(it) }
                     }

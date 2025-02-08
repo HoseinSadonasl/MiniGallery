@@ -9,9 +9,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,15 +24,14 @@ internal class AlbumsViewModel
         private val getAlbumsUseCase: GetAlbumsUseCase,
         private val mapAlbumToAlbumUi: MapAlbumToAlbumUi,
     ) : ViewModel() {
-        private var albumsViewModelState = MutableStateFlow(emptyList<AlbumUi>())
+        private var albumsViewModelState = MutableStateFlow(AlbumsUiState())
         val albumsState =
             albumsViewModelState
-                .onStart {
-                    getAlbumsUseCase.invoke().map { mapAlbumToAlbumUi.map(it) }
-                }.stateIn(
+                .onStart { updateAlbums() }
+                .stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5_000),
-                    initialValue = emptyList(),
+                    initialValue = AlbumsUiState(),
                 )
 
         private val viewModelEvent = Channel<AlbumsScreenEvents>()
@@ -39,6 +40,21 @@ internal class AlbumsViewModel
         fun onAction(action: AlbumsScreenActions) {
             when (action) {
                 is AlbumsScreenActions.OnAlbumClick -> navigateToMediaScreen(action.album)
+            }
+        }
+
+        private fun updateAlbums() {
+            viewModelScope.launch {
+                val albums =
+                    getAlbumsUseCase.invoke().map { result ->
+                        mapAlbumToAlbumUi.map(result)
+                    }
+                albumsViewModelState.update {
+                    it.copy(
+                        isLoading = false,
+                        albums = albums,
+                    )
+                }
             }
         }
 

@@ -53,14 +53,14 @@ internal fun ImageThumbnail(
 }
 
 @Composable
-fun videoThumbnail(item: MediaUi) {
+fun VideoThumbnail(item: MediaUi) {
     Box(
         modifier =
             Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f),
     ) {
-        videoThumbnail(
+        VideoThumbnail(
             modifier = Modifier.matchParentSize(),
             itemUri = item.uriString,
         )
@@ -98,7 +98,7 @@ fun videoThumbnail(item: MediaUi) {
 }
 
 @Composable
-fun videoThumbnail(
+fun VideoThumbnail(
     modifier: Modifier = Modifier,
     itemUri: String,
 ) {

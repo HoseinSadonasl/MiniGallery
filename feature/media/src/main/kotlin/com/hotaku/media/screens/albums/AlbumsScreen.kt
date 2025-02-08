@@ -29,7 +29,9 @@ import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.feature.media.R
 import com.hotaku.media.components.ImageThumbnail
 import com.hotaku.media.components.ScreenMessage
+import com.hotaku.media.components.VideoThumbnail
 import com.hotaku.media.model.AlbumUi
+import com.hotaku.media.utils.MediaType
 import com.hotaku.ui.conposables.DynamicTopAppBarColumn
 import com.hotaku.ui.conposables.TopAppBar
 import kotlinx.coroutines.flow.collectLatest
@@ -38,14 +40,15 @@ import kotlinx.coroutines.flow.collectLatest
 internal fun AlbumsScreen(
     modifier: Modifier = Modifier,
     albumsViewModel: AlbumsViewModel,
+    onNavigateWithAlbum: (AlbumUi) -> Unit,
 ) {
-    val state by albumsViewModel.albumsState.collectAsStateWithLifecycle()
+    val albums by albumsViewModel.albumsState.collectAsStateWithLifecycle()
 
     LaunchedEffect(albumsViewModel.event) {
         albumsViewModel.event.collectLatest { event ->
             when (event) {
-                is AlbumsScreenEvents.OnNavigateToMediaScreen -> {
-//                    onNavigateToMediaScreen(event.albumName)
+                is AlbumsScreenEvents.OnNavigateToWithAlbum -> {
+                    onNavigateWithAlbum(event.albumUi)
                 }
             }
         }
@@ -53,7 +56,7 @@ internal fun AlbumsScreen(
 
     AlbumsScreen(
         modifier = modifier,
-        albums = state.albums,
+        albums = albums,
         onAction = albumsViewModel::onAction,
     )
 }
@@ -116,7 +119,7 @@ fun AlbumsGridList(
     ) {
         items(
             items = albums,
-            key = { it.cover.first },
+            key = { it.thumbnailUriString },
         ) { album ->
             Column(
                 modifier =
@@ -130,24 +133,34 @@ fun AlbumsGridList(
                 ) {
                     Text(
                         modifier = Modifier.weight(1f),
-                        text = album.albumName,
+                        text = album.displayName,
                         maxLines = 1,
                         style = MaterialTheme.typography.labelMedium,
                     )
                     Text(
-                        text = album.itemsCount.toString(),
+                        text = album.count.toString(),
                         maxLines = 1,
                         style = MaterialTheme.typography.labelMedium,
                     )
                 }
                 Spacer(Modifier.height(4.dp))
-                ImageThumbnail(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .clip(MaterialTheme.shapes.large),
-                    itemUri = album.cover.first,
-                )
+                when (album.thumbnailType) {
+                    MediaType.IMAGE -> {
+                        ImageThumbnail(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .clip(MaterialTheme.shapes.large),
+                            itemUri = album.thumbnailUriString,
+                        )
+                    }
+                    MediaType.VIDEO -> {
+                        VideoThumbnail(
+                            itemUri = album.thumbnailUriString,
+                        )
+                    }
+                    else -> Unit
+                }
             }
         }
     }

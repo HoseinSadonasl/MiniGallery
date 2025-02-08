@@ -61,7 +61,6 @@ internal class MediaViewModel
         fun onAction(action: MediaScreenActions) {
             when (action) {
                 MediaScreenActions.OnUpdateMedia -> updateMedia()
-                is MediaScreenActions.OnUpdateAlbumsFromMediaList -> updateAlbumsFromMediaList(action.media)
                 MediaScreenActions.OnHideSyncSection -> setyncSectionStateFalse()
                 is MediaScreenActions.OnMimeTypeChange -> setMimeType(action.mimeType)
                 is MediaScreenActions.OnQueryChange -> setQuery(action.query)
@@ -85,26 +84,6 @@ internal class MediaViewModel
             mediaScreenViewModelState.update {
                 it.copy(
                     selectedAlbum = album,
-                )
-            }
-        }
-
-        private fun updateAlbumsFromMediaList(media: List<MediaUi>) {
-            val albumsList =
-                media.groupBy { media ->
-                    media.bucketDisplayName
-                }.map { groupedMedia ->
-                    AlbumUi(
-                        albumName = groupedMedia.key,
-                        cover =
-                            groupedMedia.value.maxByOrNull { it.dateModified }!!
-                                .let { media -> media.uriString to media.mimeType },
-                        itemsCount = groupedMedia.value.size,
-                    )
-                }
-            mediaScreenViewModelState.update {
-                it.copy(
-                    albums = albumsList,
                 )
             }
         }

@@ -39,7 +39,7 @@ import com.hotaku.feature.media.R
 import com.hotaku.media.components.ImageThumbnail
 import com.hotaku.media.components.MediaSyncLabel
 import com.hotaku.media.components.ScreenMessage
-import com.hotaku.media.components.videoThumbnail
+import com.hotaku.media.components.VideoThumbnail
 import com.hotaku.media.model.MediaUi
 import com.hotaku.media.utils.MediaType
 import com.hotaku.ui.UiState
@@ -148,7 +148,6 @@ private fun MediaScreen(
                         onAction(MediaScreenActions.OnScrolled(isScrolled = scrolled))
                     },
                     onShowSnackBar = { onShowSnackBar(it) },
-                    onAction = onAction,
                 )
             }
         },
@@ -215,7 +214,6 @@ private fun MediaGridLazyList(
     pagingMediaItems: LazyPagingItems<MediaUi>,
     onScrolled: (Boolean) -> Unit,
     onShowSnackBar: suspend (String) -> Unit,
-    onAction: (MediaScreenActions) -> Unit,
 ) {
     val context: Context = LocalContext.current
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
@@ -255,11 +253,6 @@ private fun MediaGridLazyList(
             }
 
             else -> {
-                onAction(
-                    MediaScreenActions.OnUpdateAlbumsFromMediaList(
-                        media = pagingMediaItems.itemSnapshotList.items,
-                    ),
-                )
                 mediaItems(pagingMediaItems)
             }
         }
@@ -286,7 +279,7 @@ private fun LazyGridScope.mediaItems(items: LazyPagingItems<MediaUi>) {
     ) { index ->
         items[index]?.let { item ->
             if (item.mimeType == MediaType.VIDEO) {
-                videoThumbnail(item)
+                VideoThumbnail(item)
             } else {
                 ImageThumbnail(itemUri = item.uriString)
             }

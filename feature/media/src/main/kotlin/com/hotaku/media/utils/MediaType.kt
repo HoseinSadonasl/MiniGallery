@@ -5,3 +5,11 @@ enum class MediaType {
     IMAGE,
     VIDEO,
 }
+
+fun String.asMediaType(): MediaType {
+    return when {
+        this.startsWith("video") -> MediaType.VIDEO
+        this.startsWith("image") -> MediaType.IMAGE
+        else -> MediaType.UNKNOWN
+    }
+}

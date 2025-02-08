@@ -2,12 +2,10 @@ package com.hotaku.media.navigation
 
 import android.os.Parcelable
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -15,7 +13,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.hotaku.media.screens.albums.AlbumsScreen
-import com.hotaku.media.screens.albums.AlbumsScreenActions
 import com.hotaku.media.screens.albums.AlbumsViewModel
 import com.hotaku.media.screens.media.MediaScreen
 import com.hotaku.media.screens.media.MediaScreenActions
@@ -72,33 +69,18 @@ object MediaGraph {
                         navController = navHostController,
                     )
 
-                val albums = mediaViewModel.mediaScreenUiState.value.albums
-
                 val albumsViewModel: AlbumsViewModel = hiltViewModel()
 
-                val state by albumsViewModel.albumsState.collectAsStateWithLifecycle()
-
-                LaunchedEffect(true) {
-                    albumsViewModel.onAction(
-                        AlbumsScreenActions.OnUpdateAlbums(
-                            albums = albums,
-                        ),
-                    )
-                }
-
-                LaunchedEffect(state.selectedAlbum) {
-                    state.selectedAlbum.takeIf { it != null }?.let { album ->
+                AlbumsScreen(
+                    albumsViewModel = albumsViewModel,
+                    onNavigateWithAlbum = { album ->
                         mediaViewModel.onAction(
                             MediaScreenActions.OnAlbumSelected(
                                 album = album,
                             ),
                         )
                         navHostController.popBackStack()
-                    }
-                }
-
-                AlbumsScreen(
-                    albumsViewModel = albumsViewModel,
+                    },
                 )
             }
         }

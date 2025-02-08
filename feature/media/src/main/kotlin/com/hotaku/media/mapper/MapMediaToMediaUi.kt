@@ -2,8 +2,8 @@ package com.hotaku.media.mapper
 
 import com.hotaku.common.mapper.Mapper
 import com.hotaku.media.model.MediaUi
-import com.hotaku.media.utils.MediaType
 import com.hotaku.media.utils.TimeUtils.millisAsFormattedDuration
+import com.hotaku.media.utils.asMediaType
 import com.hotaku.media_domain.model.Media
 import java.time.Instant
 import javax.inject.Inject
@@ -24,14 +24,6 @@ internal class MapMediaToMediaUi
                     size = size,
                     bucketDisplayName = bucketDisplayName,
                 )
-            }
-        }
-
-        private fun String.asMediaType(): MediaType {
-            return when {
-                this.startsWith("video") -> MediaType.VIDEO
-                this.startsWith("image") -> MediaType.IMAGE
-                else -> MediaType.UNKNOWN
             }
         }
     }

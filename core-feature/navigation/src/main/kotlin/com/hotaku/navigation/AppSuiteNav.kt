@@ -25,6 +25,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.window.core.layout.WindowWidthSizeClass
+import com.hotaku.media.navigation.AlbumsScreenRoute
 import com.hotaku.media.navigation.MediaGraph
 import com.hotaku.media.navigation.MediaGraph.mediaGraph
 import com.hotaku.media.navigation.MediaScreenRRoute
@@ -58,9 +59,10 @@ fun AppSuiteNav(
     LaunchedEffect(key1 = selectedRoute) {
         when (val route = selectedRoute) {
             MediaScreenRRoute -> {
-                if (route != MediaScreenRRoute) {
-                    navHostController.navigate(MediaScreenRRoute)
-                }
+                navHostController.navigate(MediaScreenRRoute)
+            }
+            AlbumsScreenRoute -> {
+                navHostController.navigate(AlbumsScreenRoute)
             }
         }
     }

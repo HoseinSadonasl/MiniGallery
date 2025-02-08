@@ -1,24 +1,12 @@
 package com.hotaku.media.screens.media
 
 import android.content.Context
-import android.net.Uri
-import android.util.Size
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyGridState
@@ -27,9 +15,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -38,31 +23,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import coil3.compose.AsyncImage
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.feature.media.R
+import com.hotaku.media.components.ImageThumbnail
 import com.hotaku.media.components.MediaSyncLabel
 import com.hotaku.media.components.ScreenMessage
+import com.hotaku.media.components.videoThumbnail
 import com.hotaku.media.model.MediaUi
 import com.hotaku.media.utils.MediaType
 import com.hotaku.ui.UiState
@@ -80,7 +57,7 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun MediaScreen(
     modifier: Modifier = Modifier,
-    mediaViewModel: MediaViewModel = hiltViewModel(),
+    mediaViewModel: MediaViewModel,
     onShowSnackBar: suspend (String) -> Unit,
 ) {
     MediaScreen(
@@ -112,6 +89,10 @@ private fun MediaScreen(
         focusManager.clearFocus()
         onAction(MediaScreenActions.OnQueryChange(query = ""))
         onAction(MediaScreenActions.OnCollepseSearch)
+    }
+
+    BackHandler(state.selectedAlbum != null) {
+        onAction(MediaScreenActions.OnClearSelectedAlbum)
     }
 
     LaunchedEffect(state.query) {
@@ -167,6 +148,7 @@ private fun MediaScreen(
                         onAction(MediaScreenActions.OnScrolled(isScrolled = scrolled))
                     },
                     onShowSnackBar = { onShowSnackBar(it) },
+                    onAction = onAction,
                 )
             }
         },
@@ -175,10 +157,9 @@ private fun MediaScreen(
 
 @Composable
 private fun NoMedia() {
-    Column(
+    Box(
         modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        contentAlignment = Alignment.Center,
     ) {
         ScreenMessage(
             title = stringResource(id = R.string.home_screen_no_media),
@@ -234,6 +215,7 @@ private fun MediaGridLazyList(
     pagingMediaItems: LazyPagingItems<MediaUi>,
     onScrolled: (Boolean) -> Unit,
     onShowSnackBar: suspend (String) -> Unit,
+    onAction: (MediaScreenActions) -> Unit,
 ) {
     val context: Context = LocalContext.current
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
@@ -250,7 +232,7 @@ private fun MediaGridLazyList(
 
     LazyVerticalGrid(
         modifier = modifier.fillMaxSize(),
-        columns = GridCells.Adaptive(100.dp),
+        columns = GridCells.Adaptive(80.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
         horizontalArrangement = Arrangement.spacedBy(2.dp),
         contentPadding = PaddingValues(2.dp),
@@ -273,6 +255,11 @@ private fun MediaGridLazyList(
             }
 
             else -> {
+                onAction(
+                    MediaScreenActions.OnUpdateAlbumsFromMediaList(
+                        media = pagingMediaItems.itemSnapshotList.items,
+                    ),
+                )
                 mediaItems(pagingMediaItems)
             }
         }
@@ -301,83 +288,8 @@ private fun LazyGridScope.mediaItems(items: LazyPagingItems<MediaUi>) {
             if (item.mimeType == MediaType.VIDEO) {
                 videoThumbnail(item)
             } else {
-                ImageThumbnail(item)
+                ImageThumbnail(itemUri = item.uriString)
             }
         }
     }
-}
-
-@Composable
-private fun ImageThumbnail(item: MediaUi) {
-    Box(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f),
-    ) {
-        AsyncImage(
-            modifier =
-                Modifier
-                    .fillMaxSize(),
-            model = item.uriString,
-            contentScale = ContentScale.Crop,
-            contentDescription = null,
-        )
-    }
-}
-
-@Composable
-private fun videoThumbnail(item: MediaUi) {
-    val thumbnail = item.uriString.toUri().asThumbnailImageBitmap()
-    Box(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f),
-    ) {
-        Image(
-            bitmap = thumbnail,
-            contentDescription = null,
-            modifier = Modifier.matchParentSize(),
-            contentScale = ContentScale.Crop,
-        )
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomEnd)
-                    .background(
-                        Brush.verticalGradient(
-                            0f to Color.Transparent,
-                            1f to Color.Black.copy(alpha = .5f),
-                        ),
-                    )
-                    .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End,
-        ) {
-            Icon(
-                modifier = Modifier.size(16.dp),
-                imageVector = ImageVector.vectorResource(id = R.drawable.all_video),
-                tint = Color.White,
-                contentDescription = "video",
-            )
-            Spacer(Modifier.width(4.dp))
-            Text(
-                text = item.duration,
-                style =
-                    MaterialTheme.typography.labelSmall.copy(
-                        color = Color.White,
-                    ),
-            )
-        }
-    }
-}
-
-@Composable
-private fun Uri.asThumbnailImageBitmap(size: Size = Size(320, 320)): ImageBitmap {
-    val context = LocalContext.current
-    val thumbnail =
-        context.contentResolver.loadThumbnail(this, size, null)
-    return thumbnail.asImageBitmap()
 }

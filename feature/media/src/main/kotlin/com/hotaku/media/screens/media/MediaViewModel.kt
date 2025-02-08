@@ -10,6 +10,7 @@ import com.hotaku.domain.utils.Error
 import com.hotaku.domain.utils.ErrorResult
 import com.hotaku.feature.media.R
 import com.hotaku.media.mapper.MapMediaToMediaUi
+import com.hotaku.media.model.AlbumUi
 import com.hotaku.media.model.MediaUi
 import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_domain.usecase.SyncMediaUseCase
@@ -59,12 +60,49 @@ internal class MediaViewModel
         fun onAction(action: MediaScreenActions) {
             when (action) {
                 MediaScreenActions.OnUpdateMedia -> updateMedia()
+                is MediaScreenActions.OnUpdateAlbumsFromMediaList -> updateAlbumsFromMediaList(action.media)
                 MediaScreenActions.OnHideSyncSection -> setyncSectionStateFalse()
                 is MediaScreenActions.OnMimeTypeChange -> setMimeType(action.mimeType)
                 is MediaScreenActions.OnQueryChange -> setQuery(action.query)
                 is MediaScreenActions.OnScrolled -> setScrollState(action.isScrolled)
                 MediaScreenActions.OnCollepseSearch -> setSearchExpanded(false)
                 MediaScreenActions.OnExpandSearch -> setSearchExpanded(true)
+                is MediaScreenActions.OnAlbumSelected -> onAlbumSelected(action.album)
+                MediaScreenActions.OnClearSelectedAlbum -> clearSelectedAlbum()
+            }
+        }
+
+        private fun clearSelectedAlbum() {
+            mediaScreenViewModelState.update {
+                it.copy(
+                    selectedAlbum = null,
+                )
+            }
+        }
+
+        private fun onAlbumSelected(album: AlbumUi) {
+            mediaScreenViewModelState.update {
+                it.copy(
+                    selectedAlbum = album,
+                )
+            }
+        }
+
+        private fun updateAlbumsFromMediaList(media: List<MediaUi>) {
+            val albumsList =
+                media.groupBy { media ->
+                    media.bucketDisplayName
+                }.map { groupedMedia ->
+                    AlbumUi(
+                        albumName = groupedMedia.key,
+                        coverStringUri = groupedMedia.value.first().uriString,
+                        itemsCount = groupedMedia.value.size,
+                    )
+                }
+            mediaScreenViewModelState.update {
+                it.copy(
+                    albums = albumsList,
+                )
             }
         }
 

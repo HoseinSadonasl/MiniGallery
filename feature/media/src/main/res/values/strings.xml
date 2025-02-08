@@ -14,4 +14,7 @@
     <string name="home_screentop_bar_title_all_media">All Media</string>
     <string name="home_screen_search_media">Search media</string>
     <string name="permissions_screen_message_title">Media Permission requierd!</string>
+    <string name="albums_screen_top_app_bar_title">Albums</string>
+    <string name="albums_screen_no_albums">No Albums</string>
+    <string name="albums_screen_no_albums_full_message">Looks like there\\\'s nothing to show here at the moment. Check back later or add something to get started!</string>
 </resources>

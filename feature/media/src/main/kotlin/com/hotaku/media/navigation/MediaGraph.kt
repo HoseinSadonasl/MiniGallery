@@ -1,11 +1,25 @@
 package com.hotaku.media.navigation
 
 import android.os.Parcelable
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.hotaku.media.screens.albums.AlbumsScreen
+import com.hotaku.media.screens.albums.AlbumsScreenActions
+import com.hotaku.media.screens.albums.AlbumsViewModel
 import com.hotaku.media.screens.media.MediaScreen
+import com.hotaku.media.screens.media.MediaScreenActions
+import com.hotaku.media.screens.media.MediaViewModel
 import com.hotaku.media.screens.permissions.PermissionsScreen
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
@@ -17,7 +31,7 @@ object MediaScreenRRoute : Parcelable
 
 @Serializable
 @Parcelize
-object AlbumsScreen : Parcelable
+object AlbumsScreenRoute : Parcelable
 
 @Serializable
 @Parcelize
@@ -41,11 +55,66 @@ object MediaGraph {
                     navigateToMediaScreen = { navHostController.navigate(MediaScreenRRoute) },
                 )
             }
-            composable<MediaScreenRRoute> {
+            composable<MediaScreenRRoute> { navBackStackEntry ->
+                val mediaViewModel =
+                    navBackStackEntry.sharedHiltViewModel<MediaViewModel>(
+                        navController = navHostController,
+                    )
+
                 MediaScreen(
+                    mediaViewModel = mediaViewModel,
                     onShowSnackBar = { onShowSnackBar(it) },
+                )
+            }
+            composable<AlbumsScreenRoute> { navBackStackEntry ->
+                val mediaViewModel =
+                    navBackStackEntry.sharedHiltViewModel<MediaViewModel>(
+                        navController = navHostController,
+                    )
+
+                val albums = mediaViewModel.mediaScreenUiState.value.albums
+
+                val albumsViewModel: AlbumsViewModel = hiltViewModel()
+
+                val state by albumsViewModel.albumsState.collectAsStateWithLifecycle()
+
+                LaunchedEffect(true) {
+                    albumsViewModel.onAction(
+                        AlbumsScreenActions.OnUpdateAlbums(
+                            albums = albums,
+                        ),
+                    )
+                }
+
+                LaunchedEffect(state.selectedAlbum) {
+                    state.selectedAlbum.takeIf { it != null }?.let { album ->
+                        mediaViewModel.onAction(
+                            MediaScreenActions.OnAlbumSelected(
+                                album = album,
+                            ),
+                        )
+                        navHostController.popBackStack()
+                    }
+                }
+
+                AlbumsScreen(
+                    albumsViewModel = albumsViewModel,
                 )
             }
         }
     }
+}
+
+@Composable
+private inline fun <reified T : ViewModel> NavBackStackEntry.sharedHiltViewModel(
+    navController: NavController,
+): T {
+    val navGraphRoute = destination.parent?.route ?: return hiltViewModel<T>()
+    val parentEntry =
+        remember(this) {
+            navController.getBackStackEntry(navGraphRoute)
+        }
+    return hiltViewModel(
+        viewModelStoreOwner = parentEntry,
+    )
 }

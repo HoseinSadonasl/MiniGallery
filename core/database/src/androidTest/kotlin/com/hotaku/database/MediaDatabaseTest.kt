@@ -169,6 +169,36 @@ class MediaDatabaseTest {
 
             assertThat(existingUris).isEmpty()
         }
+
+    @Test
+    fun getAlbums_shouldReturnAllAlbums() =
+        runTest {
+            val mediaList =
+                listOf(
+                    fakeMediaEntity(
+                        mediaId = "100",
+                        mediaName = "SampleName1",
+                        millis = now.toString(),
+                        mimeType = "Image",
+                    ),
+                    fakeMediaEntity(
+                        mediaId = "200",
+                        mediaName = "SampleName2",
+                        millis = now.toString(),
+                        mimeType = "Video",
+                    ),
+                )
+
+            dao.insertAll(media = mediaList)
+
+            val albums = dao.getAlbums()
+
+            assertThat(albums.size).isEqualTo(2)
+            assertThat(albums.first().displayName).isEqualTo(mediaList.first().bucketDisplayName)
+            assertThat(albums.first().count).isEqualTo(1)
+            assertThat(albums.first().thumbnailType).isEqualTo(mediaList.first().mimeType)
+            assertThat(albums.first().thumbnailUriString).isEqualTo(mediaList.first().uriString)
+        }
 }
 
 private fun fakeMediaEntity(
@@ -185,5 +215,5 @@ private fun fakeMediaEntity(
     dateAdded = millis,
     dateModified = millis,
     size = "1024",
-    bucketDisplayName = "sampleBucketDisplayName",
+    bucketDisplayName = "sampleBucketDisplayName$mediaId",
 )

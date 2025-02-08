@@ -3,6 +3,7 @@ package com.hotaku.database.dao
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
+import com.hotaku.database.entity.AlbumDto
 import com.hotaku.database.entity.MediaEntity
 
 @Dao
@@ -29,4 +30,15 @@ interface MediaDao {
 
     @Query("DELETE FROM media WHERE uriString IN (:uris)")
     fun deleteByUris(uris: List<String>)
+
+    @Query(
+        "SELECT" +
+            " bucketDisplayName, COUNT(*) AS count," +
+            " bucketDisplayName AS displayName," +
+            " MAX(uriString) AS thumbnailUriString," +
+            " MAX(mimeType) AS thumbnailType" +
+            " FROM media GROUP BY" +
+            " bucketDisplayName ORDER BY bucketDisplayName ASC",
+    )
+    suspend fun getAlbums(): List<AlbumDto>
 }

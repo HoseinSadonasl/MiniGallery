@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -95,7 +96,9 @@ internal class MediaViewModel
                 }.map { groupedMedia ->
                     AlbumUi(
                         albumName = groupedMedia.key,
-                        coverStringUri = groupedMedia.value.first().uriString,
+                        cover =
+                            groupedMedia.value.maxByOrNull { it.dateModified }!!
+                                .let { media -> media.uriString to media.mimeType },
                         itemsCount = groupedMedia.value.size,
                     )
                 }
@@ -145,11 +148,15 @@ internal class MediaViewModel
 
         private fun updateMedia() {
             viewModelScope.launch {
-                mediaUseCase.invoke(
-                    mimeType = mediaScreenViewModelState.value.mimeType,
-                    query = mediaScreenViewModelState.value.query,
-                )
-                    .cachedIn(viewModelScope)
+                val pagedList =
+                    mediaUseCase.invoke(
+                        mimeType = mediaScreenViewModelState.value.mimeType,
+                        query = mediaScreenViewModelState.value.query,
+                    )
+
+                pagedList.toList()
+
+                pagedList.cachedIn(viewModelScope)
                     .collect { pagedMedia ->
                         mediaViewModelState.value = pagedMedia.map { mapMediaToMediaUi.map(it) }
                     }

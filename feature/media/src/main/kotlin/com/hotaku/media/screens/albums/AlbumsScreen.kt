@@ -116,7 +116,7 @@ fun AlbumsGridList(
     ) {
         items(
             items = albums,
-            key = { it.coverStringUri },
+            key = { it.cover.first },
         ) { album ->
             Column(
                 modifier =
@@ -129,11 +129,14 @@ fun AlbumsGridList(
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(
+                        modifier = Modifier.weight(1f),
                         text = album.albumName,
+                        maxLines = 1,
                         style = MaterialTheme.typography.labelMedium,
                     )
                     Text(
                         text = album.itemsCount.toString(),
+                        maxLines = 1,
                         style = MaterialTheme.typography.labelMedium,
                     )
                 }
@@ -143,7 +146,7 @@ fun AlbumsGridList(
                         Modifier
                             .fillMaxWidth()
                             .clip(MaterialTheme.shapes.large),
-                    itemUri = album.coverStringUri,
+                    itemUri = album.cover.first,
                 )
             }
         }

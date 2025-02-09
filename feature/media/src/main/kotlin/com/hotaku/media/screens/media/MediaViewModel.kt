@@ -6,16 +6,13 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.hotaku.domain.utils.DataResult
-import com.hotaku.domain.utils.Error
-import com.hotaku.domain.utils.ErrorResult
-import com.hotaku.feature.media.R
 import com.hotaku.media.mapper.MapMediaToMediaUi
 import com.hotaku.media.model.AlbumUi
 import com.hotaku.media.model.MediaUi
+import com.hotaku.media.utils.asUiError
 import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_domain.usecase.SyncMediaUseCase
 import com.hotaku.ui.UiState
-import com.hotaku.ui.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -148,18 +145,4 @@ internal class MediaViewModel
                 it.copy(query = query)
             }
         }
-
-        private fun Error.asUiError(): UiText =
-            when (val error = this as ErrorResult) {
-                is ErrorResult.ApiError -> UiText.DynamicString("${error.message}(${error.code})")
-                is ErrorResult.LocalError -> {
-                    when (error) {
-                        ErrorResult.LocalError.UNKNOWN -> UiText.StringResource(R.string.all_unknown_error)
-                        ErrorResult.LocalError.DISK_FULL -> UiText.StringResource(R.string.all_disk_full)
-                        ErrorResult.LocalError.IO -> UiText.StringResource(R.string.all_io_error)
-                        ErrorResult.LocalError.READ_DATA_ERROR -> UiText.StringResource(R.string.all_io_error)
-                        ErrorResult.LocalError.SYNC_DATA_ERROR -> UiText.StringResource(R.string.all_sync_error)
-                    }
-                }
-            }
     }

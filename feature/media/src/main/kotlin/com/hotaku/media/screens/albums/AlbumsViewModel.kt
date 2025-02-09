@@ -2,9 +2,12 @@ package com.hotaku.media.screens.albums
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hotaku.domain.utils.DataResult
 import com.hotaku.media.mapper.MapAlbumToAlbumUi
 import com.hotaku.media.model.AlbumUi
+import com.hotaku.media.utils.asUiError
 import com.hotaku.media_domain.usecase.GetAlbumsUseCase
+import com.hotaku.ui.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,15 +48,31 @@ internal class AlbumsViewModel
 
         private fun updateAlbums() {
             viewModelScope.launch {
-                val albums =
-                    getAlbumsUseCase.invoke().map { result ->
-                        mapAlbumToAlbumUi.map(result)
+                getAlbumsUseCase.invoke().map { result ->
+                    val albums =
+                        when (result) {
+                            DataResult.Loading -> {
+                                UiState.Loading()
+                            }
+                            is DataResult.Success -> {
+                                UiState.Success(
+                                    data =
+                                        result.data?.map {
+                                            mapAlbumToAlbumUi.map(
+                                                it,
+                                            )
+                                        } ?: emptyList(),
+                                )
+                            }
+                            is DataResult.Failure -> {
+                                UiState.Failure(error = result.error.asUiError())
+                            }
+                        }
+                    albumsViewModelState.update {
+                        it.copy(
+                            albums = albums,
+                        )
                     }
-                albumsViewModelState.update {
-                    it.copy(
-                        isLoading = false,
-                        albums = albums,
-                    )
                 }
             }
         }

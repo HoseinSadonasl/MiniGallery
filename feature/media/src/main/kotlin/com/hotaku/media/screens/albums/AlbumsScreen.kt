@@ -32,6 +32,7 @@ import com.hotaku.media.components.ScreenMessage
 import com.hotaku.media.components.VideoThumbnail
 import com.hotaku.media.model.AlbumUi
 import com.hotaku.media.utils.MediaType
+import com.hotaku.ui.UiState
 import com.hotaku.ui.conposables.DynamicTopAppBarColumn
 import com.hotaku.ui.conposables.TopAppBar
 import kotlinx.coroutines.flow.collectLatest
@@ -68,7 +69,7 @@ internal fun AlbumsScreen(
 @Composable
 private fun AlbumsScreen(
     modifier: Modifier = Modifier,
-    albumsState: List<AlbumUi>,
+    albumsState: UiState<List<AlbumUi>>,
     onAction: (AlbumsScreenActions) -> Unit,
 ) {
     DynamicTopAppBarColumn(
@@ -79,9 +80,17 @@ private fun AlbumsScreen(
             )
         },
     ) {
-        AlbumsGridList(
-            albums = albumsState,
-        )
+        when (albumsState) {
+            is UiState.Failure -> {
+            }
+            is UiState.Loading -> {
+            }
+            is UiState.Success -> {
+                AlbumsGridList(
+                    albums = albumsState.data,
+                )
+            }
+        }
     }
 }
 
@@ -112,56 +121,60 @@ fun AlbumsGridList(
     modifier: Modifier = Modifier,
     albums: List<AlbumUi>,
 ) {
-    LazyVerticalGrid(
-        modifier = modifier.fillMaxSize(),
-        columns = GridCells.Adaptive(100.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(16.dp),
-    ) {
-        items(
-            items = albums,
-            key = { it.thumbnailUriString },
-        ) { album ->
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxWidth(),
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
+    if (albums.isEmpty()) {
+        NoAlbums()
+    } else {
+        LazyVerticalGrid(
+            modifier = modifier.fillMaxSize(),
+            columns = GridCells.Adaptive(100.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            contentPadding = PaddingValues(16.dp),
+        ) {
+            items(
+                items = albums,
+                key = { it.thumbnailUriString },
+            ) { album ->
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth(),
                 ) {
-                    Text(
-                        modifier = Modifier.weight(1f),
-                        text = album.displayName,
-                        maxLines = 1,
-                        style = MaterialTheme.typography.labelMedium,
-                    )
-                    Text(
-                        text = album.count.toString(),
-                        maxLines = 1,
-                        style = MaterialTheme.typography.labelMedium,
-                    )
-                }
-                Spacer(Modifier.height(4.dp))
-                when (album.thumbnailType) {
-                    MediaType.IMAGE -> {
-                        ImageThumbnail(
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .clip(MaterialTheme.shapes.large),
-                            itemUri = album.thumbnailUriString,
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Text(
+                            modifier = Modifier.weight(1f),
+                            text = album.displayName,
+                            maxLines = 1,
+                            style = MaterialTheme.typography.labelMedium,
+                        )
+                        Text(
+                            text = album.count.toString(),
+                            maxLines = 1,
+                            style = MaterialTheme.typography.labelMedium,
                         )
                     }
-                    MediaType.VIDEO -> {
-                        VideoThumbnail(
-                            itemUri = album.thumbnailUriString,
-                        )
+                    Spacer(Modifier.height(4.dp))
+                    when (album.thumbnailType) {
+                        MediaType.IMAGE -> {
+                            ImageThumbnail(
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .clip(MaterialTheme.shapes.large),
+                                itemUri = album.thumbnailUriString,
+                            )
+                        }
+                        MediaType.VIDEO -> {
+                            VideoThumbnail(
+                                itemUri = album.thumbnailUriString,
+                            )
+                        }
+                        else -> Unit
                     }
-                    else -> Unit
                 }
             }
         }

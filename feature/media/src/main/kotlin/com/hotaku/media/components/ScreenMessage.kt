@@ -40,6 +40,7 @@ fun ScreenMessage(
     ) {
         DecorationMediaImage(
             image = painterResource(R.drawable.all_media_illustration),
+            isError = true,
         )
         Text(
             modifier = Modifier.padding(16.dp),

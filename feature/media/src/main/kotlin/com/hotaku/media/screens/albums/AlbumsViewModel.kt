@@ -12,7 +12,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -48,7 +47,7 @@ internal class AlbumsViewModel
 
         private fun updateAlbums() {
             viewModelScope.launch {
-                getAlbumsUseCase.invoke().map { result ->
+                getAlbumsUseCase.invoke().collect { result ->
                     val albums =
                         when (result) {
                             DataResult.Loading -> {

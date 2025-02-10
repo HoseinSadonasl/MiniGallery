@@ -16,5 +16,4 @@ fun Modifier.dynamicPaddingConsume(
         this.padding(paddingValues)
     }
 
-fun Modifier.dynamicStatusBarPadding(addPadding: Boolean = true): Modifier =
-    if (addPadding) this.statusBarsPadding() else this
+fun Modifier.dynamicStatusBarPadding(addPadding: Boolean = true): Modifier = if (addPadding) this.statusBarsPadding() else this

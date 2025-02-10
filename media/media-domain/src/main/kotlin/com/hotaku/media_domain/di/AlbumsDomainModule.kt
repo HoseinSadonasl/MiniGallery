@@ -14,9 +14,7 @@ import javax.inject.Singleton
 internal object AlbumsDomainModule {
     @Provides
     @Singleton
-    fun providesAlbumsRepository(
-        albumsRepository: AlbumsRepository,
-    ): GetAlbumsUseCase =
+    fun providesAlbumsRepository(albumsRepository: AlbumsRepository): GetAlbumsUseCase =
         GetAlbumsUseCaseImpl(
             albumsRepository = albumsRepository,
         )

@@ -20,12 +20,11 @@ internal object PermissionUtils {
                 )
             }
 
-    fun permissionsToRequest(
-        context: Context,
-    ) = requiredPermissions.filterNot { permission ->
-        ContextCompat.checkSelfPermission(
-            context,
-            permission,
-        ) == PackageManager.PERMISSION_GRANTED
-    }
+    fun permissionsToRequest(context: Context) =
+        requiredPermissions.filterNot { permission ->
+            ContextCompat.checkSelfPermission(
+                context,
+                permission,
+            ) == PackageManager.PERMISSION_GRANTED
+        }
 }

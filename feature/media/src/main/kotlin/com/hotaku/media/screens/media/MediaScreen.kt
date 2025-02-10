@@ -177,9 +177,7 @@ private fun NoMediaPreview() {
 }
 
 @Composable
-private fun SyncSection(
-    synchronizeState: UiState<Int>,
-) {
+private fun SyncSection(synchronizeState: UiState<Int>) {
     when (synchronizeState) {
         is UiState.Failure -> {
             MediaSyncLabel(

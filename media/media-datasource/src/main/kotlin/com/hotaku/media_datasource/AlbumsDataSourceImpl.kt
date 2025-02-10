@@ -12,6 +12,5 @@ internal class AlbumsDataSourceImpl
         private val mediaDao: MediaDao,
         private val mapAlbumsDtoAsAlbumsData: MapAlbumsDtoAsAlbumsData,
     ) : AlbumsDataSource {
-        override suspend fun getAlbums(): List<AlbumData> =
-            mediaDao.getAlbums().map { mapAlbumsDtoAsAlbumsData.map(it) }
+        override suspend fun getAlbums(): List<AlbumData> = mediaDao.getAlbums().map { mapAlbumsDtoAsAlbumsData.map(it) }
     }

@@ -22,9 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Preview
 @Composable
-fun AnimatedPlaceHolderBox(
-    modifier: Modifier = Modifier,
-) {
+fun AnimatedPlaceHolderBox(modifier: Modifier = Modifier) {
     val infiniteTransition: InfiniteTransition =
         rememberInfiniteTransition(label = "infinite color")
     val color: Color by infiniteTransition.animateColor(

@@ -38,7 +38,7 @@ import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.feature.media.R
 import com.hotaku.media.components.ImageThumbnail
 import com.hotaku.media.components.MediaSyncLabel
-import com.hotaku.media.components.ScreenMessage
+import com.hotaku.media.components.OnScreenMessage
 import com.hotaku.media.components.VideoThumbnail
 import com.hotaku.media.model.MediaUi
 import com.hotaku.media.utils.MediaType
@@ -160,7 +160,7 @@ private fun NoMedia() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        ScreenMessage(
+        OnScreenMessage(
             title = stringResource(id = R.string.home_screen_no_media),
             fulMessage = stringResource(id = R.string.home_screen_no_media_full_message),
         )

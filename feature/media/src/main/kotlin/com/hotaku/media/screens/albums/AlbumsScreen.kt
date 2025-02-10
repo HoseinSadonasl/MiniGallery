@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.feature.media.R
 import com.hotaku.media.components.ImageThumbnail
-import com.hotaku.media.components.ScreenMessage
+import com.hotaku.media.components.OnScreenMessage
 import com.hotaku.media.components.VideoThumbnail
 import com.hotaku.media.model.AlbumUi
 import com.hotaku.media.utils.MediaType
@@ -82,6 +82,7 @@ private fun AlbumsScreen(
     ) {
         when (albumsState) {
             is UiState.Failure -> {
+                ErrorGettingAlbums()
             }
             is UiState.Loading -> {
             }
@@ -100,10 +101,33 @@ private fun NoAlbums() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        ScreenMessage(
+        OnScreenMessage(
             title = stringResource(id = R.string.albums_screen_no_albums),
             fulMessage = stringResource(id = R.string.albums_screen_no_albums_full_message),
         )
+    }
+}
+
+@Composable
+private fun ErrorGettingAlbums() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
+        OnScreenMessage(
+            color = MaterialTheme.colorScheme.error,
+            title = stringResource(id = R.string.albums_screen_error_while_getting_albums),
+            fulMessage = stringResource(id = R.string.albums_screen_error_while_getting_albums_full_message),
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@PreviewScreenSizes
+@Composable
+private fun ErrorGettingAlbumsPreview() {
+    MiniGalleryTheme {
+        ErrorGettingAlbums()
     }
 }
 

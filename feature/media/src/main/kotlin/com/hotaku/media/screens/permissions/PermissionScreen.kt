@@ -14,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.feature.media.R
-import com.hotaku.media.components.ScreenMessage
+import com.hotaku.media.components.OnScreenMessage
 
 @Composable
 internal fun PermissionsScreen(
@@ -43,7 +43,7 @@ private fun PermissionsScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly,
         ) {
-            ScreenMessage(
+            OnScreenMessage(
                 title = stringResource(id = R.string.permissions_screen_message_title),
                 fulMessage = stringResource(id = R.string.permissions_screen_message),
             )

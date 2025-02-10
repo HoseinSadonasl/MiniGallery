@@ -10,11 +10,9 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldLayout
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -25,10 +23,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.window.core.layout.WindowWidthSizeClass
-import com.hotaku.media.navigation.AlbumsScreenRoute
 import com.hotaku.media.navigation.MediaGraph
 import com.hotaku.media.navigation.MediaGraph.mediaGraph
-import com.hotaku.media.navigation.MediaScreenRRoute
 
 @Composable
 fun AppSuiteNav(
@@ -39,9 +35,6 @@ fun AppSuiteNav(
     val direction: LayoutDirection = LocalLayoutDirection.current
     val snackbarHostState: SnackbarHostState by remember { mutableStateOf(SnackbarHostState()) }
 
-    // Any route should annotated with @Parcelize and extends Parcelable interface, so we can
-    // hold them in rememberSavable state holder.
-    var selectedRoute: Any by rememberSaveable { mutableStateOf(MediaScreenRRoute) }
     val navBackStackEntry: NavBackStackEntry? by navHostController.currentBackStackEntryAsState()
 
     val windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo()
@@ -56,25 +49,13 @@ fun AppSuiteNav(
             }
         }
 
-    LaunchedEffect(key1 = selectedRoute) {
-        when (val route = selectedRoute) {
-            MediaScreenRRoute -> {
-                navHostController.navigate(MediaScreenRRoute)
-            }
-            AlbumsScreenRoute -> {
-                navHostController.navigate(AlbumsScreenRoute)
-            }
-        }
-    }
-
     NavigationSuiteScaffoldLayout(
         navigationSuite = {
             MiniGalleryNavigationSuite(
                 layoutType = layoutType,
                 navBackStackEntry = navBackStackEntry,
-                selectedRoute = selectedRoute,
                 onRouteSelected = { route ->
-                    selectedRoute = route
+                    navHostController.navigate(route)
                 },
             )
         },

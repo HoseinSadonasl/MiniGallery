@@ -10,13 +10,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
 
 @Composable
 internal fun MiniGalleryNavigationSuite(
     layoutType: NavigationSuiteType,
     navBackStackEntry: NavBackStackEntry?,
-    selectedRoute: Any,
     onRouteSelected: (Any) -> Unit,
 ) {
     val currentDestination = navBackStackEntry?.destination
@@ -32,7 +33,7 @@ internal fun MiniGalleryNavigationSuite(
             topLevelAppTopLevelRoutes.forEach { route ->
                 navigationSuitItem(
                     topLevelRoute = route,
-                    selectedRoute = selectedRoute,
+                    selected = currentDestination.isRouteInHierarchy(route = route.route),
                     onNavItemClick = onRouteSelected,
                 )
             }
@@ -40,13 +41,18 @@ internal fun MiniGalleryNavigationSuite(
     }
 }
 
+private fun NavDestination?.isRouteInHierarchy(route: Any): Boolean {
+    if (this == null) return false
+    return hierarchy?.any { it.hasRoute(route::class) } ?: false
+}
+
 private fun NavigationSuiteScope.navigationSuitItem(
     topLevelRoute: TopLevelRoute,
-    selectedRoute: Any,
+    selected: Boolean,
     onNavItemClick: (Any) -> Unit,
 ) {
     item(
-        selected = selectedRoute == topLevelRoute.route,
+        selected = selected,
         onClick = { onNavItemClick(topLevelRoute.route) },
         icon = {
             Icon(

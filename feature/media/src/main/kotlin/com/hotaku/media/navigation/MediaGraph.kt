@@ -1,6 +1,5 @@
 package com.hotaku.media.navigation
 
-import android.os.Parcelable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -18,21 +17,17 @@ import com.hotaku.media.screens.media.MediaScreen
 import com.hotaku.media.screens.media.MediaScreenActions
 import com.hotaku.media.screens.media.MediaViewModel
 import com.hotaku.media.screens.permissions.PermissionsScreen
-import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
 // Home routes
 @Serializable
-@Parcelize
-object MediaScreenRRoute : Parcelable
+object MediaScreenRRoute
 
 @Serializable
-@Parcelize
-object AlbumsScreenRoute : Parcelable
+object AlbumsScreenRoute
 
 @Serializable
-@Parcelize
-internal object PermissionsScreenRoute : Parcelable
+internal object PermissionsScreenRoute
 
 @Serializable
 object MediaGraph {
@@ -57,7 +52,6 @@ object MediaGraph {
                     navBackStackEntry.sharedHiltViewModel<MediaViewModel>(
                         navController = navHostController,
                     )
-
                 MediaScreen(
                     mediaViewModel = mediaViewModel,
                     onShowSnackBar = { onShowSnackBar(it) },

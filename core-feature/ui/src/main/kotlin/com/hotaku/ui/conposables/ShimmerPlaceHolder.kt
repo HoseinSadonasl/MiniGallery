@@ -1,9 +1,9 @@
 package com.hotaku.ui.conposables
 
-import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.InfiniteTransition
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -17,23 +17,22 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.tooling.preview.Preview
+import com.hotaku.designsystem.theme.MiniGalleryTheme
 
-@Preview
 @Composable
-fun AnimatedPlaceHolderBox(modifier: Modifier = Modifier) {
+fun ShimmerPlaceHolder(modifier: Modifier = Modifier) {
     val infiniteTransition: InfiniteTransition =
         rememberInfiniteTransition(label = "infinite color")
-    val color: Color by infiniteTransition.animateColor(
-        initialValue = MaterialTheme.colorScheme.onSurface.copy(alpha = .05f),
-        targetValue = MaterialTheme.colorScheme.onSurface.copy(alpha = .15f),
+    val shimmerPosition by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
         animationSpec =
             infiniteRepeatable(
-                animation = tween(1000, easing = LinearEasing),
+                animation = tween(3000, easing = LinearEasing),
                 repeatMode = RepeatMode.Reverse,
             ),
-        label = "color color",
     )
 
     Surface(
@@ -45,7 +44,21 @@ fun AnimatedPlaceHolderBox(modifier: Modifier = Modifier) {
         Box(
             Modifier
                 .fillMaxSize()
-                .background(color),
+                .background(
+                    Brush.linearGradient(
+                        0f to MaterialTheme.colorScheme.surfaceDim,
+                        shimmerPosition to MaterialTheme.colorScheme.surfaceContainer,
+                        1f to MaterialTheme.colorScheme.surfaceDim,
+                    ),
+                ),
         )
+    }
+}
+
+@Preview
+@Composable
+private fun AnimatedPlaceHolderBoxPreview() {
+    MiniGalleryTheme {
+        ShimmerPlaceHolder()
     }
 }

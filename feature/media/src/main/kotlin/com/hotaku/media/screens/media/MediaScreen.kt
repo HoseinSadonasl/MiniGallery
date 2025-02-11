@@ -45,9 +45,9 @@ import com.hotaku.media.utils.MediaType
 import com.hotaku.ui.UiState
 import com.hotaku.ui.UiText
 import com.hotaku.ui.asString
-import com.hotaku.ui.conposables.AnimatedPlaceHolderBox
 import com.hotaku.ui.conposables.AnimatedSearchTextField
 import com.hotaku.ui.conposables.DynamicTopAppBarColumn
+import com.hotaku.ui.conposables.ShimmerPlaceHolder
 import com.hotaku.ui.conposables.TopAppBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -237,7 +237,7 @@ private fun MediaGridLazyList(
         when (loadState) {
             LoadState.Loading -> {
                 items(30) {
-                    AnimatedPlaceHolderBox()
+                    ShimmerPlaceHolder()
                 }
             }
 

@@ -19,4 +19,7 @@
     <string name="albums_screen_no_albums_full_message">Looks like there\\\'s nothing to show here at the moment. Check back later or add something to get started!</string>
     <string name="albums_screen_error_while_getting_albums">Ops!</string>
     <string name="albums_screen_error_while_getting_albums_full_message">Looks like an error occurred while getting albums.</string>
+    <string name="media_grid_list_an_error_occured">An error occurred</string>
+    <string name="albums_screen_error_while_getting_media">Ops!</string>
+    <string name="media_list_unknown_media">Unknown media</string>
 </resources>

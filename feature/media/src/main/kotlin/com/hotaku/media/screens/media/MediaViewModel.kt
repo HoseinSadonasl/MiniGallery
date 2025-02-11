@@ -65,6 +65,16 @@ internal class MediaViewModel
                 MediaScreenActions.OnExpandSearch -> setSearchExpanded(true)
                 is MediaScreenActions.OnAlbumSelected -> onAlbumSelected(action.album)
                 MediaScreenActions.OnClearSelectedAlbum -> clearSelectedAlbum()
+                is MediaScreenActions.OnMediaClick -> openMedia(action.mediaUi)
+                MediaScreenActions.OnMediaLongClick -> {}
+            }
+        }
+
+        private fun openMedia(mediaUi: MediaUi) {
+            mediaScreenViewModelState.update {
+                it.copy(
+                    selectedMedia = mediaUi,
+                )
             }
         }
 

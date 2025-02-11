@@ -107,7 +107,9 @@ fun VideoThumbnail(
     Image(
         bitmap = thumbnail,
         contentDescription = null,
-        modifier = modifier,
+        modifier =
+            modifier
+                .aspectRatio(1f),
         contentScale = ContentScale.Crop,
     )
 }

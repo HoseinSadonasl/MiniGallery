@@ -3,10 +3,16 @@ package com.hotaku.media.screens.media
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.layout.AnimatedPane
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
+import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,6 +29,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.feature.media.R
 import com.hotaku.media.components.MediaGrid
+import com.hotaku.media.components.MediaPreviewScaffold
 import com.hotaku.media.components.MediaSyncLabel
 import com.hotaku.media.components.OnScreenMessage
 import com.hotaku.media.model.MediaUi
@@ -32,7 +39,9 @@ import com.hotaku.ui.conposables.AnimatedSearchTextField
 import com.hotaku.ui.conposables.DynamicTopAppBarColumn
 import com.hotaku.ui.conposables.TopAppBar
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 internal fun MediaScreen(
@@ -42,6 +51,7 @@ internal fun MediaScreen(
 ) {
     MediaScreen(
         modifier = modifier,
+        screenEvents = mediaViewModel.mediaScreenEvent,
         screenState = mediaViewModel.mediaScreenUiState,
         pagingMediaItemsState = mediaViewModel.mediaUiState,
         synchronizeState = mediaViewModel.synchronizeUiState,
@@ -50,9 +60,11 @@ internal fun MediaScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 private fun MediaScreen(
     modifier: Modifier = Modifier,
+    screenEvents: Flow<MediaScreenEvents>,
     screenState: StateFlow<MediaUiState>,
     pagingMediaItemsState: StateFlow<PagingData<MediaUi>>,
     synchronizeState: StateFlow<UiState<Int>>,
@@ -65,14 +77,16 @@ private fun MediaScreen(
 
     val focusManager = LocalFocusManager.current
 
+    val navigator = rememberListDetailPaneScaffoldNavigator<MediaUi>()
+
+    BackHandler(navigator.canNavigateBack()) {
+        onAction(MediaScreenActions.OnClearSelectedMedia)
+    }
+
     BackHandler(state.isSearchExpanded) {
         focusManager.clearFocus()
         onAction(MediaScreenActions.OnQueryChange(query = ""))
         onAction(MediaScreenActions.OnCollepseSearch)
-    }
-
-    BackHandler(state.selectedAlbum != null) {
-        onAction(MediaScreenActions.OnClearSelectedAlbum)
     }
 
     LaunchedEffect(state.query) {
@@ -87,6 +101,21 @@ private fun MediaScreen(
         }
     }
 
+    LaunchedEffect(state.selectedMedia) {
+        state.selectedMedia?.let {
+            navigator.navigateTo(ListDetailPaneScaffoldRole.Detail, it)
+        }
+    }
+
+    LaunchedEffect(screenEvents) {
+        screenEvents.collectLatest { event ->
+            when (event) {
+                MediaScreenEvents.OnCloseMediaPreview -> {
+                    navigator.navigateBack()
+                }
+            }
+        }
+    }
     DynamicTopAppBarColumn(
         modifier = modifier,
         show = !state.isScrolled,
@@ -113,28 +142,56 @@ private fun MediaScreen(
             )
         },
         content = {
-            AnimatedVisibility(
-                visible = state.showSyncSection,
-            ) {
-                SyncSection(synchronize)
-            }
-            if (synchronize is UiState.Success && pagingMediaItems.itemCount == 0) {
-                NoMedia()
-            } else {
-                MediaGrid(
-                    modifier = Modifier.weight(1f),
-                    pagingMediaItems = pagingMediaItems,
-                    onScrolled = { scrolled ->
-                        onAction(MediaScreenActions.OnScrolled(isScrolled = scrolled))
-                    },
-                    onItemClick = { item ->
-                        onAction(MediaScreenActions.OnMediaClick(item))
-                    },
-                    onItemLongClick = {
-                        onAction(MediaScreenActions.OnMediaLongClick)
-                    },
-                )
-            }
+            ListDetailPaneScaffold(
+                directive = navigator.scaffoldDirective,
+                value = navigator.scaffoldValue,
+                modifier = modifier,
+                listPane = {
+                    AnimatedPane {
+                        Column(
+                            Modifier.fillMaxSize(),
+                        ) {
+                            AnimatedVisibility(
+                                visible = state.showSyncSection,
+                            ) {
+                                SyncSection(synchronize)
+                            }
+                            if (synchronize is UiState.Success && pagingMediaItems.itemCount == 0) {
+                                NoMedia()
+                            } else {
+                                MediaGrid(
+                                    modifier = Modifier.weight(1f),
+                                    pagingMediaItems = pagingMediaItems,
+                                    onScrolled = { scrolled ->
+                                        onAction(MediaScreenActions.OnScrolled(isScrolled = scrolled))
+                                    },
+                                    onItemClick = { item ->
+                                        onAction(MediaScreenActions.OnMediaClick(item))
+                                    },
+                                    onItemLongClick = {
+                                        onAction(MediaScreenActions.OnMediaLongClick)
+                                    },
+                                )
+                            }
+                        }
+                    }
+                },
+                detailPane = {
+                    AnimatedPane {
+                        navigator.currentDestination?.content?.let { media ->
+                            MediaPreviewScaffold(
+                                media = media,
+                                onOpenMedia = {},
+                                onDeleteMedia = {},
+                                onShareMedia = {},
+                                onClosepreview = {
+                                    onAction(MediaScreenActions.OnClearSelectedMedia)
+                                },
+                            )
+                        }
+                    }
+                },
+            )
         },
     )
 }

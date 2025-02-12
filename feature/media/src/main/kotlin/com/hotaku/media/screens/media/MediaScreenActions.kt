@@ -25,4 +25,6 @@ sealed interface MediaScreenActions {
     data class OnMediaClick(val mediaUi: MediaUi) : MediaScreenActions
 
     data object OnMediaLongClick : MediaScreenActions
+
+    data object OnClearSelectedMedia : MediaScreenActions
 }

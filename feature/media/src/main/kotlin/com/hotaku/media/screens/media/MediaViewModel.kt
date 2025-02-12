@@ -14,10 +14,12 @@ import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_domain.usecase.SyncMediaUseCase
 import com.hotaku.ui.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -54,6 +56,9 @@ internal class MediaViewModel
                     initialValue = PagingData.empty(),
                 )
 
+        private var viewModelEvents = Channel<MediaScreenEvents>()
+        val mediaScreenEvent = viewModelEvents.receiveAsFlow()
+
         fun onAction(action: MediaScreenActions) {
             when (action) {
                 MediaScreenActions.OnUpdateMedia -> updateMedia()
@@ -67,7 +72,17 @@ internal class MediaViewModel
                 MediaScreenActions.OnClearSelectedAlbum -> clearSelectedAlbum()
                 is MediaScreenActions.OnMediaClick -> openMedia(action.mediaUi)
                 MediaScreenActions.OnMediaLongClick -> {}
+                MediaScreenActions.OnClearSelectedMedia -> clearSelectedMedia()
             }
+        }
+
+        private fun clearSelectedMedia() {
+            mediaScreenViewModelState.update {
+                it.copy(
+                    selectedMedia = null,
+                )
+            }
+            sendEvent(MediaScreenEvents.OnCloseMediaPreview)
         }
 
         private fun openMedia(mediaUi: MediaUi) {
@@ -153,6 +168,12 @@ internal class MediaViewModel
         private fun setQuery(query: String) {
             mediaScreenViewModelState.update {
                 it.copy(query = query)
+            }
+        }
+
+        private fun sendEvent(event: MediaScreenEvents) {
+            viewModelScope.launch {
+                viewModelEvents.send(event)
             }
         }
     }

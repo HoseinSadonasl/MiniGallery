@@ -65,7 +65,7 @@ internal class MediaViewModel
                 MediaScreenActions.OnHideSyncSection -> setyncSectionStateFalse()
                 is MediaScreenActions.OnMimeTypeChange -> setMimeType(action.mimeType)
                 is MediaScreenActions.OnQueryChange -> setQuery(action.query)
-                is MediaScreenActions.OnScrolled -> setScrollState(action.isScrolled)
+                is MediaScreenActions.OnSetTopBarVisibility -> setTopBarVisibility(action.visible)
                 MediaScreenActions.OnCollepseSearch -> setSearchExpanded(false)
                 MediaScreenActions.OnExpandSearch -> setSearchExpanded(true)
                 is MediaScreenActions.OnAlbumSelected -> onAlbumSelected(action.album)
@@ -117,10 +117,10 @@ internal class MediaViewModel
             }
         }
 
-        private fun setScrollState(scrolled: Boolean) {
+        private fun setTopBarVisibility(visibility: Boolean) {
             viewModelScope.launch {
                 mediaScreenViewModelState.update {
-                    it.copy(isScrolled = scrolled)
+                    it.copy(isTopBarVisible = visibility)
                 }
             }
         }

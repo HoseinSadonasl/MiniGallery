@@ -103,6 +103,7 @@ private fun MediaScreen(
 
     LaunchedEffect(state.selectedMedia) {
         state.selectedMedia?.let {
+            onAction(MediaScreenActions.OnSetTopBarVisibility(visible = false))
             navigator.navigateTo(ListDetailPaneScaffoldRole.Detail, it)
         }
     }
@@ -118,7 +119,7 @@ private fun MediaScreen(
     }
     DynamicTopAppBarColumn(
         modifier = modifier,
-        show = !state.isScrolled,
+        show = state.isTopBarVisible,
         animatableTopContent = {
             TopAppBar(
                 title = stringResource(R.string.home_screentop_bar_title_all_media),
@@ -163,7 +164,7 @@ private fun MediaScreen(
                                     modifier = Modifier.weight(1f),
                                     pagingMediaItems = pagingMediaItems,
                                     onScrolled = { scrolled ->
-                                        onAction(MediaScreenActions.OnScrolled(isScrolled = scrolled))
+                                        onAction(MediaScreenActions.OnSetTopBarVisibility(visible = !scrolled))
                                     },
                                     onItemClick = { item ->
                                         onAction(MediaScreenActions.OnMediaClick(item))

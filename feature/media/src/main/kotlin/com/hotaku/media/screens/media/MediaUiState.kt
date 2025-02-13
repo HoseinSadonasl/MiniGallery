@@ -6,7 +6,7 @@ import com.hotaku.media.model.MediaUi
 data class MediaUiState(
     val isSearchExpanded: Boolean = false,
     val showSyncSection: Boolean = true,
-    val isScrolled: Boolean = true,
+    val isTopBarVisible: Boolean = true,
     val selectedAlbum: AlbumUi? = null,
     val selectedMedia: MediaUi? = null,
     val mimeType: String = "",

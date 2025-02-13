@@ -12,7 +12,7 @@ sealed interface MediaScreenActions {
 
     data object OnHideSyncSection : MediaScreenActions
 
-    data class OnScrolled(val isScrolled: Boolean) : MediaScreenActions
+    data class OnSetTopBarVisibility(val visible: Boolean) : MediaScreenActions
 
     data object OnExpandSearch : MediaScreenActions
 

@@ -27,4 +27,10 @@ sealed interface MediaScreenActions {
     data object OnMediaLongClick : MediaScreenActions
 
     data object OnClearSelectedMedia : MediaScreenActions
+
+    data object OnOpenMedia : MediaScreenActions
+
+    data object OnShareMedia : MediaScreenActions
+
+    data object OnDeleteMedia : MediaScreenActions
 }

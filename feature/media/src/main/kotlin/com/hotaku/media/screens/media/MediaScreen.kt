@@ -18,6 +18,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,6 +34,7 @@ import com.hotaku.media.components.MediaPreviewScaffold
 import com.hotaku.media.components.MediaSyncLabel
 import com.hotaku.media.components.OnScreenMessage
 import com.hotaku.media.model.MediaUi
+import com.hotaku.media.utils.shareMedia
 import com.hotaku.ui.UiState
 import com.hotaku.ui.asString
 import com.hotaku.ui.conposables.AnimatedSearchTextField
@@ -77,6 +79,8 @@ private fun MediaScreen(
 
     val focusManager = LocalFocusManager.current
 
+    val context = LocalContext.current
+
     val navigator = rememberListDetailPaneScaffoldNavigator<MediaUi>()
 
     BackHandler(navigator.canNavigateBack()) {
@@ -113,6 +117,9 @@ private fun MediaScreen(
             when (event) {
                 MediaScreenEvents.OnCloseMediaPreview -> {
                     navigator.navigateBack()
+                }
+                MediaScreenEvents.OnShareMedia -> {
+                    state.selectedMedia?.let { it.shareMedia(context = context) }
                 }
             }
         }
@@ -182,9 +189,15 @@ private fun MediaScreen(
                         navigator.currentDestination?.content?.let { media ->
                             MediaPreviewScaffold(
                                 media = media,
-                                onOpenMedia = {},
-                                onDeleteMedia = {},
-                                onShareMedia = {},
+                                onOpenMedia = {
+                                    onAction(MediaScreenActions.OnOpenMedia)
+                                },
+                                onDeleteMedia = {
+                                    onAction(MediaScreenActions.OnDeleteMedia)
+                                },
+                                onShareMedia = {
+                                    onAction(MediaScreenActions.OnShareMedia)
+                                },
                                 onClosepreview = {
                                     onAction(MediaScreenActions.OnClearSelectedMedia)
                                 },

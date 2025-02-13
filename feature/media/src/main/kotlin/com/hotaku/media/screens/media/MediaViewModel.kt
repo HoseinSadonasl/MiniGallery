@@ -70,10 +70,25 @@ internal class MediaViewModel
                 MediaScreenActions.OnExpandSearch -> setSearchExpanded(true)
                 is MediaScreenActions.OnAlbumSelected -> onAlbumSelected(action.album)
                 MediaScreenActions.OnClearSelectedAlbum -> clearSelectedAlbum()
-                is MediaScreenActions.OnMediaClick -> openMedia(action.mediaUi)
+                is MediaScreenActions.OnMediaClick -> previewMedia(action.mediaUi)
                 MediaScreenActions.OnMediaLongClick -> {}
                 MediaScreenActions.OnClearSelectedMedia -> clearSelectedMedia()
+                MediaScreenActions.OnDeleteMedia -> deleteMedia()
+                MediaScreenActions.OnOpenMedia -> showMedia()
+                MediaScreenActions.OnShareMedia -> shareMedia()
             }
+        }
+
+        private fun deleteMedia() {
+            // TODO("Delete media")
+        }
+
+        private fun showMedia() {
+            // TODO("Show media in a dialog")
+        }
+
+        private fun shareMedia() {
+            sendEvent(MediaScreenEvents.OnShareMedia)
         }
 
         private fun clearSelectedMedia() {
@@ -85,7 +100,7 @@ internal class MediaViewModel
             sendEvent(MediaScreenEvents.OnCloseMediaPreview)
         }
 
-        private fun openMedia(mediaUi: MediaUi) {
+        private fun previewMedia(mediaUi: MediaUi) {
             mediaScreenViewModelState.update {
                 it.copy(
                     selectedMedia = mediaUi,

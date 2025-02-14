@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.hotaku.media.model.MediaUi
 
 @Composable
-fun Uri.asThumbnailImageBitmap(size: Size = Size(320, 320)): ImageBitmap {
+internal fun Uri.asThumbnailImageBitmap(size: Size = Size(320, 320)): ImageBitmap {
     val context = LocalContext.current
     val thumbnail =
         context.contentResolver.loadThumbnail(this, size, null)

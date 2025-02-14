@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
@@ -18,7 +17,6 @@ import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,7 +31,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.feature.media.R
 import com.hotaku.media.model.MediaUi
@@ -45,13 +42,13 @@ import java.time.Instant
 @Composable
 internal fun MediaPreviewScaffold(
     modifier: Modifier = Modifier,
+    isCompact: Boolean,
     media: MediaUi,
     onOpenMedia: () -> Unit,
     onDeleteMedia: () -> Unit,
     onShareMedia: () -> Unit,
     onClosepreview: () -> Unit,
 ) {
-    val isCompact = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
     var showFloatBottomBar by remember { mutableStateOf(true) }
 
     LaunchedEffect(showFloatBottomBar) {
@@ -96,7 +93,7 @@ internal fun MediaPreviewScaffold(
             exit = fadeOut(),
         ) {
             Box(
-                Modifier.fillMaxSize().statusBarsPadding(),
+                Modifier.fillMaxSize(),
             ) {
                 if (isCompact) {
                     IconButton(
@@ -185,6 +182,7 @@ private fun MediapreviewPreview() {
     MiniGalleryTheme {
         MediaPreviewScaffold(
             modifier = Modifier.background(MaterialTheme.colorScheme.background),
+            isCompact = false,
             media =
                 MediaUi(
                     mediaId = 7907,

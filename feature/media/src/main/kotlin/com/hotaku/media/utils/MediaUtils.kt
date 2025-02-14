@@ -4,6 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Size
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
+import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
+import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -28,3 +32,7 @@ internal fun MediaUi.shareMedia(context: Context) {
     val intentToShare = Intent.createChooser(sendIntent, displayName)
     context.startActivity(intentToShare)
 }
+
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+internal fun ThreePaneScaffoldNavigator<*>.isDetailExpanded() =
+    scaffoldValue[ListDetailPaneScaffoldRole.Detail] == PaneAdaptedValue.Expanded

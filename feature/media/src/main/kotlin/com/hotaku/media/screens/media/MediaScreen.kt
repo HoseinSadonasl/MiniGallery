@@ -5,14 +5,16 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.AnimatedPane
-import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
-import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
-import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
+import androidx.compose.material3.adaptive.layout.SupportingPaneScaffold
+import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldRole
+import androidx.compose.material3.adaptive.navigation.rememberSupportingPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,6 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.feature.media.R
 import com.hotaku.media.components.MediaGrid
@@ -81,7 +84,9 @@ private fun MediaScreen(
 
     val context = LocalContext.current
 
-    val navigator = rememberListDetailPaneScaffoldNavigator<MediaUi>()
+    val windowWidth = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
+
+    val navigator = rememberSupportingPaneScaffoldNavigator<MediaUi>()
 
     BackHandler(navigator.canNavigateBack()) {
         onAction(MediaScreenActions.OnClearSelectedMedia)
@@ -108,7 +113,7 @@ private fun MediaScreen(
     LaunchedEffect(state.selectedMedia) {
         state.selectedMedia?.let {
             onAction(MediaScreenActions.OnSetTopBarVisibility(visible = false))
-            navigator.navigateTo(ListDetailPaneScaffoldRole.Detail, it)
+            navigator.navigateTo(ThreePaneScaffoldRole.Secondary, it)
         }
     }
 
@@ -119,7 +124,7 @@ private fun MediaScreen(
                     navigator.navigateBack()
                 }
                 MediaScreenEvents.OnShareMedia -> {
-                    state.selectedMedia?.let { it.shareMedia(context = context) }
+                    state.selectedMedia?.shareMedia(context = context)
                 }
             }
         }
@@ -150,11 +155,10 @@ private fun MediaScreen(
             )
         },
         content = {
-            ListDetailPaneScaffold(
+            SupportingPaneScaffold(
                 directive = navigator.scaffoldDirective,
                 value = navigator.scaffoldValue,
-                modifier = modifier,
-                listPane = {
+                mainPane = {
                     AnimatedPane {
                         Column(
                             Modifier.fillMaxSize(),
@@ -184,10 +188,12 @@ private fun MediaScreen(
                         }
                     }
                 },
-                detailPane = {
+                supportingPane = {
                     AnimatedPane {
                         navigator.currentDestination?.content?.let { media ->
                             MediaPreviewScaffold(
+                                modifier = Modifier.then(if (!state.isTopBarVisible) Modifier.statusBarsPadding() else Modifier),
+                                isCompact = windowWidth == WindowWidthSizeClass.COMPACT,
                                 media = media,
                                 onOpenMedia = {
                                     onAction(MediaScreenActions.OnOpenMedia)

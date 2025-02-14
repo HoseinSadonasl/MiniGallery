@@ -21,6 +21,7 @@ internal class MediaRepositoryImpl
         override fun getMedia(
             mimeType: String,
             query: String,
+            albumName: String,
         ): Flow<PagingData<Media>> =
             Pager(
                 config =
@@ -33,6 +34,7 @@ internal class MediaRepositoryImpl
                     mediaDataSource.getMedia(
                         mimeType = mimeType,
                         query = query,
+                        albumName = albumName,
                     )
                 },
             ).flow.map { data -> data.map { mediaData -> mediaAsDomain.map(mediaData) } }

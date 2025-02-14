@@ -8,5 +8,6 @@ interface MediaRepository {
     fun getMedia(
         mimeType: String,
         query: String,
+        albumName: String,
     ): Flow<PagingData<Media>>
 }

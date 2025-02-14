@@ -14,9 +14,11 @@ internal class GetMediaUseCaseImpl
         override operator fun invoke(
             mimeType: String,
             query: String,
+            albumName: String,
         ): Flow<PagingData<Media>> =
             mediaRepository.getMedia(
                 mimeType = mimeType,
                 query = query,
+                albumName = albumName,
             )
     }

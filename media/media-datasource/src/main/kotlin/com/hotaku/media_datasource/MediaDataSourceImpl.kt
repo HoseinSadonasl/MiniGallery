@@ -16,11 +16,13 @@ internal class MediaDataSourceImpl
         override fun getMedia(
             mimeType: String,
             query: String,
+            albumName: String,
         ): PagingSource<Int, MediaData> =
             MediaPagingSource(
                 mapMediaEntityAsMediaData = mapMediaEntityAsMediaData,
                 mediaDao = mediaDao,
                 mimeType = mimeType,
                 query = query,
+                albumName = albumName,
             )
     }

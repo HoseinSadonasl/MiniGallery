@@ -2,9 +2,11 @@ package com.hotaku.media.screens.albums
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.compose.LazyPagingItems
 import com.hotaku.domain.utils.DataResult
 import com.hotaku.media.mapper.MapAlbumToAlbumUi
 import com.hotaku.media.model.AlbumUi
+import com.hotaku.media.model.MediaUi
 import com.hotaku.media.utils.asUiError
 import com.hotaku.media_domain.usecase.GetAlbumsUseCase
 import com.hotaku.ui.UiState
@@ -41,7 +43,29 @@ internal class AlbumsViewModel
 
         fun onAction(action: AlbumsScreenActions) {
             when (action) {
-                is AlbumsScreenActions.OnAlbumClick -> navigateToMediaScreen(action.album)
+                is AlbumsScreenActions.OnAlbumClick -> getAlbumMedia(action.album)
+                is AlbumsScreenActions.OnOpenAlbum -> onAddMedia(action.media)
+                AlbumsScreenActions.OnCloseAlbum -> closeAlbum()
+            }
+        }
+
+        private fun closeAlbum() {
+            getAlbumMedia(album = null)
+        }
+
+        private fun getAlbumMedia(album: AlbumUi?) {
+            albumsViewModelState.update {
+                it.copy(
+                    selectedAlbum = album,
+                )
+            }
+        }
+
+        private fun onAddMedia(media: LazyPagingItems<MediaUi>?) {
+            albumsViewModelState.update {
+                it.copy(
+                    mediaList = media,
+                )
             }
         }
 
@@ -73,12 +97,6 @@ internal class AlbumsViewModel
                         )
                     }
                 }
-            }
-        }
-
-        private fun navigateToMediaScreen(album: AlbumUi) {
-            viewModelScope.launch {
-                viewModelEvent.send(AlbumsScreenEvents.OnNavigateToWithAlbum(album))
             }
         }
     }

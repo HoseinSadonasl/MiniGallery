@@ -1,5 +1,6 @@
 package com.hotaku.media.screens.albums
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,9 +16,13 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.layout.AnimatedPane
+import androidx.compose.material3.adaptive.layout.SupportingPaneScaffold
+import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldRole
+import androidx.compose.material3.adaptive.navigation.rememberSupportingPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,12 +32,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.feature.media.R
 import com.hotaku.media.components.ImageThumbnail
+import com.hotaku.media.components.MediaGrid
 import com.hotaku.media.components.OnScreenMessage
 import com.hotaku.media.components.VideoThumbnail
 import com.hotaku.media.model.AlbumUi
+import com.hotaku.media.model.MediaUi
 import com.hotaku.media.utils.MediaType
 import com.hotaku.ui.UiState
 import com.hotaku.ui.conposables.DynamicTopAppBarColumn
@@ -44,37 +53,46 @@ import kotlinx.coroutines.flow.collectLatest
 internal fun AlbumsScreen(
     modifier: Modifier = Modifier,
     albumsViewModel: AlbumsViewModel,
-    onNavigateWithAlbum: (AlbumUi) -> Unit,
 ) {
-    val state by albumsViewModel.albumsState.collectAsState()
+    AlbumsScreen(
+        modifier = modifier,
+        albumsViewModel = albumsViewModel,
+        onAction = albumsViewModel::onAction,
+    )
+}
 
-    LaunchedEffect(state.albums) {
-        println(state.albums.toString())
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+@Composable
+private fun AlbumsScreen(
+    modifier: Modifier = Modifier,
+    albumsViewModel: AlbumsViewModel,
+    onAction: (AlbumsScreenActions) -> Unit,
+) {
+    val state by albumsViewModel.albumsState.collectAsStateWithLifecycle()
+
+    val navigator = rememberSupportingPaneScaffoldNavigator<LazyPagingItems<MediaUi>>()
+
+    BackHandler(navigator.canNavigateBack()) {
+        onAction(AlbumsScreenActions.OnCloseAlbum)
+        navigator.navigateBack()
     }
 
     LaunchedEffect(albumsViewModel.event) {
         albumsViewModel.event.collectLatest { event ->
             when (event) {
-                is AlbumsScreenEvents.OnNavigateToWithAlbum -> {
-                    onNavigateWithAlbum(event.albumUi)
+                is AlbumsScreenEvents.OnNavigateToMediaPane -> {
+                    navigator.navigateTo(ThreePaneScaffoldRole.Secondary, state.mediaList)
                 }
             }
         }
     }
 
-    AlbumsScreen(
-        modifier = modifier,
-        albumsState = state.albums,
-        onAction = albumsViewModel::onAction,
-    )
-}
+    LaunchedEffect(state.selectedAlbum) {
+        if (state.selectedAlbum != null && state.mediaList != null) {
+            navigator.navigateTo(ThreePaneScaffoldRole.Secondary, state.mediaList)
+        }
+    }
 
-@Composable
-private fun AlbumsScreen(
-    modifier: Modifier = Modifier,
-    albumsState: UiState<List<AlbumUi>>,
-    onAction: (AlbumsScreenActions) -> Unit,
-) {
     DynamicTopAppBarColumn(
         modifier = modifier,
         animatableTopContent = {
@@ -83,9 +101,31 @@ private fun AlbumsScreen(
             )
         },
         content = {
-            AlbumsGridList(
-                albumsListState = albumsState,
-                onAction = onAction,
+            SupportingPaneScaffold(
+                directive = navigator.scaffoldDirective,
+                value = navigator.scaffoldValue,
+                mainPane = {
+                    AnimatedPane {
+                        AlbumsGridList(
+                            albumsListState = state.albums,
+                            onAction = onAction,
+                        )
+                    }
+                },
+                supportingPane = {
+                    AnimatedPane {
+                        navigator.currentDestination?.content?.let { mediaPagingItems ->
+                            MediaGrid(
+                                pagingMediaItems = mediaPagingItems,
+                                onScrolled = { scrolled ->
+                                },
+                                onItemClick = { media ->
+                                },
+                                onItemLongClick = {},
+                            )
+                        }
+                    }
+                },
             )
         },
     )

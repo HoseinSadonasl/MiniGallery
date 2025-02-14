@@ -7,5 +7,6 @@ interface MediaDataSource {
     fun getMedia(
         mimeType: String,
         query: String,
+        albumName: String,
     ): PagingSource<Int, MediaData>
 }

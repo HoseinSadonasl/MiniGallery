@@ -8,5 +8,6 @@ interface GetMediaUseCase {
     operator fun invoke(
         mimeType: String,
         query: String,
+        albumName: String,
     ): Flow<PagingData<Media>>
 }

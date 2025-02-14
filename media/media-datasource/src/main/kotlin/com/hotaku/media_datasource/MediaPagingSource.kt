@@ -13,6 +13,7 @@ internal class MediaPagingSource(
     private val mediaDao: MediaDao,
     private val mimeType: String,
     private val query: String,
+    private val albumName: String,
 ) : PagingSource<Int, MediaData>() {
     override fun getRefreshKey(state: PagingState<Int, MediaData>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
@@ -29,6 +30,7 @@ internal class MediaPagingSource(
             mediaDao.getAll(
                 query = query.takeIf { it.isNotEmpty() },
                 mimeType = mimeType.takeIf { it.isNotEmpty() },
+                albumName = albumName.takeIf { it.isNotEmpty() },
                 limit = params.loadSize,
                 offset = page * params.loadSize,
             ).map { mapMediaEntityAsMediaData.map(it) }

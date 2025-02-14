@@ -18,9 +18,7 @@ sealed interface MediaScreenActions {
 
     data object OnCollepseSearch : MediaScreenActions
 
-    data class OnAlbumSelected(val album: AlbumUi) : MediaScreenActions
-
-    data object OnClearSelectedAlbum : MediaScreenActions
+    data class OnAlbumSelected(val album: AlbumUi?) : MediaScreenActions
 
     data class OnMediaClick(val mediaUi: MediaUi) : MediaScreenActions
 

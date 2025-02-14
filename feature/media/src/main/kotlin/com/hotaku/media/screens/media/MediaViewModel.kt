@@ -69,7 +69,6 @@ internal class MediaViewModel
                 MediaScreenActions.OnCollepseSearch -> setSearchExpanded(false)
                 MediaScreenActions.OnExpandSearch -> setSearchExpanded(true)
                 is MediaScreenActions.OnAlbumSelected -> onAlbumSelected(action.album)
-                MediaScreenActions.OnClearSelectedAlbum -> clearSelectedAlbum()
                 is MediaScreenActions.OnMediaClick -> previewMedia(action.mediaUi)
                 MediaScreenActions.OnMediaLongClick -> {}
                 MediaScreenActions.OnClearSelectedMedia -> clearSelectedMedia()
@@ -108,15 +107,7 @@ internal class MediaViewModel
             }
         }
 
-        private fun clearSelectedAlbum() {
-            mediaScreenViewModelState.update {
-                it.copy(
-                    selectedAlbum = null,
-                )
-            }
-        }
-
-        private fun onAlbumSelected(album: AlbumUi) {
+        private fun onAlbumSelected(album: AlbumUi?) {
             mediaScreenViewModelState.update {
                 it.copy(
                     selectedAlbum = album,
@@ -166,6 +157,7 @@ internal class MediaViewModel
                 mediaUseCase.invoke(
                     mimeType = mediaScreenViewModelState.value.mimeType,
                     query = mediaScreenViewModelState.value.query,
+                    albumName = mediaScreenViewModelState.value.selectedAlbum?.displayName.orEmpty(),
                 )
                     .cachedIn(viewModelScope)
                     .collect { pagedMedia ->

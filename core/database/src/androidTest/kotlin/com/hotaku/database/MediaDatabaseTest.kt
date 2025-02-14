@@ -113,6 +113,32 @@ class MediaDatabaseTest {
         }
 
     @Test
+    fun get_all_media_with_specified_album_from_database() =
+        runTest {
+            val mediaList =
+                listOf(
+                    fakeMediaEntity(
+                        mediaId = "100",
+                        mediaName = "SampleName1",
+                        millis = now.toString(),
+                        mimeType = "Image",
+                    ),
+                    fakeMediaEntity(
+                        mediaId = "200",
+                        mediaName = "SampleName2",
+                        millis = now.toString(),
+                        mimeType = "Video",
+                    ),
+                )
+
+            dao.insertAll(media = mediaList)
+
+            val savedMediaList = dao.getAll(query = "SampleName1", limit = 2, offset = 0)
+
+            Truth.assertThat(savedMediaList.first().bucketDisplayName).isEqualTo(mediaList.first().bucketDisplayName)
+        }
+
+    @Test
     fun getAllUris_shouldReturnAllExistingUrils() =
         runTest {
             val mediaList =

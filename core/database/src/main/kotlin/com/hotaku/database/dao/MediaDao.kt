@@ -15,12 +15,14 @@ interface MediaDao {
         "SELECT * FROM media \n" +
             "WHERE (displayName LIKE '%' || :query || '%' OR :query IS NULL) " +
             "AND (mimeType = :mimeType OR :mimeType IS NULL) " +
+            "AND (bucketDisplayName LIKE '%' || :albumName || '%' OR :albumName IS NULL) " +
             "ORDER BY dateModified DESC " +
             "LIMIT :limit OFFSET :offset",
     )
     suspend fun getAll(
         query: String? = null,
         mimeType: String? = null,
+        albumName: String? = null,
         limit: Int,
         offset: Int,
     ): List<MediaEntity>

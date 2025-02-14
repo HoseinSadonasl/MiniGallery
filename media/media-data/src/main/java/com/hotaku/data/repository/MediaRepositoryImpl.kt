@@ -5,18 +5,24 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.hotaku.data.datasource.MediaDataSource
+import com.hotaku.data.datasource.ProviderDataSource
+import com.hotaku.data.mapper.MapMediaAsData
 import com.hotaku.data.mapper.MapMediaAsDomain
 import com.hotaku.media_domain.model.Media
 import com.hotaku.media_domain.repository.MediaRepository
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 internal class MediaRepositoryImpl
     @Inject
     constructor(
         private val mediaDataSource: MediaDataSource,
+        private val providerDataSource: ProviderDataSource,
         private val mediaAsDomain: MapMediaAsDomain,
+        private val mapMediaAsData: MapMediaAsData,
     ) : MediaRepository {
         override fun getMedia(
             mimeType: String,
@@ -38,6 +44,18 @@ internal class MediaRepositoryImpl
                     )
                 },
             ).flow.map { data -> data.map { mediaData -> mediaAsDomain.map(mediaData) } }
+
+        override suspend fun updateMedia(media: Media): Boolean =
+            withContext(NonCancellable) {
+                mapMediaAsData.map(media).let { mediaData ->
+                    providerDataSource.updateMedia(media = mediaData).getOrDefault(defaultValue = false)
+                }
+            }
+
+        override suspend fun deleteMediaById(mediaUriString: String): Boolean =
+            withContext(NonCancellable) {
+                providerDataSource.deleteMediaByUri(mediaUriString = mediaUriString).getOrDefault(defaultValue = false)
+            }
 
         companion object {
             private const val INITIAL_LOAD_SIZE = 40

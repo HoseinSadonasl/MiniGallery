@@ -10,4 +10,8 @@ interface MediaRepository {
         query: String,
         albumName: String,
     ): Flow<PagingData<Media>>
+
+    suspend fun updateMedia(media: Media): Boolean
+
+    suspend fun deleteMediaById(mediaUriString: String): Boolean
 }

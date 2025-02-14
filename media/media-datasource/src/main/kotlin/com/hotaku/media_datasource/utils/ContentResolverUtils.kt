@@ -2,9 +2,11 @@ package com.hotaku.media_datasource.utils
 
 import android.content.ContentResolver
 import android.content.ContentUris
+import android.content.ContentValues
 import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
+import androidx.core.net.toUri
 import com.hotaku.data.model.MediaData
 
 fun ContentResolver.queryMedia(
@@ -57,3 +59,24 @@ fun Cursor.processCursor(): List<MediaData> {
     }
     return mediaList
 }
+
+internal fun ContentResolver.updateMedia(media: MediaData): Result<Boolean> =
+    runCatching {
+        update(
+            media.uriString.toUri(),
+            media.toContentValues(),
+            "${MediaStore.Files.FileColumns._ID} LIKE ?",
+            null,
+        ) == 1
+    }
+
+internal fun ContentResolver.deleteMedia(mediaUri: String): Result<Boolean> =
+    runCatching {
+        delete(mediaUri.toUri(), null, null) == 1
+    }
+
+private fun MediaData.toContentValues(): ContentValues? =
+    ContentValues().apply {
+        put(MediaStore.Files.FileColumns.DISPLAY_NAME, displayName)
+        put(MediaStore.Files.FileColumns.MIME_TYPE, mimeType)
+    }

@@ -45,17 +45,19 @@ internal class MediaRepositoryImpl
                 },
             ).flow.map { data -> data.map { mediaData -> mediaAsDomain.map(mediaData) } }
 
-        override suspend fun updateMedia(media: Media): Boolean =
+        override suspend fun updateMedia(media: Media) {
             withContext(NonCancellable) {
                 mapMediaAsData.map(media).let { mediaData ->
-                    providerDataSource.updateMedia(media = mediaData).getOrDefault(defaultValue = false)
+                    providerDataSource.updateMedia(media = mediaData).getOrThrow()
                 }
             }
+        }
 
-        override suspend fun deleteMediaById(mediaUriString: String): Boolean =
+        override suspend fun deleteMediaById(mediaUriString: String) {
             withContext(NonCancellable) {
-                providerDataSource.deleteMediaByUri(mediaUriString = mediaUriString).getOrDefault(defaultValue = false)
+                providerDataSource.deleteMediaByUri(mediaUriString = mediaUriString).getOrThrow()
             }
+        }
 
         companion object {
             private const val INITIAL_LOAD_SIZE = 40

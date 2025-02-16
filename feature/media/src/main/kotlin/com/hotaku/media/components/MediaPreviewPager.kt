@@ -6,7 +6,7 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.hotaku.media.model.MediaUi
-import com.hotaku.media.screens.media.MediaScreenActions
+import com.hotaku.media.screens.media_list.MediaListScreenActions
 
 @Composable
 internal fun MediaPreviewPager(
@@ -14,7 +14,7 @@ internal fun MediaPreviewPager(
     mediaPagerState: PagerState,
     isCompact: Boolean,
     pagingMediaItems: List<MediaUi>,
-    onAction: (MediaScreenActions) -> Unit,
+    onAction: (MediaListScreenActions) -> Unit,
 ) {
     VerticalPager(
         state = mediaPagerState,
@@ -25,16 +25,16 @@ internal fun MediaPreviewPager(
             isCompact = isCompact,
             media = pagingMediaItems[page],
             onOpenMedia = {
-                onAction(MediaScreenActions.OnOpenMedia)
+                onAction(MediaListScreenActions.OnOpenMediaList)
             },
             onDeleteMedia = {
-                onAction(MediaScreenActions.OnDeleteMedia)
+                onAction(MediaListScreenActions.OnDeleteMediaList)
             },
             onShareMedia = {
-                onAction(MediaScreenActions.OnShareMedia)
+                onAction(MediaListScreenActions.OnShareMediaList)
             },
             onClosepreview = {
-                onAction(MediaScreenActions.OnClearSelectedMedia)
+                onAction(MediaListScreenActions.OnClearSelectedMediaList)
             },
         )
     }

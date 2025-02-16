@@ -1,11 +1,11 @@
-package com.hotaku.media.screens.media
+package com.hotaku.media.screens.media_list
 
 import android.os.Parcelable
 import com.hotaku.media.model.AlbumUi
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class MediaUiState(
+data class MediaListUiState(
     val isSearchExpanded: Boolean = false,
     val showSyncSection: Boolean = true,
     val isTopBarVisible: Boolean = true,

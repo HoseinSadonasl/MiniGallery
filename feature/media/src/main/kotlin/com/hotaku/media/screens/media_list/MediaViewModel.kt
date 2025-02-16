@@ -1,4 +1,4 @@
-package com.hotaku.media.screens.media
+package com.hotaku.media.screens.media_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -33,8 +33,8 @@ internal class MediaViewModel
         private val syncMediaUseCase: SyncMediaUseCase,
         private val mediaUseCase: GetMediaUseCase,
     ) : ViewModel() {
-        private var mediaScreenViewModelState = MutableStateFlow(MediaUiState())
-        val mediaScreenUiState: StateFlow<MediaUiState> = mediaScreenViewModelState
+        private var mediaScreenViewModelState = MutableStateFlow(MediaListUiState())
+        val mediaScreenUiState: StateFlow<MediaListUiState> = mediaScreenViewModelState
 
         private var synchronizeViewModelState = MutableStateFlow<UiState<Int>>(UiState.Loading())
         val synchronizeUiState =
@@ -56,25 +56,25 @@ internal class MediaViewModel
                     initialValue = PagingData.empty(),
                 )
 
-        private var viewModelEvents = Channel<MediaScreenEvents>()
+        private var viewModelEvents = Channel<MediaListScreenEvents>()
         val mediaScreenEvent = viewModelEvents.receiveAsFlow()
 
-        fun onAction(action: MediaScreenActions) {
+        fun onAction(action: MediaListScreenActions) {
             when (action) {
-                MediaScreenActions.OnUpdateMedia -> updateMedia()
-                MediaScreenActions.OnHideSyncSection -> setyncSectionStateFalse()
-                is MediaScreenActions.OnMimeTypeChange -> setMimeType(action.mimeType)
-                is MediaScreenActions.OnQueryChange -> setQuery(action.query)
-                is MediaScreenActions.OnSetTopBarVisibility -> setTopBarVisibility(action.visible)
-                MediaScreenActions.OnCollepseSearch -> setSearchExpanded(false)
-                MediaScreenActions.OnExpandSearch -> setSearchExpanded(true)
-                is MediaScreenActions.OnAlbumSelected -> onAlbumSelected(action.album)
-                is MediaScreenActions.OnMediaClick -> previewMedia(action.mediaItemIndex)
-                MediaScreenActions.OnMediaLongClick -> {}
-                MediaScreenActions.OnClearSelectedMedia -> clearSelectedMedia()
-                MediaScreenActions.OnDeleteMedia -> deleteMedia()
-                MediaScreenActions.OnOpenMedia -> showMedia()
-                MediaScreenActions.OnShareMedia -> shareMedia()
+                MediaListScreenActions.OnUpdateMediaList -> updateMedia()
+                MediaListScreenActions.OnHideSyncSection -> setyncSectionStateFalse()
+                is MediaListScreenActions.OnMimeTypeChange -> setMimeType(action.mimeType)
+                is MediaListScreenActions.OnQueryChange -> setQuery(action.query)
+                is MediaListScreenActions.OnSetTopBarVisibility -> setTopBarVisibility(action.visible)
+                MediaListScreenActions.OnCollepseSearch -> setSearchExpanded(false)
+                MediaListScreenActions.OnExpandSearch -> setSearchExpanded(true)
+                is MediaListScreenActions.OnAlbumSelected -> onAlbumSelected(action.album)
+                is MediaListScreenActions.OnMediaListClick -> previewMedia(action.mediaItemIndex)
+                MediaListScreenActions.OnMediaListLongClick -> {}
+                MediaListScreenActions.OnClearSelectedMediaList -> clearSelectedMedia()
+                MediaListScreenActions.OnDeleteMediaList -> deleteMedia()
+                MediaListScreenActions.OnOpenMediaList -> showMedia()
+                MediaListScreenActions.OnShareMediaList -> shareMedia()
             }
         }
 
@@ -87,7 +87,7 @@ internal class MediaViewModel
         }
 
         private fun shareMedia() {
-            sendEvent(MediaScreenEvents.OnShareMedia)
+            sendEvent(MediaListScreenEvents.OnShareMediaList)
         }
 
         private fun clearSelectedMedia() {
@@ -96,7 +96,7 @@ internal class MediaViewModel
                     selectedMediaIndex = null,
                 )
             }
-            sendEvent(MediaScreenEvents.OnCloseMediaPreview)
+            sendEvent(MediaListScreenEvents.OnCloseMediaListPreview)
         }
 
         private fun previewMedia(mediaItemIndex: Int) {
@@ -178,7 +178,7 @@ internal class MediaViewModel
             }
         }
 
-        private fun sendEvent(event: MediaScreenEvents) {
+        private fun sendEvent(event: MediaListScreenEvents) {
             viewModelScope.launch {
                 viewModelEvents.send(event)
             }

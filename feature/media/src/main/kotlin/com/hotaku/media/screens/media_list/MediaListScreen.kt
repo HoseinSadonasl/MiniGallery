@@ -1,4 +1,4 @@
-package com.hotaku.media.screens.media
+package com.hotaku.media.screens.media_list
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -50,12 +50,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-internal fun MediaScreen(
+internal fun MediaListScreen(
     modifier: Modifier = Modifier,
     mediaViewModel: MediaViewModel,
     onShowSnackBar: suspend (String) -> Unit,
 ) {
-    MediaScreen(
+    MediaListScreen(
         modifier = modifier,
         screenEvents = mediaViewModel.mediaScreenEvent,
         screenState = mediaViewModel.mediaScreenUiState,
@@ -68,16 +68,16 @@ internal fun MediaScreen(
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-private fun MediaScreen(
+private fun MediaListScreen(
     modifier: Modifier = Modifier,
-    screenEvents: Flow<MediaScreenEvents>,
-    screenState: StateFlow<MediaUiState>,
+    screenEvents: Flow<MediaListScreenEvents>,
+    screenState: StateFlow<MediaListUiState>,
     pagingMediaItemsState: StateFlow<PagingData<MediaUi>>,
     synchronizeState: StateFlow<UiState<Int>>,
-    onAction: (MediaScreenActions) -> Unit,
+    onAction: (MediaListScreenActions) -> Unit,
     onShowSnackBar: suspend (String) -> Unit,
 ) {
-    val state: MediaUiState by screenState.collectAsStateWithLifecycle()
+    val state: MediaListUiState by screenState.collectAsStateWithLifecycle()
     val synchronize: UiState<Int> by synchronizeState.collectAsStateWithLifecycle()
     val pagingMediaItems: LazyPagingItems<MediaUi> = pagingMediaItemsState.collectAsLazyPagingItems()
 
@@ -95,30 +95,30 @@ private fun MediaScreen(
         )
 
     BackHandler(navigator.canNavigateBack()) {
-        onAction(MediaScreenActions.OnClearSelectedMedia)
+        onAction(MediaListScreenActions.OnClearSelectedMediaList)
     }
 
     BackHandler(state.isSearchExpanded) {
         focusManager.clearFocus()
-        onAction(MediaScreenActions.OnQueryChange(query = ""))
-        onAction(MediaScreenActions.OnCollepseSearch)
+        onAction(MediaListScreenActions.OnQueryChange(query = ""))
+        onAction(MediaListScreenActions.OnCollepseSearch)
     }
 
     LaunchedEffect(state.query) {
-        onAction(MediaScreenActions.OnUpdateMedia)
+        onAction(MediaListScreenActions.OnUpdateMediaList)
     }
 
     LaunchedEffect(synchronize) {
         if (synchronize is UiState.Success) {
             pagingMediaItems.refresh()
             delay(3000)
-            onAction(MediaScreenActions.OnHideSyncSection)
+            onAction(MediaListScreenActions.OnHideSyncSection)
         }
     }
 
     LaunchedEffect(state.selectedMediaIndex) {
         state.selectedMediaIndex?.let {
-            onAction(MediaScreenActions.OnSetTopBarVisibility(visible = false))
+            onAction(MediaListScreenActions.OnSetTopBarVisibility(visible = false))
             navigator.navigateTo(ThreePaneScaffoldRole.Secondary, it)
             mediaPagerState.scrollToPage(it)
         }
@@ -127,10 +127,10 @@ private fun MediaScreen(
     LaunchedEffect(screenEvents) {
         screenEvents.collectLatest { event ->
             when (event) {
-                MediaScreenEvents.OnCloseMediaPreview -> {
+                MediaListScreenEvents.OnCloseMediaListPreview -> {
                     navigator.navigateBack()
                 }
-                MediaScreenEvents.OnShareMedia -> {
+                MediaListScreenEvents.OnShareMediaList -> {
                     state.selectedMediaIndex?.let { pagingMediaItems[it]?.shareMedia(context = context) }
                 }
             }
@@ -147,14 +147,14 @@ private fun MediaScreen(
                         expanded = state.isSearchExpanded,
                         onIconClick = {
                             if (state.isSearchExpanded && state.query.isEmpty()) {
-                                onAction(MediaScreenActions.OnCollepseSearch)
+                                onAction(MediaListScreenActions.OnCollepseSearch)
                             } else {
-                                onAction(MediaScreenActions.OnExpandSearch)
+                                onAction(MediaListScreenActions.OnExpandSearch)
                             }
                         },
                         value = state.query,
                         onValueChange = { query ->
-                            onAction(MediaScreenActions.OnQueryChange(query = query))
+                            onAction(MediaListScreenActions.OnQueryChange(query = query))
                         },
                         placeHolderText = stringResource(R.string.home_screen_search_media),
                     )
@@ -182,13 +182,13 @@ private fun MediaScreen(
                                     modifier = Modifier.weight(1f),
                                     pagingMediaItems = pagingMediaItems,
                                     onScrolled = { scrolled ->
-                                        onAction(MediaScreenActions.OnSetTopBarVisibility(visible = !scrolled))
+                                        onAction(MediaListScreenActions.OnSetTopBarVisibility(visible = !scrolled))
                                     },
                                     onItemClick = { itemIndex ->
-                                        onAction(MediaScreenActions.OnMediaClick(itemIndex))
+                                        onAction(MediaListScreenActions.OnMediaListClick(itemIndex))
                                     },
                                     onItemLongClick = {
-                                        onAction(MediaScreenActions.OnMediaLongClick)
+                                        onAction(MediaListScreenActions.OnMediaListLongClick)
                                     },
                                 )
                             }

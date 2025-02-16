@@ -17,9 +17,9 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.hotaku.media.screens.albums.AlbumsScreen
 import com.hotaku.media.screens.albums.AlbumsScreenActions
 import com.hotaku.media.screens.albums.AlbumsViewModel
-import com.hotaku.media.screens.media.MediaScreen
-import com.hotaku.media.screens.media.MediaScreenActions
-import com.hotaku.media.screens.media.MediaViewModel
+import com.hotaku.media.screens.media_list.MediaListScreen
+import com.hotaku.media.screens.media_list.MediaListScreenActions
+import com.hotaku.media.screens.media_list.MediaViewModel
 import com.hotaku.media.screens.permissions.PermissionsScreen
 import kotlinx.serialization.Serializable
 
@@ -57,7 +57,7 @@ object MediaGraph {
                         navController = navHostController,
                     )
 
-                MediaScreen(
+                MediaListScreen(
                     mediaViewModel = mediaViewModel,
                     onShowSnackBar = { onShowSnackBar(it) },
                 )
@@ -76,13 +76,13 @@ object MediaGraph {
 
                 LaunchedEffect(mediaScreenUiState.selectedAlbum) {
                     mediaViewModel.onAction(
-                        MediaScreenActions.OnUpdateMedia,
+                        MediaListScreenActions.OnUpdateMediaList,
                     )
                 }
 
                 LaunchedEffect(albumsUiState.selectedAlbum) {
                     mediaViewModel.onAction(
-                        MediaScreenActions.OnAlbumSelected(
+                        MediaListScreenActions.OnAlbumSelected(
                             album = albumsUiState.selectedAlbum,
                         ),
                     )

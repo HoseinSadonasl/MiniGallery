@@ -36,7 +36,7 @@ internal fun MediaGrid(
     modifier: Modifier = Modifier,
     pagingMediaItems: LazyPagingItems<MediaUi>,
     onScrolled: (Boolean) -> Unit,
-    onItemClick: (MediaUi) -> Unit,
+    onItemClick: (Int) -> Unit,
     onItemLongClick: () -> Unit,
 ) {
     val loadState: LoadState = pagingMediaItems.loadState.refresh
@@ -74,7 +74,7 @@ private fun MediaGridList(
     lazyGridState: LazyGridState,
     loadState: LoadState,
     items: LazyPagingItems<MediaUi>,
-    onItemClick: (MediaUi) -> Unit,
+    onItemClick: (Int) -> Unit,
     onItemLongClick: () -> Unit,
 ) {
     LazyVerticalGrid(
@@ -106,7 +106,7 @@ private fun MediaGridList(
 @OptIn(ExperimentalFoundationApi::class)
 private fun LazyGridScope.mediaItems(
     items: LazyPagingItems<MediaUi>,
-    onItemClick: (MediaUi) -> Unit,
+    onItemClick: (Int) -> Unit,
     onItemLongClick: () -> Unit,
 ) {
     items(
@@ -121,7 +121,7 @@ private fun LazyGridScope.mediaItems(
                         .aspectRatio(1f)
                         .background(MaterialTheme.colorScheme.surfaceDim)
                         .combinedClickable(
-                            onClick = { items[index]?.let { onItemClick(it) } },
+                            onClick = { items[index]?.let { onItemClick(index) } },
                             onLongClick = onItemLongClick,
                         ),
             ) {

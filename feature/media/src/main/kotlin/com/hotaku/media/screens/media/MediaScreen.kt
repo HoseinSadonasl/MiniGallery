@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Warning
@@ -33,7 +34,7 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.feature.media.R
 import com.hotaku.media.components.MediaGrid
-import com.hotaku.media.components.MediaPreviewScaffold
+import com.hotaku.media.components.MediaPreviewPager
 import com.hotaku.media.components.MediaSyncLabel
 import com.hotaku.media.components.OnScreenMessage
 import com.hotaku.media.model.MediaUi
@@ -86,7 +87,12 @@ private fun MediaScreen(
 
     val windowWidth = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
 
-    val navigator = rememberSupportingPaneScaffoldNavigator<MediaUi>()
+    val navigator = rememberSupportingPaneScaffoldNavigator<Int>()
+
+    val mediaPagerState =
+        rememberPagerState(
+            pageCount = { pagingMediaItems.itemCount },
+        )
 
     BackHandler(navigator.canNavigateBack()) {
         onAction(MediaScreenActions.OnClearSelectedMedia)
@@ -110,10 +116,11 @@ private fun MediaScreen(
         }
     }
 
-    LaunchedEffect(state.selectedMedia) {
-        state.selectedMedia?.let {
+    LaunchedEffect(state.selectedMediaIndex) {
+        state.selectedMediaIndex?.let {
             onAction(MediaScreenActions.OnSetTopBarVisibility(visible = false))
             navigator.navigateTo(ThreePaneScaffoldRole.Secondary, it)
+            mediaPagerState.scrollToPage(it)
         }
     }
 
@@ -124,7 +131,7 @@ private fun MediaScreen(
                     navigator.navigateBack()
                 }
                 MediaScreenEvents.OnShareMedia -> {
-                    state.selectedMedia?.shareMedia(context = context)
+                    state.selectedMediaIndex?.let { pagingMediaItems[it]?.shareMedia(context = context) }
                 }
             }
         }
@@ -177,8 +184,8 @@ private fun MediaScreen(
                                     onScrolled = { scrolled ->
                                         onAction(MediaScreenActions.OnSetTopBarVisibility(visible = !scrolled))
                                     },
-                                    onItemClick = { item ->
-                                        onAction(MediaScreenActions.OnMediaClick(item))
+                                    onItemClick = { itemIndex ->
+                                        onAction(MediaScreenActions.OnMediaClick(itemIndex))
                                     },
                                     onItemLongClick = {
                                         onAction(MediaScreenActions.OnMediaLongClick)
@@ -191,22 +198,16 @@ private fun MediaScreen(
                 supportingPane = {
                     AnimatedPane {
                         navigator.currentDestination?.content?.let { media ->
-                            MediaPreviewScaffold(
-                                modifier = Modifier.then(if (!state.isTopBarVisible) Modifier.statusBarsPadding() else Modifier),
+                            MediaPreviewPager(
+                                modifier =
+                                    Modifier
+                                        .then(
+                                            if (!state.isTopBarVisible) Modifier.statusBarsPadding() else Modifier,
+                                        ),
+                                mediaPagerState = mediaPagerState,
                                 isCompact = windowWidth == WindowWidthSizeClass.COMPACT,
-                                media = media,
-                                onOpenMedia = {
-                                    onAction(MediaScreenActions.OnOpenMedia)
-                                },
-                                onDeleteMedia = {
-                                    onAction(MediaScreenActions.OnDeleteMedia)
-                                },
-                                onShareMedia = {
-                                    onAction(MediaScreenActions.OnShareMedia)
-                                },
-                                onClosepreview = {
-                                    onAction(MediaScreenActions.OnClearSelectedMedia)
-                                },
+                                pagingMediaItems = pagingMediaItems.itemSnapshotList.items,
+                                onAction = onAction,
                             )
                         }
                     }

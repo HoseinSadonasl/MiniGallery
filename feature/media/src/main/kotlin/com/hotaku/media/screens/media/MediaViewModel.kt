@@ -69,7 +69,7 @@ internal class MediaViewModel
                 MediaScreenActions.OnCollepseSearch -> setSearchExpanded(false)
                 MediaScreenActions.OnExpandSearch -> setSearchExpanded(true)
                 is MediaScreenActions.OnAlbumSelected -> onAlbumSelected(action.album)
-                is MediaScreenActions.OnMediaClick -> previewMedia(action.mediaUi)
+                is MediaScreenActions.OnMediaClick -> previewMedia(action.mediaItemIndex)
                 MediaScreenActions.OnMediaLongClick -> {}
                 MediaScreenActions.OnClearSelectedMedia -> clearSelectedMedia()
                 MediaScreenActions.OnDeleteMedia -> deleteMedia()
@@ -93,16 +93,16 @@ internal class MediaViewModel
         private fun clearSelectedMedia() {
             mediaScreenViewModelState.update {
                 it.copy(
-                    selectedMedia = null,
+                    selectedMediaIndex = null,
                 )
             }
             sendEvent(MediaScreenEvents.OnCloseMediaPreview)
         }
 
-        private fun previewMedia(mediaUi: MediaUi) {
+        private fun previewMedia(mediaItemIndex: Int) {
             mediaScreenViewModelState.update {
                 it.copy(
-                    selectedMedia = mediaUi,
+                    selectedMediaIndex = mediaItemIndex,
                 )
             }
         }

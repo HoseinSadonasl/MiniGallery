@@ -1,7 +1,6 @@
 package com.hotaku.media.screens.media
 
 import com.hotaku.media.model.AlbumUi
-import com.hotaku.media.model.MediaUi
 
 sealed interface MediaScreenActions {
     data object OnUpdateMedia : MediaScreenActions
@@ -20,7 +19,7 @@ sealed interface MediaScreenActions {
 
     data class OnAlbumSelected(val album: AlbumUi?) : MediaScreenActions
 
-    data class OnMediaClick(val mediaUi: MediaUi) : MediaScreenActions
+    data class OnMediaClick(val mediaItemIndex: Int) : MediaScreenActions
 
     data object OnMediaLongClick : MediaScreenActions
 

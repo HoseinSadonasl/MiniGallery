@@ -11,7 +11,7 @@ data class MediaUi(
     val uriString: String,
     val displayName: String,
     val mimeType: MediaType,
-    val duration: String,
+    val duration: Int,
     val dateAdded: Instant,
     val dateModified: Instant,
     val size: Long,

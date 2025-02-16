@@ -1,5 +1,6 @@
 package com.hotaku.media.screens.media_list
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -32,6 +33,7 @@ internal class MediaViewModel
         private val mapMediaToMediaUi: MapMediaToMediaUi,
         private val syncMediaUseCase: SyncMediaUseCase,
         private val mediaUseCase: GetMediaUseCase,
+        private val savedStateHandle: SavedStateHandle,
     ) : ViewModel() {
         private var mediaScreenViewModelState = MutableStateFlow(MediaListUiState())
         val mediaScreenUiState: StateFlow<MediaListUiState> = mediaScreenViewModelState
@@ -83,7 +85,7 @@ internal class MediaViewModel
         }
 
         private fun showMedia() {
-            // TODO("Show media in a dialog")
+            savedStateHandle[SELECTED_MEDIA_INDEX] = mediaScreenViewModelState.value.selectedMediaIndex.toString()
         }
 
         private fun shareMedia() {
@@ -182,5 +184,9 @@ internal class MediaViewModel
             viewModelScope.launch {
                 viewModelEvents.send(event)
             }
+        }
+
+        companion object {
+            const val SELECTED_MEDIA_INDEX = ""
         }
     }

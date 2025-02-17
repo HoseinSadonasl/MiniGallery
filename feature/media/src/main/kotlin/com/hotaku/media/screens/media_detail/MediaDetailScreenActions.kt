@@ -3,7 +3,7 @@ package com.hotaku.media.screens.media_detail
 import com.hotaku.media.model.MediaUi
 
 internal sealed interface MediaDetailScreenActions {
-    data class OnAddmediaList(val media: List<MediaUi>) : MediaDetailScreenActions
+    data class OnAddmediaList(val media: List<MediaUi>, val initialIndex: Int) : MediaDetailScreenActions
 
     data object OnOOpenMenu : MediaDetailScreenActions
 

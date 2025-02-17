@@ -5,11 +5,11 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.AnimatedPane
@@ -21,9 +21,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -33,7 +35,9 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.feature.media.R
+import com.hotaku.media.components.MediaDetail
 import com.hotaku.media.components.MediaGrid
+import com.hotaku.media.components.MediaOptions
 import com.hotaku.media.components.MediaPreviewPager
 import com.hotaku.media.components.MediaSyncLabel
 import com.hotaku.media.components.OnScreenMessage
@@ -53,6 +57,7 @@ import kotlinx.coroutines.flow.collectLatest
 internal fun MediaListScreen(
     modifier: Modifier = Modifier,
     mediaViewModel: MediaViewModel,
+    navigateToMediaDetailScreen: (List<MediaUi>) -> Unit,
     onShowSnackBar: suspend (String) -> Unit,
 ) {
     MediaListScreen(
@@ -62,6 +67,7 @@ internal fun MediaListScreen(
         pagingMediaItemsState = mediaViewModel.mediaUiState,
         synchronizeState = mediaViewModel.synchronizeUiState,
         onAction = mediaViewModel::onAction,
+        navigateToMediaDetailScreen = navigateToMediaDetailScreen,
         onShowSnackBar = { onShowSnackBar(it) },
     )
 }
@@ -74,6 +80,7 @@ private fun MediaListScreen(
     screenState: StateFlow<MediaListUiState>,
     pagingMediaItemsState: StateFlow<PagingData<MediaUi>>,
     synchronizeState: StateFlow<UiState<Int>>,
+    navigateToMediaDetailScreen: (List<MediaUi>) -> Unit,
     onAction: (MediaListScreenActions) -> Unit,
     onShowSnackBar: suspend (String) -> Unit,
 ) {
@@ -89,13 +96,8 @@ private fun MediaListScreen(
 
     val navigator = rememberSupportingPaneScaffoldNavigator<Int>()
 
-    val mediaPagerState =
-        rememberPagerState(
-            pageCount = { pagingMediaItems.itemCount },
-        )
-
     BackHandler(navigator.canNavigateBack()) {
-        onAction(MediaListScreenActions.OnClearSelectedMediaList)
+        onAction(MediaListScreenActions.OnClearSelectedMedia)
     }
 
     BackHandler(state.isSearchExpanded) {
@@ -120,7 +122,6 @@ private fun MediaListScreen(
         state.selectedMediaIndex?.let {
             onAction(MediaListScreenActions.OnSetTopBarVisibility(visible = false))
             navigator.navigateTo(ThreePaneScaffoldRole.Secondary, it)
-            mediaPagerState.scrollToPage(it)
         }
     }
 
@@ -132,6 +133,9 @@ private fun MediaListScreen(
                 }
                 MediaListScreenEvents.OnShareMediaList -> {
                     state.selectedMediaIndex?.let { pagingMediaItems[it]?.shareMedia(context = context) }
+                }
+                MediaListScreenEvents.OnNavigateToMediaDetail -> {
+                    navigateToMediaDetailScreen(pagingMediaItems.itemSnapshotList.items)
                 }
             }
         }
@@ -197,18 +201,45 @@ private fun MediaListScreen(
                 },
                 supportingPane = {
                     AnimatedPane {
-                        navigator.currentDestination?.content?.let { media ->
+                        navigator.currentDestination?.content?.let { index ->
                             MediaPreviewPager(
-                                modifier =
-                                    Modifier
-                                        .then(
-                                            if (!state.isTopBarVisible) Modifier.statusBarsPadding() else Modifier,
-                                        ),
-                                mediaPagerState = mediaPagerState,
-                                isCompact = windowWidth == WindowWidthSizeClass.COMPACT,
-                                pagingMediaItems = pagingMediaItems.itemSnapshotList.items,
-                                onAction = onAction,
-                            )
+                                modifier = Modifier,
+                                currentPage = index,
+                                pagerMediaItems = pagingMediaItems.itemSnapshotList.items,
+                            ) { media ->
+                                MediaDetail(
+                                    isCompact = windowWidth == WindowWidthSizeClass.COMPACT,
+                                    media = media,
+                                    onPlayVideo = {
+                                        // play video
+                                    },
+                                    onClose = {
+                                        onAction(MediaListScreenActions.OnClearSelectedMedia)
+                                    },
+                                    floatOptions = {
+                                        MediaOptions(
+                                            onShareMedia = {
+                                                onAction(MediaListScreenActions.OnShareMedia)
+                                            },
+                                            onDeleteMedia = {
+                                                onAction(MediaListScreenActions.OnDeleteMedia)
+                                            },
+                                            extraActions = {
+                                                IconButton(
+                                                    onClick = {
+                                                        onAction(MediaListScreenActions.OnOpenMedia)
+                                                    },
+                                                ) {
+                                                    Icon(
+                                                        imageVector = ImageVector.vectorResource(id = R.drawable.media_preview_full_screen),
+                                                        contentDescription = "Open full screen",
+                                                    )
+                                                }
+                                            },
+                                        )
+                                    },
+                                )
+                            }
                         }
                     }
                 },

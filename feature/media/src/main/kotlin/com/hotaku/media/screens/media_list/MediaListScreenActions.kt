@@ -23,11 +23,11 @@ sealed interface MediaListScreenActions {
 
     data object OnMediaListLongClick : MediaListScreenActions
 
-    data object OnClearSelectedMediaList : MediaListScreenActions
+    data object OnClearSelectedMedia : MediaListScreenActions
 
-    data object OnOpenMediaList : MediaListScreenActions
+    data object OnOpenMedia : MediaListScreenActions
 
-    data object OnShareMediaList : MediaListScreenActions
+    data object OnShareMedia : MediaListScreenActions
 
-    data object OnDeleteMediaList : MediaListScreenActions
+    data object OnDeleteMedia : MediaListScreenActions
 }

@@ -73,10 +73,10 @@ internal class MediaViewModel
                 is MediaListScreenActions.OnAlbumSelected -> onAlbumSelected(action.album)
                 is MediaListScreenActions.OnMediaListClick -> previewMedia(action.mediaItemIndex)
                 MediaListScreenActions.OnMediaListLongClick -> {}
-                MediaListScreenActions.OnClearSelectedMediaList -> clearSelectedMedia()
-                MediaListScreenActions.OnDeleteMediaList -> deleteMedia()
-                MediaListScreenActions.OnOpenMediaList -> showMedia()
-                MediaListScreenActions.OnShareMediaList -> shareMedia()
+                MediaListScreenActions.OnClearSelectedMedia -> clearSelectedMedia()
+                MediaListScreenActions.OnDeleteMedia -> deleteMedia()
+                MediaListScreenActions.OnOpenMedia -> showMedia()
+                MediaListScreenActions.OnShareMedia -> shareMedia()
             }
         }
 
@@ -86,6 +86,7 @@ internal class MediaViewModel
 
         private fun showMedia() {
             savedStateHandle[SELECTED_MEDIA_INDEX] = mediaScreenViewModelState.value.selectedMediaIndex.toString()
+            sendEvent(MediaListScreenEvents.OnNavigateToMediaDetail)
         }
 
         private fun shareMedia() {

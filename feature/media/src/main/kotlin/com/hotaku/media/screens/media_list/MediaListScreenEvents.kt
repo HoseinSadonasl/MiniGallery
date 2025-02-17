@@ -4,4 +4,6 @@ interface MediaListScreenEvents {
     data object OnCloseMediaListPreview : MediaListScreenEvents
 
     object OnShareMediaList : MediaListScreenEvents
+
+    data object OnNavigateToMediaDetail : MediaListScreenEvents
 }

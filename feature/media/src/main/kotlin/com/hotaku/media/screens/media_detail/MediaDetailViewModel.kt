@@ -5,14 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hotaku.media.mapper.MapMediaUiAsMedia
 import com.hotaku.media.model.MediaUi
-import com.hotaku.media.screens.media_list.MediaViewModel
 import com.hotaku.media_domain.usecase.DeleteMediaUseCase
 import com.hotaku.media_domain.usecase.UpdateMediaUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -30,9 +28,6 @@ internal class MediaDetailViewModel
         private var mediaDetailViewModlState = MutableStateFlow(MediaDetailUiState())
         val mediaDetailUiState: StateFlow<MediaDetailUiState> =
             mediaDetailViewModlState
-                .onStart {
-                    getSelectedIndex()
-                }
                 .stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5_000),
@@ -41,7 +36,7 @@ internal class MediaDetailViewModel
 
         fun onAction(action: MediaDetailScreenActions) {
             when (action) {
-                is MediaDetailScreenActions.OnAddmediaList -> setMediaList(media = action.media)
+                is MediaDetailScreenActions.OnAddmediaList -> setMediaList(media = action.media, initialIndex = action.initialIndex)
                 is MediaDetailScreenActions.OnNameChange -> setName(newName = action.newName)
                 MediaDetailScreenActions.OnDeleteMedia -> deleteMedia()
                 MediaDetailScreenActions.OnOOpenMenu -> openMenuPopup()
@@ -49,14 +44,6 @@ internal class MediaDetailViewModel
                 MediaDetailScreenActions.OnRenameClick -> openRenameDialog()
                 MediaDetailScreenActions.OnSubmitRenameClick -> openRenameDialog(open = false)
                 MediaDetailScreenActions.OnUpdateMedia -> updateMedia()
-            }
-        }
-
-        private fun getSelectedIndex() {
-            mediaDetailViewModlState.update {
-                it.copy(
-                    selectedMediaItemIndex = savedStateHandle[MediaViewModel.SELECTED_MEDIA_INDEX] ?: 0,
-                )
             }
         }
 
@@ -98,10 +85,14 @@ internal class MediaDetailViewModel
             }
         }
 
-        private fun setMediaList(media: List<MediaUi>) {
+        private fun setMediaList(
+            media: List<MediaUi>,
+            initialIndex: Int,
+        ) {
             mediaDetailViewModlState.update {
                 it.copy(
                     media = media,
+                    selectedMediaItemIndex = initialIndex,
                 )
             }
         }

@@ -17,6 +17,9 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.hotaku.media.screens.albums.AlbumsScreen
 import com.hotaku.media.screens.albums.AlbumsScreenActions
 import com.hotaku.media.screens.albums.AlbumsViewModel
+import com.hotaku.media.screens.media_detail.MediaDetailScreen
+import com.hotaku.media.screens.media_detail.MediaDetailScreenActions
+import com.hotaku.media.screens.media_detail.MediaDetailViewModel
 import com.hotaku.media.screens.media_list.MediaListScreen
 import com.hotaku.media.screens.media_list.MediaListScreenActions
 import com.hotaku.media.screens.media_list.MediaViewModel
@@ -29,6 +32,9 @@ object MediaScreenRRoute
 
 @Serializable
 object AlbumsScreenRoute
+
+@Serializable
+object MediaDetailRoute
 
 @Serializable
 internal object PermissionsScreenRoute
@@ -59,6 +65,9 @@ object MediaGraph {
 
                 MediaListScreen(
                     mediaViewModel = mediaViewModel,
+                    navigateToMediaDetailScreen = { media ->
+                        navHostController.navigate(MediaDetailRoute)
+                    },
                     onShowSnackBar = { onShowSnackBar(it) },
                 )
             }
@@ -96,6 +105,28 @@ object MediaGraph {
 
                 AlbumsScreen(
                     albumsViewModel = albumsViewModel,
+                )
+            }
+            composable<MediaDetailRoute> { navBackStackEntry ->
+                val mediaViewModel =
+                    navBackStackEntry.sharedHiltViewModel<MediaViewModel>(
+                        navController = navHostController,
+                    )
+
+                val mediaState = mediaViewModel.mediaUiState.collectAsLazyPagingItems()
+
+                val mediaDetailViewModel = hiltViewModel<MediaDetailViewModel>()
+
+                mediaDetailViewModel.onAction(
+                    MediaDetailScreenActions.OnAddmediaList(
+                        media = mediaState.itemSnapshotList.items,
+                        initialIndex = mediaViewModel.mediaScreenUiState.value.selectedMediaIndex ?: 0,
+                    ),
+                )
+
+                MediaDetailScreen(
+                    mediaDetailViewModel = mediaDetailViewModel,
+                    navigateUp = { navHostController.popBackStack() },
                 )
             }
         }

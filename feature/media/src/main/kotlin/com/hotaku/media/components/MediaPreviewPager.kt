@@ -1,41 +1,37 @@
 package com.hotaku.media.components
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.hotaku.media.model.MediaUi
-import com.hotaku.media.screens.media_list.MediaListScreenActions
 
 @Composable
 internal fun MediaPreviewPager(
     modifier: Modifier = Modifier,
-    mediaPagerState: PagerState,
-    isCompact: Boolean,
-    pagingMediaItems: List<MediaUi>,
-    onAction: (MediaListScreenActions) -> Unit,
+    currentPage: Int,
+    pagerMediaItems: List<MediaUi>,
+    content: @Composable (MediaUi) -> Unit,
 ) {
+    val mediaPagerState =
+        rememberPagerState(
+            initialPage = currentPage,
+            pageCount = { pagerMediaItems.size },
+        )
+
+    LaunchedEffect(currentPage) {
+        mediaPagerState.animateScrollToPage(currentPage)
+    }
+
     VerticalPager(
         state = mediaPagerState,
-        modifier = Modifier.fillMaxSize(),
+        modifier =
+            modifier
+                .fillMaxSize(),
+        key = { it },
     ) { page ->
-        MediaPreviewScaffold(
-            modifier = modifier,
-            isCompact = isCompact,
-            media = pagingMediaItems[page],
-            onOpenMedia = {
-                onAction(MediaListScreenActions.OnOpenMediaList)
-            },
-            onDeleteMedia = {
-                onAction(MediaListScreenActions.OnDeleteMediaList)
-            },
-            onShareMedia = {
-                onAction(MediaListScreenActions.OnShareMediaList)
-            },
-            onClosepreview = {
-                onAction(MediaListScreenActions.OnClearSelectedMediaList)
-            },
-        )
+        content(pagerMediaItems[page])
     }
 }

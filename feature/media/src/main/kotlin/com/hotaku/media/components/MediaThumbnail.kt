@@ -28,6 +28,7 @@ import androidx.core.net.toUri
 import coil3.compose.AsyncImage
 import com.hotaku.feature.media.R
 import com.hotaku.media.model.MediaUi
+import com.hotaku.media.utils.TimeUtils.millisAsFormattedDuration
 import com.hotaku.media.utils.asThumbnailImageBitmap
 
 @Composable
@@ -87,7 +88,7 @@ fun VideoThumbnail(item: MediaUi) {
             )
             Spacer(Modifier.width(4.dp))
             Text(
-                text = item.duration,
+                text = item.duration.millisAsFormattedDuration(),
                 style =
                     MaterialTheme.typography.labelSmall.copy(
                         color = Color.White,

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
@@ -27,12 +28,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hotaku.designsystem.theme.MiniGalleryTheme
-import com.hotaku.feature.media.R
 import com.hotaku.media.model.MediaUi
 import com.hotaku.media.utils.MediaType
 import com.hotaku.ui.conposables.ShimmerPlaceHolder
@@ -40,21 +38,20 @@ import kotlinx.coroutines.delay
 import java.time.Instant
 
 @Composable
-internal fun MediaPreviewScaffold(
+internal fun MediaDetail(
     modifier: Modifier = Modifier,
     isCompact: Boolean,
     media: MediaUi,
-    onOpenMedia: () -> Unit,
-    onDeleteMedia: () -> Unit,
-    onShareMedia: () -> Unit,
-    onClosepreview: () -> Unit,
+    onPlayVideo: () -> Unit,
+    onClose: () -> Unit,
+    floatOptions: @Composable () -> Unit,
 ) {
-    var showFloatBottomBar by remember { mutableStateOf(true) }
+    var showFloatOptions by remember { mutableStateOf(true) }
 
-    LaunchedEffect(showFloatBottomBar) {
-        if (showFloatBottomBar) {
+    LaunchedEffect(showFloatOptions) {
+        if (showFloatOptions) {
             delay(1_500)
-            showFloatBottomBar = false
+            showFloatOptions = false
         }
     }
 
@@ -63,7 +60,7 @@ internal fun MediaPreviewScaffold(
             modifier
                 .fillMaxSize()
                 .noRippleClickable {
-                    showFloatBottomBar = !showFloatBottomBar
+                    showFloatOptions = !showFloatOptions
                 },
         contentAlignment = Alignment.Center,
     ) {
@@ -82,23 +79,23 @@ internal fun MediaPreviewScaffold(
                 Video(
                     itemUri = media.uriString,
                     onVideoClick = {
-                        onOpenMedia()
+                        onPlayVideo()
                     },
                 )
             }
         }
         AnimatedVisibility(
-            visible = showFloatBottomBar,
+            visible = showFloatOptions,
             enter = fadeIn(),
             exit = fadeOut(),
         ) {
             Box(
-                Modifier.fillMaxSize(),
+                Modifier.fillMaxSize().statusBarsPadding(),
             ) {
                 if (isCompact) {
                     IconButton(
                         modifier = Modifier.align(Alignment.TopStart),
-                        onClick = onClosepreview,
+                        onClick = onClose,
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
@@ -109,7 +106,7 @@ internal fun MediaPreviewScaffold(
                 } else {
                     IconButton(
                         modifier = Modifier.align(Alignment.TopEnd),
-                        onClick = onClosepreview,
+                        onClick = onClose,
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Close,
@@ -118,25 +115,22 @@ internal fun MediaPreviewScaffold(
                         )
                     }
                 }
-                ImagePreviewFloatBottomBar(
+                Box(
                     modifier = Modifier.align(Alignment.Center),
-                    showPreviewButton = media.mimeType == MediaType.IMAGE,
-                    onDeleteMedia = onDeleteMedia,
-                    onShareMedia = onShareMedia,
-                    onOpenMedia = onOpenMedia,
-                )
+                ) {
+                    floatOptions()
+                }
             }
         }
     }
 }
 
 @Composable
-private fun ImagePreviewFloatBottomBar(
+internal fun MediaOptions(
     modifier: Modifier = Modifier,
-    showPreviewButton: Boolean = false,
-    onOpenMedia: () -> Unit,
-    onDeleteMedia: () -> Unit,
     onShareMedia: () -> Unit,
+    onDeleteMedia: () -> Unit,
+    extraActions: @Composable () -> Unit = {},
 ) {
     Row(
         modifier =
@@ -147,16 +141,7 @@ private fun ImagePreviewFloatBottomBar(
                 .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (showPreviewButton) {
-            IconButton(
-                onClick = onOpenMedia,
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.media_preview_full_screen),
-                    contentDescription = "Full Screen",
-                )
-            }
-        }
+        extraActions()
         IconButton(
             onClick = onShareMedia,
         ) {
@@ -180,7 +165,7 @@ private fun ImagePreviewFloatBottomBar(
 @Composable
 private fun MediapreviewPreview() {
     MiniGalleryTheme {
-        MediaPreviewScaffold(
+        MediaDetail(
             modifier = Modifier.background(MaterialTheme.colorScheme.background),
             isCompact = false,
             media =
@@ -189,16 +174,15 @@ private fun MediapreviewPreview() {
                     uriString = "https://picsum.photos/200/300",
                     displayName = "Nola Gillespie",
                     mimeType = MediaType.VIDEO,
-                    duration = "commune",
+                    duration = 213343,
                     dateAdded = Instant.now(),
                     dateModified = Instant.now(),
                     size = 2566,
                     bucketDisplayName = "Ismael McCarthy",
                 ),
-            onOpenMedia = {},
-            onDeleteMedia = {},
-            onShareMedia = {},
-            onClosepreview = {},
+            onPlayVideo = {},
+            onClose = {},
+            floatOptions = {},
         )
     }
 }

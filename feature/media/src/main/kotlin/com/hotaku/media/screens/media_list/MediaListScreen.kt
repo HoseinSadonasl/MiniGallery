@@ -57,7 +57,7 @@ import kotlinx.coroutines.flow.collectLatest
 internal fun MediaListScreen(
     modifier: Modifier = Modifier,
     mediaViewModel: MediaViewModel,
-    navigateToMediaDetailScreen: (List<MediaUi>) -> Unit,
+    navigateToMediaDetailScreen: () -> Unit,
     onShowSnackBar: suspend (String) -> Unit,
 ) {
     MediaListScreen(
@@ -80,7 +80,7 @@ private fun MediaListScreen(
     screenState: StateFlow<MediaListUiState>,
     pagingMediaItemsState: StateFlow<PagingData<MediaUi>>,
     synchronizeState: StateFlow<UiState<Int>>,
-    navigateToMediaDetailScreen: (List<MediaUi>) -> Unit,
+    navigateToMediaDetailScreen: () -> Unit,
     onAction: (MediaListScreenActions) -> Unit,
     onShowSnackBar: suspend (String) -> Unit,
 ) {
@@ -135,7 +135,7 @@ private fun MediaListScreen(
                     state.selectedMediaIndex?.let { pagingMediaItems[it]?.shareMedia(context = context) }
                 }
                 MediaListScreenEvents.OnNavigateToMediaDetail -> {
-                    navigateToMediaDetailScreen(pagingMediaItems.itemSnapshotList.items)
+                    navigateToMediaDetailScreen()
                 }
             }
         }

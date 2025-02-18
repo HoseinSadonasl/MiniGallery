@@ -1,6 +1,5 @@
 package com.hotaku.media.screens.media_detail
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hotaku.media.mapper.MapMediaUiAsMedia
@@ -9,9 +8,8 @@ import com.hotaku.media_domain.usecase.DeleteMediaUseCase
 import com.hotaku.media_domain.usecase.UpdateMediaUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,16 +21,9 @@ internal class MediaDetailViewModel
         private val deleteMediaUseCase: DeleteMediaUseCase,
         private val updateMediaUseCase: UpdateMediaUseCase,
         private val mapMediaUiAsMedia: MapMediaUiAsMedia,
-        private val savedStateHandle: SavedStateHandle,
     ) : ViewModel() {
         private var mediaDetailViewModlState = MutableStateFlow(MediaDetailUiState())
-        val mediaDetailUiState: StateFlow<MediaDetailUiState> =
-            mediaDetailViewModlState
-                .stateIn(
-                    scope = viewModelScope,
-                    started = SharingStarted.WhileSubscribed(5_000),
-                    initialValue = MediaDetailUiState(),
-                )
+        val mediaDetailUiState: StateFlow<MediaDetailUiState> = mediaDetailViewModlState.asStateFlow()
 
         fun onAction(action: MediaDetailScreenActions) {
             when (action) {

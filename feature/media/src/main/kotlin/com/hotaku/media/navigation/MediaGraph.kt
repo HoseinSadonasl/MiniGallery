@@ -65,7 +65,7 @@ object MediaGraph {
 
                 MediaListScreen(
                     mediaViewModel = mediaViewModel,
-                    navigateToMediaDetailScreen = { media ->
+                    navigateToMediaDetailScreen = {
                         navHostController.navigate(MediaDetailRoute)
                     },
                     onShowSnackBar = { onShowSnackBar(it) },
@@ -113,16 +113,20 @@ object MediaGraph {
                         navController = navHostController,
                     )
 
-                val mediaState = mediaViewModel.mediaUiState.collectAsLazyPagingItems()
-
                 val mediaDetailViewModel = hiltViewModel<MediaDetailViewModel>()
 
-                mediaDetailViewModel.onAction(
-                    MediaDetailScreenActions.OnAddmediaList(
-                        media = mediaState.itemSnapshotList.items,
-                        initialIndex = mediaViewModel.mediaScreenUiState.value.selectedMediaIndex ?: 0,
-                    ),
-                )
+                val initialIndex = mediaViewModel.mediaScreenUiState.value.selectedMediaIndex
+
+                val mediaState = mediaViewModel.mediaUiState.collectAsLazyPagingItems()
+                LaunchedEffect(mediaState.loadState) {
+                    if (mediaState.itemSnapshotList.isEmpty()) return@LaunchedEffect
+                    mediaDetailViewModel.onAction(
+                        MediaDetailScreenActions.OnAddmediaList(
+                            media = mediaState.itemSnapshotList.items,
+                            initialIndex = initialIndex ?: 0,
+                        ),
+                    )
+                }
 
                 MediaDetailScreen(
                     mediaDetailViewModel = mediaDetailViewModel,

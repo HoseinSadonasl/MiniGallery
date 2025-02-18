@@ -33,7 +33,6 @@ private fun MediaDetailScreen(
     onAction: (MediaDetailScreenActions) -> Unit,
 ) {
     val state by viewModel.mediaDetailUiState.collectAsStateWithLifecycle()
-
     val windowWidth = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
 
     Box(

@@ -1,5 +1,6 @@
 package com.hotaku.media.screens.media_list
 
+import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
@@ -42,7 +43,7 @@ import com.hotaku.media.components.MediaPreviewPager
 import com.hotaku.media.components.MediaSyncLabel
 import com.hotaku.media.components.OnScreenMessage
 import com.hotaku.media.model.MediaUi
-import com.hotaku.media.utils.shareMedia
+import com.hotaku.media.utils.sendIntent
 import com.hotaku.ui.UiState
 import com.hotaku.ui.asString
 import com.hotaku.ui.conposables.AnimatedSearchTextField
@@ -132,7 +133,12 @@ private fun MediaListScreen(
                     navigator.navigateBack()
                 }
                 MediaListScreenEvents.OnShareMediaList -> {
-                    state.selectedMediaIndex?.let { pagingMediaItems[it]?.shareMedia(context = context) }
+                    state.selectedMediaIndex?.let {
+                        pagingMediaItems[it]?.sendIntent(
+                            context = context,
+                            intentAction = Intent.ACTION_SEND,
+                        )
+                    }
                 }
                 MediaListScreenEvents.OnNavigateToMediaDetail -> {
                     navigateToMediaDetailScreen()

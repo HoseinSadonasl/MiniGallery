@@ -7,9 +7,11 @@ import com.hotaku.media.model.MediaUi
 import com.hotaku.media_domain.usecase.DeleteMediaUseCase
 import com.hotaku.media_domain.usecase.UpdateMediaUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,10 +27,17 @@ internal class MediaDetailViewModel
         private var mediaDetailViewModlState = MutableStateFlow(MediaDetailUiState())
         val mediaDetailUiState: StateFlow<MediaDetailUiState> = mediaDetailViewModlState.asStateFlow()
 
+        private var mediaDetailViewModelEvents = Channel<MediaDetailScreenEvents>()
+        val mediaDetailUiEvents = mediaDetailViewModelEvents.consumeAsFlow()
+
         fun onAction(action: MediaDetailScreenActions) {
             when (action) {
                 is MediaDetailScreenActions.OnAddmediaList -> setMediaList(media = action.media, initialIndex = action.initialIndex)
                 is MediaDetailScreenActions.OnNameChange -> setName(newName = action.newName)
+                MediaDetailScreenActions.OnViewMedia -> viewMedia()
+                MediaDetailScreenActions.OnShareMedia -> shareMedia()
+                MediaDetailScreenActions.OnCloseDialog -> closeDialog()
+                MediaDetailScreenActions.OnShowDeleteMediaDialog -> showDeleteMediaDialog()
                 MediaDetailScreenActions.OnDeleteMedia -> deleteMedia()
                 MediaDetailScreenActions.OnOOpenMenu -> openMenuPopup()
                 MediaDetailScreenActions.OnCloseMenu -> openMenuPopup(open = false)
@@ -36,6 +45,30 @@ internal class MediaDetailViewModel
                 MediaDetailScreenActions.OnSubmitRenameClick -> openRenameDialog(open = false)
                 MediaDetailScreenActions.OnUpdateMedia -> updateMedia()
             }
+        }
+
+        private fun closeDialog() {
+            mediaDetailViewModlState.update {
+                it.copy(
+                    mediaDetailDialog = null,
+                )
+            }
+        }
+
+        private fun showDeleteMediaDialog() {
+            mediaDetailViewModlState.update {
+                it.copy(
+                    mediaDetailDialog = MediaDetailsDialogs.DeleteMediaDialog,
+                )
+            }
+        }
+
+        private fun shareMedia() {
+            sendEvent(MediaDetailScreenEvents.OnShareMedia)
+        }
+
+        private fun viewMedia() {
+            sendEvent(MediaDetailScreenEvents.OnViewMedia)
         }
 
         private fun openMenuPopup(open: Boolean = true) {
@@ -63,8 +96,14 @@ internal class MediaDetailViewModel
 
         private fun deleteMedia() {
             viewModelScope.launch {
-                val mediaUriToDelete = currentMedia().uriString
-                deleteMediaUseCase.invoke(mediaUriString = mediaUriToDelete)
+                val mediaUriToDelete = currentMedia()
+                deleteMediaUseCase.invoke(mediaUriString = mediaUriToDelete.uriString)
+                mediaDetailViewModlState.update {
+                    it.copy(
+                        media = it.media.filterNot { it == mediaUriToDelete },
+                        mediaDetailDialog = null,
+                    )
+                }
             }
         }
 
@@ -91,5 +130,11 @@ internal class MediaDetailViewModel
         private fun currentMedia(): MediaUi {
             val currentIndex = mediaDetailViewModlState.value.selectedMediaItemIndex
             return mediaDetailViewModlState.value.media[currentIndex]
+        }
+
+        private fun sendEvent(event: MediaDetailScreenEvents) {
+            viewModelScope.launch {
+                mediaDetailViewModelEvents.send(event)
+            }
         }
     }

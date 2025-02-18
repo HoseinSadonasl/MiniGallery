@@ -18,10 +18,13 @@ internal fun Uri.asThumbnailImageBitmap(size: Size = Size(320, 320)): ImageBitma
     return thumbnail.asImageBitmap()
 }
 
-internal fun MediaUi.shareMedia(context: Context) {
+internal fun MediaUi.sendIntent(
+    context: Context,
+    intentAction: String,
+) {
     val sendIntent =
         Intent().apply {
-            action = Intent.ACTION_SEND
+            action = intentAction
             putExtra(Intent.EXTRA_STREAM, Uri.parse(uriString))
             type = "$mimeType/*"
         }

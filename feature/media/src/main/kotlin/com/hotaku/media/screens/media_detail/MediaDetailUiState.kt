@@ -8,4 +8,5 @@ internal data class MediaDetailUiState(
     val mediaName: String = "",
     val openMenuPopup: Boolean = false,
     val openRenameDialog: Boolean = false,
+    val mediaDetailDialog: MediaDetailsDialogs? = null,
 )

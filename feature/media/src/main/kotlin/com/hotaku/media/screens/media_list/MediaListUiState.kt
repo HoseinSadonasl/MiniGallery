@@ -1,11 +1,8 @@
 package com.hotaku.media.screens.media_list
 
-import android.os.Parcelable
 import com.hotaku.media.model.AlbumUi
-import kotlinx.parcelize.Parcelize
 
-@Parcelize
-data class MediaListUiState(
+internal data class MediaListUiState(
     val isSearchExpanded: Boolean = false,
     val showSyncSection: Boolean = true,
     val isTopBarVisible: Boolean = true,
@@ -13,4 +10,5 @@ data class MediaListUiState(
     val selectedMediaIndex: Int? = null,
     val mimeType: String = "",
     val query: String = "",
-) : Parcelable
+    val mediaListDialogs: MediaListScreenDialogs? = null,
+)

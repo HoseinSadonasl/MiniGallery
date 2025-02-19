@@ -29,5 +29,9 @@ sealed interface MediaListScreenActions {
 
     data object OnShareMedia : MediaListScreenActions
 
-    data object OnDeleteMedia : MediaListScreenActions
+    data object OnShowDeleteMediaDialog : MediaListScreenActions
+
+    data object OnCloseDialog : MediaListScreenActions
+
+    data class OnDeleteMedia(val mediaUri: String) : MediaListScreenActions
 }

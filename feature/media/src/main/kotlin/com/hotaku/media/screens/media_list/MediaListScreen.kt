@@ -46,6 +46,7 @@ import com.hotaku.media.model.MediaUi
 import com.hotaku.media.utils.sendIntent
 import com.hotaku.ui.UiState
 import com.hotaku.ui.asString
+import com.hotaku.ui.conposables.AlertDialog
 import com.hotaku.ui.conposables.AnimatedSearchTextField
 import com.hotaku.ui.conposables.DynamicTopAppBarColumn
 import com.hotaku.ui.conposables.TopAppBar
@@ -143,9 +144,35 @@ private fun MediaListScreen(
                 MediaListScreenEvents.OnNavigateToMediaDetail -> {
                     navigateToMediaDetailScreen()
                 }
+                MediaListScreenEvents.OnRefreshList -> {
+                    pagingMediaItems.refresh()
+                }
             }
         }
     }
+
+    state.mediaListDialogs?.let { dialog ->
+        when (dialog) {
+            MediaListScreenDialogs.DeleteMediaDialog -> {
+                AlertDialog(
+                    title = stringResource(R.string.all_dialog_warning),
+                    description = stringResource(R.string.delete_media_dialog_description_delete_this_media_file),
+                    confirmButtonLabel = stringResource(R.string.delete_media_dialog_delete_button),
+                    onDismiss = {
+                        onAction(MediaListScreenActions.OnCloseDialog)
+                    },
+                    onConfirm = {
+                        state.selectedMediaIndex?.let {
+                            pagingMediaItems.peek(it)
+                        }?.also { media ->
+                            onAction(MediaListScreenActions.OnDeleteMedia(mediaUri = media.uriString))
+                        }
+                    },
+                )
+            }
+        }
+    }
+
     DynamicTopAppBarColumn(
         modifier = modifier,
         show = state.isTopBarVisible,
@@ -228,7 +255,7 @@ private fun MediaListScreen(
                                                 onAction(MediaListScreenActions.OnShareMedia)
                                             },
                                             onDeleteMedia = {
-                                                onAction(MediaListScreenActions.OnDeleteMedia)
+                                                onAction(MediaListScreenActions.OnShowDeleteMediaDialog)
                                             },
                                             extraActions = {
                                                 IconButton(

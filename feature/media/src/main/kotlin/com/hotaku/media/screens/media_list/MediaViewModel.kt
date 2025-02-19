@@ -1,6 +1,5 @@
 package com.hotaku.media.screens.media_list
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -11,6 +10,7 @@ import com.hotaku.media.mapper.MapMediaToMediaUi
 import com.hotaku.media.model.AlbumUi
 import com.hotaku.media.model.MediaUi
 import com.hotaku.media.utils.asUiError
+import com.hotaku.media_domain.usecase.DeleteMediaUseCase
 import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_domain.usecase.SyncMediaUseCase
 import com.hotaku.ui.UiState
@@ -33,7 +33,7 @@ internal class MediaViewModel
         private val mapMediaToMediaUi: MapMediaToMediaUi,
         private val syncMediaUseCase: SyncMediaUseCase,
         private val mediaUseCase: GetMediaUseCase,
-        private val savedStateHandle: SavedStateHandle,
+        private val deleteMediaUseCase: DeleteMediaUseCase,
     ) : ViewModel() {
         private var mediaScreenViewModelState = MutableStateFlow(MediaListUiState())
         val mediaScreenUiState: StateFlow<MediaListUiState> = mediaScreenViewModelState
@@ -74,18 +74,39 @@ internal class MediaViewModel
                 is MediaListScreenActions.OnMediaListClick -> previewMedia(action.mediaItemIndex)
                 MediaListScreenActions.OnMediaListLongClick -> {}
                 MediaListScreenActions.OnClearSelectedMedia -> clearSelectedMedia()
-                MediaListScreenActions.OnDeleteMedia -> deleteMedia()
+                is MediaListScreenActions.OnDeleteMedia -> deleteMedia(mediaUri = action.mediaUri)
                 MediaListScreenActions.OnOpenMedia -> showMedia()
                 MediaListScreenActions.OnShareMedia -> shareMedia()
+                MediaListScreenActions.OnShowDeleteMediaDialog -> showDeleteMediaDialog()
+                MediaListScreenActions.OnCloseDialog -> hideDialog()
             }
         }
 
-        private fun deleteMedia() {
-            // TODO("Delete media")
+        private fun hideDialog() {
+            mediaScreenViewModelState.update {
+                it.copy(
+                    mediaListDialogs = null,
+                )
+            }
+        }
+
+        private fun showDeleteMediaDialog() {
+            mediaScreenViewModelState.update {
+                it.copy(
+                    mediaListDialogs = MediaListScreenDialogs.DeleteMediaDialog,
+                )
+            }
+        }
+
+        private fun deleteMedia(mediaUri: String) {
+            viewModelScope.launch {
+                deleteMediaUseCase.invoke(mediaUriString = mediaUri)
+                hideDialog()
+                sendEvent(MediaListScreenEvents.OnRefreshList)
+            }
         }
 
         private fun showMedia() {
-            savedStateHandle[SELECTED_MEDIA_INDEX] = mediaScreenViewModelState.value.selectedMediaIndex.toString()
             sendEvent(MediaListScreenEvents.OnNavigateToMediaDetail)
         }
 
@@ -185,9 +206,5 @@ internal class MediaViewModel
             viewModelScope.launch {
                 viewModelEvents.send(event)
             }
-        }
-
-        companion object {
-            const val SELECTED_MEDIA_INDEX = ""
         }
     }

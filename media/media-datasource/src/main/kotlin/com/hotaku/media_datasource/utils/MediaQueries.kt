@@ -20,4 +20,12 @@ internal object MediaQueries {
         )
 
     const val SORT_MEDIA_BY_DATE_ADDED = MediaStore.Files.FileColumns.DATE_ADDED + " DESC"
+
+    internal fun String.getMediaUri(): Uri {
+        return if (contains("image")) {
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        } else {
+            MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+        }
+    }
 }

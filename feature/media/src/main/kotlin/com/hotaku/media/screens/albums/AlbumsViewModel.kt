@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.compose.LazyPagingItems
 import com.hotaku.domain.utils.DataResult
-import com.hotaku.media.mapper.MapAlbumToAlbumUi
+import com.hotaku.media.mapper.MapAlbumAsAlbumUi
 import com.hotaku.media.model.AlbumUi
 import com.hotaku.media.model.MediaUi
 import com.hotaku.media.utils.asUiError
@@ -26,7 +26,7 @@ internal class AlbumsViewModel
     @Inject
     constructor(
         private val getAlbumsUseCase: GetAlbumsUseCase,
-        private val mapAlbumToAlbumUi: MapAlbumToAlbumUi,
+        private val mapAlbumAsAlbumUi: MapAlbumAsAlbumUi,
     ) : ViewModel() {
         private var albumsViewModelState = MutableStateFlow(AlbumsUiState())
         val albumsState =
@@ -81,7 +81,7 @@ internal class AlbumsViewModel
                                 UiState.Success(
                                     data =
                                         result.data?.map {
-                                            mapAlbumToAlbumUi.map(
+                                            mapAlbumAsAlbumUi.map(
                                                 it,
                                             )
                                         } ?: emptyList(),

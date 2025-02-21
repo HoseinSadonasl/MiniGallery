@@ -1,15 +1,15 @@
 package com.hotaku.home.mapper
 
 import com.google.common.truth.Truth.assertThat
-import com.hotaku.media.mapper.MapMediaToMediaUi
+import com.hotaku.media.mapper.MapMediaAsMediaUi
 import com.hotaku.media.model.MediaUi
 import com.hotaku.media.utils.MediaType
 import com.hotaku.media_domain.model.Media
 import org.junit.Test
 import java.time.Instant
 
-class MapMediaToMediaUiTest {
-    private val mapMediaToMediaUi = MapMediaToMediaUi()
+class MapMediaAsMediaUiTest {
+    private val mapMediaAsMediaUi = MapMediaAsMediaUi()
     private var now = Instant.now()
 
     @Test
@@ -42,7 +42,7 @@ class MapMediaToMediaUiTest {
                 bucketDisplayName = "sampleBucketDisplayName",
             )
 
-        val actualMedia = mapMediaToMediaUi.map(domainMediaModel)
+        val actualMedia = mapMediaAsMediaUi.map(domainMediaModel)
         assertThat(actualMedia).isEqualTo(
             expectedModel,
         )

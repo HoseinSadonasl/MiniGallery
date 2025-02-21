@@ -7,7 +7,7 @@ import com.hotaku.media_domain.model.Media
 import java.time.Instant
 import javax.inject.Inject
 
-internal class MapMediaToMediaUi
+internal class MapMediaAsMediaUi
     @Inject
     constructor() : Mapper<Media, MediaUi> {
         override fun map(from: Media): MediaUi {

@@ -6,7 +6,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.hotaku.domain.utils.DataResult
-import com.hotaku.media.mapper.MapMediaToMediaUi
+import com.hotaku.media.mapper.MapMediaAsMediaUi
 import com.hotaku.media.mapper.MapMediaUiAsMedia
 import com.hotaku.media.model.AlbumUi
 import com.hotaku.media.model.MediaUi
@@ -34,7 +34,7 @@ internal class MediaViewModel
         private val syncMediaUseCase: SyncMediaUseCase,
         private val mediaUseCase: GetMediaUseCase,
         private val deleteMediaUseCase: DeleteMediaUseCase,
-        private val mapMediaToMediaUi: MapMediaToMediaUi,
+        private val mapMediaAsMediaUi: MapMediaAsMediaUi,
         private val mapMediaUiAsMedia: MapMediaUiAsMedia,
     ) : ViewModel() {
         private var mediaScreenViewModelState = MutableStateFlow(MediaListUiState())
@@ -202,7 +202,7 @@ internal class MediaViewModel
                 )
                     .cachedIn(viewModelScope)
                     .collect { pagedMedia ->
-                        mediaViewModelState.value = pagedMedia.map { mapMediaToMediaUi.map(it) }
+                        mediaViewModelState.value = pagedMedia.map { mapMediaAsMediaUi.map(it) }
                     }
             }
         }

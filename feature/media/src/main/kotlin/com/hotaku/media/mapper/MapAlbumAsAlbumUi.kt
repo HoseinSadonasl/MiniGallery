@@ -6,7 +6,7 @@ import com.hotaku.media.utils.asMediaType
 import com.hotaku.media_domain.model.Album
 import javax.inject.Inject
 
-internal class MapAlbumToAlbumUi
+internal class MapAlbumAsAlbumUi
     @Inject
     constructor() : Mapper<Album, AlbumUi> {
         override fun map(from: Album): AlbumUi {

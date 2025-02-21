@@ -1,6 +1,7 @@
 package com.hotaku.database.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import com.hotaku.database.entity.AlbumDto
@@ -10,6 +11,12 @@ import com.hotaku.database.entity.MediaEntity
 interface MediaDao {
     @Upsert
     fun insertAll(media: List<MediaEntity>)
+
+    @Upsert
+    fun upsertMedia(media: MediaEntity)
+
+    @Delete
+    suspend fun deleteMedia(media: List<MediaEntity>)
 
     @Query(
         "SELECT * FROM media \n" +

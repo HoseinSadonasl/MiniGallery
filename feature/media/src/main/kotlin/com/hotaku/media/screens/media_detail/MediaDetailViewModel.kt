@@ -34,10 +34,10 @@ internal class MediaDetailViewModel
             when (action) {
                 is MediaDetailScreenActions.OnAddmediaList -> setMediaList(media = action.media, initialIndex = action.initialIndex)
                 is MediaDetailScreenActions.OnNameChange -> setName(newName = action.newName)
+                is MediaDetailScreenActions.OnPageChanged -> setSelectedIndex(action.page)
                 MediaDetailScreenActions.OnViewMedia -> viewMedia()
                 MediaDetailScreenActions.OnShareMedia -> shareMedia()
                 MediaDetailScreenActions.OnCloseDialog -> closeDialog()
-                MediaDetailScreenActions.OnShowDeleteMediaDialog -> showDeleteMediaDialog()
                 MediaDetailScreenActions.OnDeleteMedia -> deleteMedia()
                 MediaDetailScreenActions.OnOOpenMenu -> openMenuPopup()
                 MediaDetailScreenActions.OnCloseMenu -> openMenuPopup(open = false)
@@ -47,18 +47,18 @@ internal class MediaDetailViewModel
             }
         }
 
-        private fun closeDialog() {
+        private fun setSelectedIndex(page: Int) {
             mediaDetailViewModlState.update {
                 it.copy(
-                    mediaDetailDialog = null,
+                    selectedMediaItemIndex = page,
                 )
             }
         }
 
-        private fun showDeleteMediaDialog() {
+        private fun closeDialog() {
             mediaDetailViewModlState.update {
                 it.copy(
-                    mediaDetailDialog = MediaDetailsDialogs.DeleteMediaDialog,
+                    mediaDetailDialog = null,
                 )
             }
         }
@@ -97,11 +97,12 @@ internal class MediaDetailViewModel
         private fun deleteMedia() {
             viewModelScope.launch {
                 val mediaUriToDelete = currentMedia()
-                deleteMediaUseCase.invoke(mediaUriString = mediaUriToDelete.uriString)
+                mediaUriToDelete.let { mapMediaUiAsMedia.map(it) }.also { media ->
+                    deleteMediaUseCase.invoke(media = listOf(media))
+                }
                 mediaDetailViewModlState.update {
                     it.copy(
-                        media = it.media.filterNot { it == mediaUriToDelete },
-                        mediaDetailDialog = null,
+                        media = it.media.filterNot { mediaUi -> mediaUi == mediaUriToDelete },
                     )
                 }
             }

@@ -1,6 +1,7 @@
 package com.hotaku.media.screens.media_list
 
 import com.hotaku.media.model.AlbumUi
+import com.hotaku.media.model.MediaUi
 
 sealed interface MediaListScreenActions {
     data object OnUpdateMediaList : MediaListScreenActions
@@ -33,5 +34,7 @@ sealed interface MediaListScreenActions {
 
     data object OnCloseDialog : MediaListScreenActions
 
-    data class OnDeleteMedia(val mediaUri: String) : MediaListScreenActions
+    data class OnDeleteMediaItem(val mediaItem: MediaUi) : MediaListScreenActions
+
+    data class OnPagersPageChanged(val page: Int) : MediaListScreenActions
 }

@@ -5,6 +5,8 @@ import com.hotaku.media.model.MediaUi
 internal sealed interface MediaDetailScreenActions {
     data class OnAddmediaList(val media: List<MediaUi>, val initialIndex: Int) : MediaDetailScreenActions
 
+    data class OnPageChanged(val page: Int) : MediaDetailScreenActions
+
     data object OnViewMedia : MediaDetailScreenActions
 
     data object OnShareMedia : MediaDetailScreenActions
@@ -12,8 +14,6 @@ internal sealed interface MediaDetailScreenActions {
     data object OnOOpenMenu : MediaDetailScreenActions
 
     data object OnCloseMenu : MediaDetailScreenActions
-
-    data object OnShowDeleteMediaDialog : MediaDetailScreenActions
 
     data object OnCloseDialog : MediaDetailScreenActions
 

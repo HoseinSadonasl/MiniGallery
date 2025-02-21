@@ -9,4 +9,8 @@ interface MediaDataSource {
         query: String,
         albumName: String,
     ): PagingSource<Int, MediaData>
+
+    suspend fun updateMedia(mediaData: MediaData)
+
+    suspend fun deleteMedia(mediaData: List<MediaData>)
 }

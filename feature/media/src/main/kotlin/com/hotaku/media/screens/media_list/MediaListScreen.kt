@@ -19,6 +19,7 @@ import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.rememberSupportingPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,10 +44,11 @@ import com.hotaku.media.components.MediaPreviewPager
 import com.hotaku.media.components.MediaSyncLabel
 import com.hotaku.media.components.OnScreenMessage
 import com.hotaku.media.model.MediaUi
+import com.hotaku.media.utils.rememberTrashLauncherForResult
 import com.hotaku.media.utils.sendIntent
+import com.hotaku.media.utils.trashMediaItemByUri
 import com.hotaku.ui.UiState
 import com.hotaku.ui.asString
-import com.hotaku.ui.conposables.AlertDialog
 import com.hotaku.ui.conposables.AnimatedSearchTextField
 import com.hotaku.ui.conposables.DynamicTopAppBarColumn
 import com.hotaku.ui.conposables.TopAppBar
@@ -88,7 +90,8 @@ private fun MediaListScreen(
 ) {
     val state: MediaListUiState by screenState.collectAsStateWithLifecycle()
     val synchronize: UiState<Int> by synchronizeState.collectAsStateWithLifecycle()
-    val pagingMediaItems: LazyPagingItems<MediaUi> = pagingMediaItemsState.collectAsLazyPagingItems()
+    val pagingMediaItems: LazyPagingItems<MediaUi> =
+        pagingMediaItemsState.collectAsLazyPagingItems()
 
     val focusManager = LocalFocusManager.current
 
@@ -97,6 +100,15 @@ private fun MediaListScreen(
     val windowWidth = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
 
     val navigator = rememberSupportingPaneScaffoldNavigator<Int>()
+
+    val trashLauncher =
+        rememberTrashLauncherForResult {
+            state.selectedMediaIndex?.let {
+                pagingMediaItems.peek(it)?.let { mediaItem ->
+                    onAction(MediaListScreenActions.OnDeleteMediaItem(mediaItem = mediaItem))
+                }
+            }
+        }
 
     BackHandler(navigator.canNavigateBack()) {
         onAction(MediaListScreenActions.OnClearSelectedMedia)
@@ -133,6 +145,7 @@ private fun MediaListScreen(
                 MediaListScreenEvents.OnCloseMediaListPreview -> {
                     navigator.navigateBack()
                 }
+
                 MediaListScreenEvents.OnShareMediaList -> {
                     state.selectedMediaIndex?.let {
                         pagingMediaItems[it]?.sendIntent(
@@ -141,34 +154,14 @@ private fun MediaListScreen(
                         )
                     }
                 }
+
                 MediaListScreenEvents.OnNavigateToMediaDetail -> {
                     navigateToMediaDetailScreen()
                 }
+
                 MediaListScreenEvents.OnRefreshList -> {
                     pagingMediaItems.refresh()
                 }
-            }
-        }
-    }
-
-    state.mediaListDialogs?.let { dialog ->
-        when (dialog) {
-            MediaListScreenDialogs.DeleteMediaDialog -> {
-                AlertDialog(
-                    title = stringResource(R.string.all_dialog_warning),
-                    description = stringResource(R.string.delete_media_dialog_description_delete_this_media_file),
-                    confirmButtonLabel = stringResource(R.string.delete_media_dialog_delete_button),
-                    onDismiss = {
-                        onAction(MediaListScreenActions.OnCloseDialog)
-                    },
-                    onConfirm = {
-                        state.selectedMediaIndex?.let {
-                            pagingMediaItems.peek(it)
-                        }?.also { media ->
-                            onAction(MediaListScreenActions.OnDeleteMedia(mediaUri = media.uriString))
-                        }
-                    },
-                )
             }
         }
     }
@@ -219,7 +212,11 @@ private fun MediaListScreen(
                                     modifier = Modifier.weight(1f),
                                     pagingMediaItems = pagingMediaItems,
                                     onScrolled = { scrolled ->
-                                        onAction(MediaListScreenActions.OnSetTopBarVisibility(visible = !scrolled))
+                                        onAction(
+                                            MediaListScreenActions.OnSetTopBarVisibility(
+                                                visible = !scrolled,
+                                            ),
+                                        )
                                     },
                                     onItemClick = { itemIndex ->
                                         onAction(MediaListScreenActions.OnMediaListClick(itemIndex))
@@ -239,7 +236,8 @@ private fun MediaListScreen(
                                 modifier = Modifier,
                                 currentPage = index,
                                 pagerMediaItems = pagingMediaItems.itemSnapshotList.items,
-                            ) { media ->
+                            ) { page, media ->
+                                SideEffect { onAction(MediaListScreenActions.OnPagersPageChanged(page)) }
                                 MediaDetail(
                                     isCompact = windowWidth == WindowWidthSizeClass.COMPACT,
                                     media = media,
@@ -255,7 +253,10 @@ private fun MediaListScreen(
                                                 onAction(MediaListScreenActions.OnShareMedia)
                                             },
                                             onDeleteMedia = {
-                                                onAction(MediaListScreenActions.OnShowDeleteMediaDialog)
+                                                media.uriString.trashMediaItemByUri(
+                                                    context = context,
+                                                    trashLauncher = trashLauncher,
+                                                )
                                             },
                                             extraActions = {
                                                 IconButton(

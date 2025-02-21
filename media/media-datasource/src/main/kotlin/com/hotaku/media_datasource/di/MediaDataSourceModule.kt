@@ -23,11 +23,13 @@ internal object MediaDataSourceModule {
     @Singleton
     fun providesMediaDataSource(
         mapMediaEntityAsMediaData: MapMediaEntityAsMediaData,
+        mapMediaDataAsMediaEntity: MapMediaDataAsMediaEntity,
         mediaDao: MediaDao,
     ): MediaDataSource =
         MediaDataSourceImpl(
             mapMediaEntityAsMediaData = mapMediaEntityAsMediaData,
             mediaDao = mediaDao,
+            mapMediaDataAsMediaEntity = mapMediaDataAsMediaEntity,
         )
 
     @Provides

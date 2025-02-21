@@ -13,5 +13,5 @@ interface MediaRepository {
 
     suspend fun updateMedia(media: Media)
 
-    suspend fun deleteMediaById(mediaUriString: String)
+    suspend fun deleteMedia(media: List<Media>)
 }

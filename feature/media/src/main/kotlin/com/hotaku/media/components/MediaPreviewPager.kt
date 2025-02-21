@@ -13,7 +13,7 @@ internal fun MediaPreviewPager(
     modifier: Modifier = Modifier,
     currentPage: Int,
     pagerMediaItems: List<MediaUi>,
-    content: @Composable (MediaUi) -> Unit,
+    content: @Composable (Int, MediaUi) -> Unit,
 ) {
     val mediaPagerState =
         rememberPagerState(
@@ -32,6 +32,6 @@ internal fun MediaPreviewPager(
                 .fillMaxSize(),
         key = { it },
     ) { page ->
-        content(pagerMediaItems[page])
+        content(page, pagerMediaItems[page])
     }
 }

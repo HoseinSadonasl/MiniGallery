@@ -3,7 +3,7 @@ package com.hotaku.data.di
 import com.hotaku.common.di.Dispatcher
 import com.hotaku.common.di.MiniGalleryDispatchers
 import com.hotaku.data.datasource.AlbumsDataSource
-import com.hotaku.data.mapper.MapAlbumAsDomain
+import com.hotaku.data.mapper.MapAlbumDataAsAlbum
 import com.hotaku.data.repository.AlbumsRepositoryImpl
 import com.hotaku.media_domain.repository.AlbumsRepository
 import dagger.Module
@@ -20,12 +20,12 @@ internal object AlbumDataModule {
     @Singleton
     fun providesAlbumsRepository(
         albumsDataSource: AlbumsDataSource,
-        mapAlbumAsDomain: MapAlbumAsDomain = MapAlbumAsDomain(),
+        mapAlbumDataAsAlbum: MapAlbumDataAsAlbum = MapAlbumDataAsAlbum(),
         @Dispatcher(MiniGalleryDispatchers.IO) ioDispatcher: CoroutineDispatcher,
     ): AlbumsRepository =
         AlbumsRepositoryImpl(
             albumsDataSource = albumsDataSource,
-            mapAlbumAsDomain = mapAlbumAsDomain,
+            mapAlbumDataAsAlbum = mapAlbumDataAsAlbum,
             ioDispatcher = ioDispatcher,
         )
 }

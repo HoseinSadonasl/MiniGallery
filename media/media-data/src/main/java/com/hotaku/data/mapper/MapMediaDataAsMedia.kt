@@ -5,7 +5,7 @@ import com.hotaku.data.model.MediaData
 import com.hotaku.media_domain.model.Media
 import javax.inject.Inject
 
-internal class MapMediaAsDomain
+internal class MapMediaDataAsMedia
     @Inject
     constructor() : Mapper<MediaData, Media> {
         override fun map(from: MediaData): Media {

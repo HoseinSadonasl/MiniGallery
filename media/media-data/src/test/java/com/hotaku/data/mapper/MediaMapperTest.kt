@@ -11,14 +11,14 @@ internal class MediaMapperTest {
 
     @Test
     fun `mapping MediaData to MediaDomain returns correct data`() {
-        val mapMediaAsDomain = MapMediaAsDomain()
-        val mappedMedia = mapMediaAsDomain.map(from = getMediaData())
+        val mapMediaDataAsMedia = MapMediaDataAsMedia()
+        val mappedMedia = mapMediaDataAsMedia.map(from = getMediaData())
         assertThat(mappedMedia).isEqualTo(getMedia())
     }
 
     @Test
     fun `mapping MediaDomain to MediaData returns correct data`() {
-        val mapMediaAsDomain = MapMediaAsData()
+        val mapMediaAsDomain = MapMediaAsMediaData()
         val mappedMedia = mapMediaAsDomain.map(from = getMedia())
         assertThat(mappedMedia).isEqualTo(getMediaData())
     }

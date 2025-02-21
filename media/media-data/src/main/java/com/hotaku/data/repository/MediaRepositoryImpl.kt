@@ -5,8 +5,8 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.hotaku.data.datasource.MediaDataSource
-import com.hotaku.data.mapper.MapMediaAsData
-import com.hotaku.data.mapper.MapMediaAsDomain
+import com.hotaku.data.mapper.MapMediaAsMediaData
+import com.hotaku.data.mapper.MapMediaDataAsMedia
 import com.hotaku.media_domain.model.Media
 import com.hotaku.media_domain.repository.MediaRepository
 import kotlinx.coroutines.NonCancellable
@@ -19,8 +19,8 @@ internal class MediaRepositoryImpl
     @Inject
     constructor(
         private val mediaDataSource: MediaDataSource,
-        private val mediaAsDomain: MapMediaAsDomain,
-        private val mapMediaAsData: MapMediaAsData,
+        private val mapMediaDataAsMedia: MapMediaDataAsMedia,
+        private val mapMediaAsMediaData: MapMediaAsMediaData,
     ) : MediaRepository {
         override fun getMedia(
             mimeType: String,
@@ -41,18 +41,18 @@ internal class MediaRepositoryImpl
                         albumName = albumName,
                     )
                 },
-            ).flow.map { data -> data.map { mediaData -> mediaAsDomain.map(mediaData) } }
+            ).flow.map { data -> data.map { mediaData -> mapMediaDataAsMedia.map(mediaData) } }
 
         override suspend fun updateMedia(media: Media) =
             withContext(NonCancellable) {
-                mapMediaAsData.map(media).let { mediaData ->
+                mapMediaAsMediaData.map(media).let { mediaData ->
                     mediaDataSource.updateMedia(mediaData = mediaData)
                 }
             }
 
         override suspend fun deleteMedia(media: List<Media>) =
             withContext(NonCancellable) {
-                media.map { mapMediaAsData.map(it) }.let { mediaData ->
+                media.map { mapMediaAsMediaData.map(it) }.let { mediaData ->
                     mediaDataSource.deleteMedia(mediaData = mediaData)
                 }
             }

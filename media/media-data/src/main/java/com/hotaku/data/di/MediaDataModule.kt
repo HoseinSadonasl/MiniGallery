@@ -1,8 +1,8 @@
 package com.hotaku.data.di
 
 import com.hotaku.data.datasource.MediaDataSource
-import com.hotaku.data.mapper.MapMediaAsData
-import com.hotaku.data.mapper.MapMediaAsDomain
+import com.hotaku.data.mapper.MapMediaAsMediaData
+import com.hotaku.data.mapper.MapMediaDataAsMedia
 import com.hotaku.data.repository.MediaRepositoryImpl
 import com.hotaku.media_domain.repository.MediaRepository
 import dagger.Module
@@ -18,12 +18,12 @@ internal object MediaDataModule {
     @Singleton
     fun providesMediaRepository(
         mediaDataSource: MediaDataSource,
-        mediaAsDomain: MapMediaAsDomain,
-        mapMediaAsData: MapMediaAsData = MapMediaAsData(),
+        mediaAsDomain: MapMediaDataAsMedia,
+        mapMediaAsMediaData: MapMediaAsMediaData = MapMediaAsMediaData(),
     ): MediaRepository =
         MediaRepositoryImpl(
             mediaDataSource = mediaDataSource,
-            mediaAsDomain = mediaAsDomain,
-            mapMediaAsData = mapMediaAsData,
+            mapMediaDataAsMedia = mediaAsDomain,
+            mapMediaAsMediaData = mapMediaAsMediaData,
         )
 }

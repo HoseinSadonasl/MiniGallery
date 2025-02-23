@@ -13,6 +13,7 @@ internal fun MediaPreviewPager(
     modifier: Modifier = Modifier,
     currentPage: Int,
     pagerMediaItems: List<MediaUi>,
+    onCurrentPageChanged: (Int) -> Unit = {},
     content: @Composable (Int, MediaUi) -> Unit,
 ) {
     val mediaPagerState =
@@ -23,6 +24,10 @@ internal fun MediaPreviewPager(
 
     LaunchedEffect(currentPage) {
         mediaPagerState.animateScrollToPage(currentPage)
+    }
+
+    LaunchedEffect(mediaPagerState.currentPage) {
+        onCurrentPageChanged(mediaPagerState.currentPage)
     }
 
     VerticalPager(

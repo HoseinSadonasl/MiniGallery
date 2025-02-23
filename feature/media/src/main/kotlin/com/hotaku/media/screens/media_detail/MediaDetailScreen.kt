@@ -5,11 +5,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.media.components.MediaDetail
 import com.hotaku.media.components.MediaOptions
@@ -23,11 +23,13 @@ import kotlinx.coroutines.flow.collectLatest
 internal fun MediaDetailScreen(
     modifier: Modifier = Modifier,
     mediaDetailViewModel: MediaDetailViewModel,
+    selectedMediaItemIndex: Int,
     navigateUp: () -> Unit,
 ) {
     MediaDetailScreen(
         modifier = modifier,
-        viewModel = mediaDetailViewModel,
+        mediaDetailViewModel = mediaDetailViewModel,
+        selectedMediaItemIndex = selectedMediaItemIndex,
         navigateUp = navigateUp,
         onAction = mediaDetailViewModel::onAction,
     )
@@ -36,34 +38,49 @@ internal fun MediaDetailScreen(
 @Composable
 private fun MediaDetailScreen(
     modifier: Modifier = Modifier,
-    viewModel: MediaDetailViewModel,
+    mediaDetailViewModel: MediaDetailViewModel,
+    selectedMediaItemIndex: Int,
     navigateUp: () -> Unit,
     onAction: (MediaDetailScreenActions) -> Unit,
 ) {
     val context = LocalContext.current
 
-    val state by viewModel.mediaDetailUiState.collectAsStateWithLifecycle()
+    val state by mediaDetailViewModel.mediaDetailUiState.collectAsStateWithLifecycle()
+
+    val mediaListState = mediaDetailViewModel.mediaUiState.collectAsLazyPagingItems()
+
     val windowWidth = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
 
     val trashLauncher =
         rememberTrashLauncherForResult {
-            onAction(MediaDetailScreenActions.OnDeleteMedia)
+            state.selectedMediaItemIndex.let { index ->
+                mediaListState.peek(index)?.let { media ->
+                    onAction(
+                        MediaDetailScreenActions.OnDeleteMedia(
+                            mediaItem = media,
+                        ),
+                    )
+                }
+            }
         }
 
-    LaunchedEffect(viewModel.mediaDetailUiEvents) {
-        viewModel.mediaDetailUiEvents.collectLatest { event ->
+    LaunchedEffect(mediaDetailViewModel.mediaDetailUiEvents) {
+        mediaDetailViewModel.mediaDetailUiEvents.collectLatest { event ->
             when (event) {
                 MediaDetailScreenEvents.OnViewMedia -> {
-                    state.media[state.selectedMediaItemIndex].sendIntent(
+                    mediaListState.peek(state.selectedMediaItemIndex)?.sendIntent(
                         context = context,
                         intentAction = Intent.ACTION_VIEW,
                     )
                 }
                 MediaDetailScreenEvents.OnShareMedia -> {
-                    state.media[state.selectedMediaItemIndex].sendIntent(
+                    mediaListState.peek(state.selectedMediaItemIndex)?.sendIntent(
                         context = context,
                         intentAction = Intent.ACTION_SEND,
                     )
+                }
+                MediaDetailScreenEvents.OnRefreshMedia -> {
+                    mediaListState.refresh()
                 }
             }
         }
@@ -74,10 +91,12 @@ private fun MediaDetailScreen(
     ) {
         MediaPreviewPager(
             modifier = Modifier,
-            currentPage = state.selectedMediaItemIndex,
-            pagerMediaItems = state.media,
+            currentPage = selectedMediaItemIndex,
+            pagerMediaItems = mediaListState.itemSnapshotList.items,
+            onCurrentPageChanged = { pageIndex ->
+                onAction(MediaDetailScreenActions.OnSelectedIndexChanged(index = pageIndex))
+            },
         ) { page, media ->
-            SideEffect { onAction(MediaDetailScreenActions.OnPageChanged(page)) }
             MediaDetail(
                 isCompact = windowWidth == WindowWidthSizeClass.COMPACT,
                 media = media,

@@ -3,9 +3,7 @@ package com.hotaku.media.screens.media_detail
 import com.hotaku.media.model.MediaUi
 
 internal sealed interface MediaDetailScreenActions {
-    data class OnAddmediaList(val media: List<MediaUi>, val initialIndex: Int) : MediaDetailScreenActions
-
-    data class OnPageChanged(val page: Int) : MediaDetailScreenActions
+    data class OnSelectedIndexChanged(val index: Int) : MediaDetailScreenActions
 
     data object OnViewMedia : MediaDetailScreenActions
 
@@ -15,15 +13,13 @@ internal sealed interface MediaDetailScreenActions {
 
     data object OnCloseMenu : MediaDetailScreenActions
 
-    data object OnCloseDialog : MediaDetailScreenActions
-
     data object OnRenameClick : MediaDetailScreenActions
 
     data object OnSubmitRenameClick : MediaDetailScreenActions
 
     data class OnNameChange(val newName: String) : MediaDetailScreenActions
 
-    data object OnDeleteMedia : MediaDetailScreenActions
+    data class OnDeleteMedia(val mediaItem: MediaUi) : MediaDetailScreenActions
 
     data object OnUpdateMedia : MediaDetailScreenActions
 }

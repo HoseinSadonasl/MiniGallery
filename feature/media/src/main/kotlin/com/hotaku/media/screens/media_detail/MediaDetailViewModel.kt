@@ -2,16 +2,16 @@ package com.hotaku.media.screens.media_detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import com.hotaku.media.mapper.MapMediaUiAsMedia
 import com.hotaku.media.model.MediaUi
 import com.hotaku.media_domain.usecase.DeleteMediaUseCase
-import com.hotaku.media_domain.usecase.UpdateMediaUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,24 +21,24 @@ internal class MediaDetailViewModel
     @Inject
     constructor(
         private val deleteMediaUseCase: DeleteMediaUseCase,
-        private val updateMediaUseCase: UpdateMediaUseCase,
         private val mapMediaUiAsMedia: MapMediaUiAsMedia,
     ) : ViewModel() {
         private var mediaDetailViewModlState = MutableStateFlow(MediaDetailUiState())
         val mediaDetailUiState: StateFlow<MediaDetailUiState> = mediaDetailViewModlState.asStateFlow()
 
+        private var mediaViewModelState = MutableStateFlow<PagingData<MediaUi>>(PagingData.empty())
+        val mediaUiState = mediaViewModelState.asStateFlow()
+
         private var mediaDetailViewModelEvents = Channel<MediaDetailScreenEvents>()
-        val mediaDetailUiEvents = mediaDetailViewModelEvents.consumeAsFlow()
+        val mediaDetailUiEvents = mediaDetailViewModelEvents.receiveAsFlow()
 
         fun onAction(action: MediaDetailScreenActions) {
             when (action) {
-                is MediaDetailScreenActions.OnAddmediaList -> setMediaList(media = action.media, initialIndex = action.initialIndex)
                 is MediaDetailScreenActions.OnNameChange -> setName(newName = action.newName)
-                is MediaDetailScreenActions.OnPageChanged -> setSelectedIndex(action.page)
+                is MediaDetailScreenActions.OnSelectedIndexChanged -> setSelectedIndex(action.index)
                 MediaDetailScreenActions.OnViewMedia -> viewMedia()
                 MediaDetailScreenActions.OnShareMedia -> shareMedia()
-                MediaDetailScreenActions.OnCloseDialog -> closeDialog()
-                MediaDetailScreenActions.OnDeleteMedia -> deleteMedia()
+                is MediaDetailScreenActions.OnDeleteMedia -> deleteMedia(media = action.mediaItem)
                 MediaDetailScreenActions.OnOOpenMenu -> openMenuPopup()
                 MediaDetailScreenActions.OnCloseMenu -> openMenuPopup(open = false)
                 MediaDetailScreenActions.OnRenameClick -> openRenameDialog()
@@ -51,14 +51,6 @@ internal class MediaDetailViewModel
             mediaDetailViewModlState.update {
                 it.copy(
                     selectedMediaItemIndex = page,
-                )
-            }
-        }
-
-        private fun closeDialog() {
-            mediaDetailViewModlState.update {
-                it.copy(
-                    mediaDetailDialog = null,
                 )
             }
         }
@@ -89,23 +81,16 @@ internal class MediaDetailViewModel
 
         private fun updateMedia() {
             viewModelScope.launch {
-                val mediaToUpdate = mapMediaUiAsMedia.map(currentMedia())
-                updateMediaUseCase.invoke(media = mediaToUpdate)
+                // Update media
             }
         }
 
-        private fun deleteMedia() {
+        private fun deleteMedia(media: MediaUi) {
+            val mediaUriToDelete = mapMediaUiAsMedia.map(media)
             viewModelScope.launch {
-                val mediaUriToDelete = currentMedia()
-                mediaUriToDelete.let { mapMediaUiAsMedia.map(it) }.also { media ->
-                    deleteMediaUseCase.invoke(media = listOf(media))
-                }
-                mediaDetailViewModlState.update {
-                    it.copy(
-                        media = it.media.filterNot { mediaUi -> mediaUi == mediaUriToDelete },
-                    )
-                }
+                deleteMediaUseCase.invoke(media = listOf(mediaUriToDelete))
             }
+            sendEvent(MediaDetailScreenEvents.OnRefreshMedia)
         }
 
         private fun setName(newName: String) {
@@ -116,21 +101,8 @@ internal class MediaDetailViewModel
             }
         }
 
-        private fun setMediaList(
-            media: List<MediaUi>,
-            initialIndex: Int,
-        ) {
-            mediaDetailViewModlState.update {
-                it.copy(
-                    media = media,
-                    selectedMediaItemIndex = initialIndex,
-                )
-            }
-        }
-
-        private fun currentMedia(): MediaUi {
-            val currentIndex = mediaDetailViewModlState.value.selectedMediaItemIndex
-            return mediaDetailViewModlState.value.media[currentIndex]
+        fun setMediaState(mediaState: PagingData<MediaUi>) {
+            mediaViewModelState.value = mediaState
         }
 
         private fun sendEvent(event: MediaDetailScreenEvents) {

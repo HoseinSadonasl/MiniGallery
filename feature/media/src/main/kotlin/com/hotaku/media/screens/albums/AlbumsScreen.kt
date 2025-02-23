@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.feature.media.R
 import com.hotaku.media.components.ImageThumbnail
@@ -53,10 +54,12 @@ import kotlinx.coroutines.flow.collectLatest
 internal fun AlbumsScreen(
     modifier: Modifier = Modifier,
     albumsViewModel: AlbumsViewModel,
+    navigateToMediaDetailScreen: () -> Unit,
 ) {
     AlbumsScreen(
         modifier = modifier,
         albumsViewModel = albumsViewModel,
+        navigateToMediaDetailScreen = navigateToMediaDetailScreen,
         onAction = albumsViewModel::onAction,
     )
 }
@@ -66,9 +69,12 @@ internal fun AlbumsScreen(
 private fun AlbumsScreen(
     modifier: Modifier = Modifier,
     albumsViewModel: AlbumsViewModel,
+    navigateToMediaDetailScreen: () -> Unit,
     onAction: (AlbumsScreenActions) -> Unit,
 ) {
-    val state by albumsViewModel.albumsState.collectAsStateWithLifecycle()
+    val state by albumsViewModel.albumsUiState.collectAsStateWithLifecycle()
+
+    val mediaListState = albumsViewModel.mediaUiState.collectAsLazyPagingItems()
 
     val navigator = rememberSupportingPaneScaffoldNavigator<LazyPagingItems<MediaUi>>()
 
@@ -77,19 +83,19 @@ private fun AlbumsScreen(
         navigator.navigateBack()
     }
 
-    LaunchedEffect(albumsViewModel.event) {
-        albumsViewModel.event.collectLatest { event ->
+    LaunchedEffect(albumsViewModel.albumsUiEvent) {
+        albumsViewModel.albumsUiEvent.collectLatest { event ->
             when (event) {
-                is AlbumsScreenEvents.OnNavigateToMediaPane -> {
-                    navigator.navigateTo(ThreePaneScaffoldRole.Secondary, state.mediaList)
+                is AlbumsScreenEvents.OnNavigateToMediaDetailScreen -> {
+                    navigateToMediaDetailScreen()
                 }
             }
         }
     }
 
     LaunchedEffect(state.selectedAlbum) {
-        if (state.selectedAlbum != null && state.mediaList != null) {
-            navigator.navigateTo(ThreePaneScaffoldRole.Secondary, state.mediaList)
+        if (state.selectedAlbum != null && mediaListState.itemSnapshotList.items.isNotEmpty()) {
+            navigator.navigateTo(ThreePaneScaffoldRole.Secondary, mediaListState)
         }
     }
 
@@ -117,9 +123,9 @@ private fun AlbumsScreen(
                         navigator.currentDestination?.content?.let { mediaPagingItems ->
                             MediaGrid(
                                 pagingMediaItems = mediaPagingItems,
-                                onScrolled = { scrolled ->
-                                },
-                                onItemClick = { media ->
+                                onScrolled = {},
+                                onItemClick = { itemIndex ->
+                                    onAction(AlbumsScreenActions.OnMediaItemClick(itemIndex))
                                 },
                                 onItemLongClick = {},
                             )

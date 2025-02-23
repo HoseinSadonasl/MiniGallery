@@ -19,7 +19,6 @@ import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.rememberSupportingPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,17 +59,17 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 internal fun MediaListScreen(
     modifier: Modifier = Modifier,
-    mediaViewModel: MediaViewModel,
+    mediaListViewModel: MediaListViewModel,
     navigateToMediaDetailScreen: () -> Unit,
     onShowSnackBar: suspend (String) -> Unit,
 ) {
     MediaListScreen(
         modifier = modifier,
-        screenEvents = mediaViewModel.mediaScreenEvent,
-        screenState = mediaViewModel.mediaScreenUiState,
-        pagingMediaItemsState = mediaViewModel.mediaUiState,
-        synchronizeState = mediaViewModel.synchronizeUiState,
-        onAction = mediaViewModel::onAction,
+        screenEvents = mediaListViewModel.mediaScreenEvent,
+        screenState = mediaListViewModel.mediaListScreenUiState,
+        pagingMediaItemsState = mediaListViewModel.mediaUiState,
+        synchronizeState = mediaListViewModel.synchronizeUiState,
+        onAction = mediaListViewModel::onAction,
         navigateToMediaDetailScreen = navigateToMediaDetailScreen,
         onShowSnackBar = { onShowSnackBar(it) },
     )
@@ -121,7 +120,7 @@ private fun MediaListScreen(
     }
 
     LaunchedEffect(state.query) {
-        onAction(MediaListScreenActions.OnUpdateMediaList)
+//        onAction(MediaListScreenActions.OnUpdateMediaList)
     }
 
     LaunchedEffect(synchronize) {
@@ -219,10 +218,10 @@ private fun MediaListScreen(
                                         )
                                     },
                                     onItemClick = { itemIndex ->
-                                        onAction(MediaListScreenActions.OnMediaListClick(itemIndex))
+                                        onAction(MediaListScreenActions.OnMediaListItemClick(itemIndex))
                                     },
                                     onItemLongClick = {
-                                        onAction(MediaListScreenActions.OnMediaListLongClick)
+                                        onAction(MediaListScreenActions.OnMediaListItemLongClick)
                                     },
                                 )
                             }
@@ -236,8 +235,10 @@ private fun MediaListScreen(
                                 modifier = Modifier,
                                 currentPage = index,
                                 pagerMediaItems = pagingMediaItems.itemSnapshotList.items,
-                            ) { page, media ->
-                                SideEffect { onAction(MediaListScreenActions.OnPagersPageChanged(page)) }
+                                onCurrentPageChanged = { currentIndex ->
+                                    onAction(MediaListScreenActions.OnMediaListItemClick(mediaItemIndex = currentIndex))
+                                },
+                            ) { pageIndex, media ->
                                 MediaDetail(
                                     isCompact = windowWidth == WindowWidthSizeClass.COMPACT,
                                     media = media,

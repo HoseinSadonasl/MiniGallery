@@ -14,6 +14,10 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
@@ -33,7 +37,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.feature.media.R
@@ -42,7 +45,6 @@ import com.hotaku.media.components.MediaGrid
 import com.hotaku.media.components.OnScreenMessage
 import com.hotaku.media.components.VideoThumbnail
 import com.hotaku.media.model.AlbumUi
-import com.hotaku.media.model.MediaUi
 import com.hotaku.media.utils.MediaType
 import com.hotaku.ui.UiState
 import com.hotaku.ui.conposables.DynamicTopAppBarColumn
@@ -76,7 +78,7 @@ private fun AlbumsScreen(
 
     val mediaListState = albumsViewModel.mediaUiState.collectAsLazyPagingItems()
 
-    val navigator = rememberSupportingPaneScaffoldNavigator<LazyPagingItems<MediaUi>>()
+    val navigator = rememberSupportingPaneScaffoldNavigator<String>()
 
     BackHandler(navigator.canNavigateBack()) {
         onAction(AlbumsScreenActions.OnCloseAlbum)
@@ -95,7 +97,7 @@ private fun AlbumsScreen(
 
     LaunchedEffect(state.selectedAlbum) {
         if (state.selectedAlbum != null && mediaListState.itemSnapshotList.items.isNotEmpty()) {
-            navigator.navigateTo(ThreePaneScaffoldRole.Secondary, mediaListState)
+            navigator.navigateTo(ThreePaneScaffoldRole.Secondary, state.selectedAlbum?.displayName)
         }
     }
 
@@ -103,7 +105,24 @@ private fun AlbumsScreen(
         modifier = modifier,
         animatableTopContent = {
             TopAppBar(
-                title = stringResource(R.string.albums_screen_top_app_bar_title),
+                title =
+                    state.selectedAlbum?.displayName
+                        ?: stringResource(R.string.albums_screen_top_app_bar_title),
+                actions = {
+                    state.selectedAlbum?.let {
+                        IconButton(
+                            onClick = {
+                                onAction(AlbumsScreenActions.OnCloseAlbum)
+                                navigator.navigateBack()
+                            },
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Close,
+                                contentDescription = null,
+                            )
+                        }
+                    }
+                },
             )
         },
         content = {
@@ -120,9 +139,9 @@ private fun AlbumsScreen(
                 },
                 supportingPane = {
                     AnimatedPane {
-                        navigator.currentDestination?.content?.let { mediaPagingItems ->
+                        navigator.currentDestination?.content?.let { albumName ->
                             MediaGrid(
-                                pagingMediaItems = mediaPagingItems,
+                                pagingMediaItems = mediaListState,
                                 onScrolled = {},
                                 onItemClick = { itemIndex ->
                                     onAction(AlbumsScreenActions.OnMediaItemClick(itemIndex))

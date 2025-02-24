@@ -24,7 +24,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.media.navigation.MediaGraph
 import com.hotaku.media.navigation.MediaGraph.mediaGraph
-import com.hotaku.media.navigation.MediaScreenRRoute
+import com.hotaku.media.navigation.MediaListScreenRRoute
 
 @Composable
 fun AppSuiteNav(
@@ -56,7 +56,7 @@ fun AppSuiteNav(
                 navBackStackEntry = navBackStackEntry,
                 onRouteSelected = { route ->
                     navHostController.navigate(route) {
-                        popUpTo(MediaScreenRRoute) {
+                        popUpTo(MediaListScreenRRoute) {
                             saveState = true
                         }
                         launchSingleTop = true

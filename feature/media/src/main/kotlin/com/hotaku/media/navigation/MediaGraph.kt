@@ -1,14 +1,11 @@
 package com.hotaku.media.navigation
 
-import androidx.compose.runtime.Composable
+import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -26,13 +23,13 @@ import kotlinx.serialization.Serializable
 
 // Home routes
 @Serializable
-object MediaScreenRRoute
+object MediaListScreenRRoute
 
 @Serializable
 object AlbumsScreenRoute
 
 @Serializable
-data class MediaDetailRoute(
+internal data class MediaDetailRoute(
     val initialItemIndex: Int?,
 )
 
@@ -48,16 +45,35 @@ object MediaGraph {
         onRequestPermissions: () -> Unit,
     ) {
         navigation<MediaGraph>(
-            startDestination = if (permissionState) MediaScreenRRoute else PermissionsScreenRoute,
+            startDestination = if (permissionState) MediaListScreenRRoute else PermissionsScreenRoute,
         ) {
-            composable<PermissionsScreenRoute> {
+            composable<PermissionsScreenRoute>(
+                popExitTransition = { slideOutOfContainer(SlideDirection.Right) },
+            ) {
                 PermissionsScreen(
                     permissionState = permissionState,
                     onRequestPermissions = onRequestPermissions,
-                    navigateToMediaScreen = { navHostController.navigate(MediaScreenRRoute) },
+                    navigateToMediaScreen = {
+                        navHostController.navigate(MediaListScreenRRoute) {
+                            popUpTo<MediaListScreenRRoute>()
+                        }
+                    },
                 )
             }
-            composable<MediaScreenRRoute> { navBackStackEntry ->
+            composable<MediaListScreenRRoute>(
+                enterTransition = {
+                    slideIntoContainer(
+                        SlideDirection.Right,
+                        animationSpec = tween(500),
+                    )
+                },
+                exitTransition = {
+                    slideOutOfContainer(
+                        SlideDirection.Left,
+                        animationSpec = tween(500),
+                    )
+                },
+            ) { navBackStackEntry ->
                 val sharedMediaViewModel =
                     navBackStackEntry.sharedHiltViewModel<SharedMediaViewModel>(
                         navController = navHostController,
@@ -91,7 +107,20 @@ object MediaGraph {
                     onShowSnackBar = { onShowSnackBar(it) },
                 )
             }
-            composable<AlbumsScreenRoute> { navBackStackEntry ->
+            composable<AlbumsScreenRoute>(
+                enterTransition = {
+                    slideIntoContainer(
+                        SlideDirection.Left,
+                        animationSpec = tween(500),
+                    )
+                },
+                exitTransition = {
+                    slideOutOfContainer(
+                        SlideDirection.Right,
+                        animationSpec = tween(500),
+                    )
+                },
+            ) { navBackStackEntry ->
                 val sharedMediaViewModel =
                     navBackStackEntry.sharedHiltViewModel<SharedMediaViewModel>(
                         navController = navHostController,
@@ -148,26 +177,14 @@ object MediaGraph {
             }
         }
     }
-
-    private fun NavHostController.navigateToMediaDetailScreen(selectedMediaIndex: Int?) {
-        navigate(
-            MediaDetailRoute(
-                initialItemIndex = selectedMediaIndex,
-            ),
-        ) {
-            launchSingleTop = true
-        }
-    }
 }
 
-@Composable
-private inline fun <reified T : ViewModel> NavBackStackEntry.sharedHiltViewModel(navController: NavController): T {
-    val navGraphRoute = destination.parent?.route ?: return hiltViewModel<T>()
-    val parentEntry =
-        remember(this) {
-            navController.getBackStackEntry(navGraphRoute)
-        }
-    return hiltViewModel(
-        viewModelStoreOwner = parentEntry,
-    )
+private fun NavHostController.navigateToMediaDetailScreen(selectedMediaIndex: Int?) {
+    navigate(
+        MediaDetailRoute(
+            initialItemIndex = selectedMediaIndex,
+        ),
+    ) {
+        launchSingleTop = true
+    }
 }

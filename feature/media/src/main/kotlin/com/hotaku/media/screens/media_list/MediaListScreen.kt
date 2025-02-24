@@ -134,7 +134,12 @@ private fun MediaListScreen(
     LaunchedEffect(state.selectedMediaIndex) {
         state.selectedMediaIndex?.let {
             onAction(MediaListScreenActions.OnSetTopBarVisibility(visible = false))
-            navigator.navigateTo(ThreePaneScaffoldRole.Secondary, it)
+            if (windowWidth == WindowWidthSizeClass.COMPACT) {
+                navigateToMediaDetailScreen()
+                onAction(MediaListScreenActions.OnClearSelectedMedia)
+            } else {
+                navigator.navigateTo(ThreePaneScaffoldRole.Secondary, it)
+            }
         }
     }
 

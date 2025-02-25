@@ -5,8 +5,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,6 +25,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.designsystem.theme.MiniGalleryTheme
@@ -34,28 +38,50 @@ fun OnScreenMessage(
     title: String,
     fulMessage: String,
 ) {
-    val adaptiveInfo = currentWindowAdaptiveInfo()
-    val maxWidth =
-        when (adaptiveInfo.windowSizeClass.windowWidthSizeClass) {
-            WindowWidthSizeClass.COMPACT -> 1f
+    val windowSize = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
+        MessageSection(
+            windowSize = windowSize,
+            color = color,
+            title = title,
+            fulMessage = fulMessage,
+        )
+    }
+}
+
+@Composable
+private fun MessageSection(
+    modifier: Modifier = Modifier,
+    windowSize: WindowWidthSizeClass,
+    color: Color,
+    title: String,
+    fulMessage: String,
+) {
+    val iconFraction =
+        when (windowSize) {
+            WindowWidthSizeClass.COMPACT -> .7f
             WindowWidthSizeClass.MEDIUM -> .5f
-            else -> .3f
+            else -> .15f
         }
     Column(
-        modifier = modifier.fillMaxWidth(maxWidth),
+        modifier = modifier.verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         Icon(
             modifier =
                 Modifier
-                    .fillMaxWidth(.7f)
+                    .fillMaxWidth(fraction = iconFraction)
                     .aspectRatio(1f)
                     .alpha(.5f),
             imageVector = ImageVector.vectorResource(id = R.drawable.all_media_illustration),
             tint = color,
             contentDescription = null,
         )
+
         Text(
             modifier = Modifier.padding(16.dp),
             text = title,
@@ -66,6 +92,7 @@ fun OnScreenMessage(
                     color = color,
                 ),
         )
+
         Text(
             modifier = Modifier.fillMaxWidth(.8f),
             text = fulMessage,
@@ -77,14 +104,17 @@ fun OnScreenMessage(
 }
 
 @PreviewLightDark
+@PreviewScreenSizes
 @Composable
 private fun ScreenMessagePreview() {
     MiniGalleryTheme {
         Box(
             Modifier
+                .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
         ) {
             OnScreenMessage(
+                modifier = Modifier.align(Alignment.Center),
                 title = stringResource(id = R.string.permissions_screen_message_title),
                 fulMessage = stringResource(id = R.string.permissions_screen_message),
             )

@@ -196,22 +196,22 @@ private fun MediaListScreen(
             )
         },
         content = {
-            SupportingPaneScaffold(
-                directive = navigator.scaffoldDirective,
-                value = navigator.scaffoldValue,
-                mainPane = {
-                    AnimatedPane {
-                        Column(
-                            Modifier.fillMaxSize(),
-                        ) {
-                            AnimatedVisibility(
-                                visible = state.showSyncSection,
+            if (synchronize is UiState.Success && pagingMediaItems.itemCount == 0) {
+                NoMedia()
+            } else {
+                SupportingPaneScaffold(
+                    directive = navigator.scaffoldDirective,
+                    value = navigator.scaffoldValue,
+                    mainPane = {
+                        AnimatedPane {
+                            Column(
+                                Modifier.fillMaxSize(),
                             ) {
-                                SyncSection(synchronize)
-                            }
-                            if (synchronize is UiState.Success && pagingMediaItems.itemCount == 0) {
-                                NoMedia()
-                            } else {
+                                AnimatedVisibility(
+                                    visible = state.showSyncSection,
+                                ) {
+                                    SyncSection(synchronize)
+                                }
                                 MediaGrid(
                                     modifier = Modifier.weight(1f),
                                     pagingMediaItems = pagingMediaItems,
@@ -231,59 +231,62 @@ private fun MediaListScreen(
                                 )
                             }
                         }
-                    }
-                },
-                supportingPane = {
-                    AnimatedPane {
-                        navigator.currentDestination?.content?.let { index ->
-                            MediaPreviewPager(
-                                modifier = Modifier,
-                                currentPage = index,
-                                pagerMediaItems = pagingMediaItems.itemSnapshotList.items,
-                                onCurrentPageChanged = { currentIndex ->
-                                    onAction(MediaListScreenActions.OnMediaListItemClick(mediaItemIndex = currentIndex))
-                                },
-                            ) { pageIndex, media ->
-                                MediaDetail(
-                                    isCompact = windowWidth == WindowWidthSizeClass.COMPACT,
-                                    media = media,
-                                    onPlayVideo = {
-                                        // play video
+                    },
+                    supportingPane = {
+                        AnimatedPane {
+                            navigator.currentDestination?.content?.let { index ->
+                                MediaPreviewPager(
+                                    modifier = Modifier,
+                                    currentPage = index,
+                                    pagerMediaItems = pagingMediaItems.itemSnapshotList.items,
+                                    onCurrentPageChanged = { currentIndex ->
+                                        onAction(MediaListScreenActions.OnMediaListItemClick(mediaItemIndex = currentIndex))
                                     },
-                                    onClose = {
-                                        onAction(MediaListScreenActions.OnClearSelectedMedia)
-                                    },
-                                    floatOptions = {
-                                        MediaOptions(
-                                            onShareMedia = {
-                                                onAction(MediaListScreenActions.OnShareMedia)
-                                            },
-                                            onDeleteMedia = {
-                                                media.uriString.trashMediaItemByUri(
-                                                    context = context,
-                                                    trashLauncher = trashLauncher,
-                                                )
-                                            },
-                                            extraActions = {
-                                                IconButton(
-                                                    onClick = {
-                                                        onAction(MediaListScreenActions.OnOpenMedia)
-                                                    },
-                                                ) {
-                                                    Icon(
-                                                        imageVector = ImageVector.vectorResource(id = R.drawable.media_preview_full_screen),
-                                                        contentDescription = "Open full screen",
+                                ) { pageIndex, media ->
+                                    MediaDetail(
+                                        isCompact = windowWidth == WindowWidthSizeClass.COMPACT,
+                                        media = media,
+                                        onPlayVideo = {
+                                            // play video
+                                        },
+                                        onClose = {
+                                            onAction(MediaListScreenActions.OnClearSelectedMedia)
+                                        },
+                                        floatOptions = {
+                                            MediaOptions(
+                                                onShareMedia = {
+                                                    onAction(MediaListScreenActions.OnShareMedia)
+                                                },
+                                                onDeleteMedia = {
+                                                    media.uriString.trashMediaItemByUri(
+                                                        context = context,
+                                                        trashLauncher = trashLauncher,
                                                     )
-                                                }
-                                            },
-                                        )
-                                    },
-                                )
+                                                },
+                                                extraActions = {
+                                                    IconButton(
+                                                        onClick = {
+                                                            onAction(MediaListScreenActions.OnOpenMedia)
+                                                        },
+                                                    ) {
+                                                        Icon(
+                                                            imageVector =
+                                                                ImageVector.vectorResource(
+                                                                    id = R.drawable.media_preview_full_screen,
+                                                                ),
+                                                            contentDescription = "Open full screen",
+                                                        )
+                                                    }
+                                                },
+                                            )
+                                        },
+                                    )
+                                }
                             }
                         }
-                    }
-                },
-            )
+                    },
+                )
+            }
         },
     )
 }

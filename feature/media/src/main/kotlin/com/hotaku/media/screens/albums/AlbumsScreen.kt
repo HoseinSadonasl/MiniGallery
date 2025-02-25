@@ -158,29 +158,19 @@ private fun AlbumsScreen(
 
 @Composable
 private fun NoAlbums() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        OnScreenMessage(
-            title = stringResource(id = R.string.albums_screen_no_albums),
-            fulMessage = stringResource(id = R.string.albums_screen_no_albums_full_message),
-        )
-    }
+    OnScreenMessage(
+        title = stringResource(id = R.string.albums_screen_no_albums),
+        fulMessage = stringResource(id = R.string.albums_screen_no_albums_full_message),
+    )
 }
 
 @Composable
 private fun AlbumsLoadError() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        OnScreenMessage(
-            color = MaterialTheme.colorScheme.error,
-            title = stringResource(id = R.string.albums_screen_error_while_getting_albums),
-            fulMessage = stringResource(id = R.string.albums_screen_error_while_getting_albums_full_message),
-        )
-    }
+    OnScreenMessage(
+        color = MaterialTheme.colorScheme.error,
+        title = stringResource(id = R.string.albums_screen_error_while_getting_albums),
+        fulMessage = stringResource(id = R.string.albums_screen_error_while_getting_albums_full_message),
+    )
 }
 
 @Preview(showBackground = true)

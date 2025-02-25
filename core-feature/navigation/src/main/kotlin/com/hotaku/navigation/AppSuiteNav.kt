@@ -19,12 +19,14 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.navOptions
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.media.navigation.MediaGraph
 import com.hotaku.media.navigation.MediaGraph.mediaGraph
-import com.hotaku.media.navigation.MediaListScreenRRoute
+import com.hotaku.media.screens.media_list.navigation.MediaListScreenRRoute
 
 @Composable
 fun AppSuiteNav(
@@ -55,13 +57,7 @@ fun AppSuiteNav(
                 layoutType = layoutType,
                 navBackStackEntry = navBackStackEntry,
                 onRouteSelected = { route ->
-                    navHostController.navigate(route) {
-                        popUpTo(MediaListScreenRRoute) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+                    navHostController.navigate(route = route, navOptions = topLevelNavOptions)
                 },
             )
         },
@@ -90,6 +86,17 @@ fun AppSuiteNav(
         },
     )
 }
+
+private val topLevelNavOptions: NavOptions
+    get() =
+        navOptions {
+            popUpTo(MediaListScreenRRoute) {
+                saveState = true
+                inclusive = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
 
 @Composable
 private fun MiniGalleryNavHost(

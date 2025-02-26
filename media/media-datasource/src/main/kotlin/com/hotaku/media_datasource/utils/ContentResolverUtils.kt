@@ -5,16 +5,16 @@ import android.content.ContentUris
 import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
-import com.hotaku.data.model.MediaData
+import com.hotaku.media_datasource.models.MediaDto
 import com.hotaku.media_datasource.utils.MediaQueries.getMediaUri
 
-fun ContentResolver.queryMedia(
+internal fun ContentResolver.queryMedia(
     uri: Uri,
     projection: Array<String>? = null,
     selection: String? = null,
     selectionArgs: Array<String>? = null,
     sortOrder: String? = MediaQueries.SORT_MEDIA_BY_DATE_ADDED,
-): Result<List<MediaData>> =
+): Result<List<MediaDto>> =
     runCatching {
         query(
             uri,
@@ -25,8 +25,8 @@ fun ContentResolver.queryMedia(
         )?.use { it.processCursor() }.orEmpty()
     }
 
-fun Cursor.processCursor(): List<MediaData> {
-    val mediaList = mutableListOf<MediaData>()
+internal fun Cursor.processCursor(): List<MediaDto> {
+    val mediaList = mutableListOf<MediaDto>()
 
     val mediaId = getColumnIndex(MediaStore.Files.FileColumns._ID)
 
@@ -44,7 +44,7 @@ fun Cursor.processCursor(): List<MediaData> {
                 getString(mimeType).getMediaUri(),
                 getLong(mediaId),
             )
-        MediaData(
+        MediaDto(
             mediaId = getLong(mediaId),
             uriString = uriString.toString(),
             displayName = getString(displayName),

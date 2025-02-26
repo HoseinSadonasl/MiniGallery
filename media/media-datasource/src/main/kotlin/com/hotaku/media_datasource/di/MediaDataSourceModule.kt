@@ -9,6 +9,7 @@ import com.hotaku.media_datasource.MediaDataSourceImpl
 import com.hotaku.media_datasource.ProviderDataSourceImpl
 import com.hotaku.media_datasource.UpdateMediaDataSourceImpl
 import com.hotaku.media_datasource.mapper.MapMediaDataAsMediaEntity
+import com.hotaku.media_datasource.mapper.MapMediaDtoAsMediaData
 import com.hotaku.media_datasource.mapper.MapMediaEntityAsMediaData
 import dagger.Module
 import dagger.Provides
@@ -45,8 +46,12 @@ internal object MediaDataSourceModule {
 
     @Provides
     @Singleton
-    fun providesProviderDataSource(contentResolver: ContentResolver): ProviderDataSource =
+    fun providesProviderDataSource(
+        contentResolver: ContentResolver,
+        mapMediaDtoAsMediaData: MapMediaDtoAsMediaData,
+    ): ProviderDataSource =
         ProviderDataSourceImpl(
             contentResolver = contentResolver,
+            mapMediaDtoAsMediaData = mapMediaDtoAsMediaData,
         )
 }

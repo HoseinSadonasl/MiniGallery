@@ -3,7 +3,7 @@ package com.hotaku.media_datasource.di
 import com.hotaku.data.datasource.AlbumsDataSource
 import com.hotaku.database.dao.MediaDao
 import com.hotaku.media_datasource.AlbumsDataSourceImpl
-import com.hotaku.media_datasource.mapper.MapAlbumsDtoAsAlbumsData
+import com.hotaku.media_datasource.mapper.MapAlbumsEntityAsAlbumsData
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,10 +17,10 @@ internal object AlbumDataSourceModule {
     @Singleton
     fun providesAlbumDataSource(
         mediaDao: MediaDao,
-        mapAlbumsDtoAsAlbumsData: MapAlbumsDtoAsAlbumsData = MapAlbumsDtoAsAlbumsData(),
+        mapAlbumsEntityAsAlbumsData: MapAlbumsEntityAsAlbumsData = MapAlbumsEntityAsAlbumsData(),
     ): AlbumsDataSource =
         AlbumsDataSourceImpl(
             mediaDao = mediaDao,
-            mapAlbumsDtoAsAlbumsData = mapAlbumsDtoAsAlbumsData,
+            mapAlbumsEntityAsAlbumsData = mapAlbumsEntityAsAlbumsData,
         )
 }

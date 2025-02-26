@@ -1,6 +1,6 @@
 package com.hotaku.database.entity
 
-data class AlbumDto(
+data class AlbumEntity(
     val displayName: String,
     val thumbnailUriString: String,
     val thumbnailType: String,

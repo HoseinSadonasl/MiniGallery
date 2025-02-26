@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
-import com.hotaku.database.entity.AlbumDto
+import com.hotaku.database.entity.AlbumEntity
 import com.hotaku.database.entity.MediaEntity
 
 @Dao
@@ -49,5 +49,5 @@ interface MediaDao {
             " FROM media GROUP BY" +
             " bucketDisplayName ORDER BY bucketDisplayName ASC",
     )
-    suspend fun getAlbums(): List<AlbumDto>
+    suspend fun getAlbums(): List<AlbumEntity>
 }

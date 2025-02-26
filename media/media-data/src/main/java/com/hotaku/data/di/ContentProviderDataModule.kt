@@ -1,6 +1,6 @@
 package com.hotaku.data.di
 
-import com.hotaku.data.datasource.ProviderDataSource
+import com.hotaku.data.datasource.ContentProviderDataSource
 import com.hotaku.data.datasource.UpdateMediaDbDataSource
 import com.hotaku.data.repository.UpdateLocalLocalMediaRepositoryImpl
 import com.hotaku.media_domain.repository.UpdateLocalMediaRepository
@@ -12,15 +12,15 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal object ProviderDataModule {
+internal object ContentProviderDataModule {
     @Provides
     @Singleton
-    fun providesProviderRepository(
+    fun providesContentProviderRepository(
         updateMediaDbDataSource: UpdateMediaDbDataSource,
-        providerDataSource: ProviderDataSource,
+        contentProviderDataSource: ContentProviderDataSource,
     ): UpdateLocalMediaRepository =
         UpdateLocalLocalMediaRepositoryImpl(
             updateMediaDbDataSource = updateMediaDbDataSource,
-            providerDataSource = providerDataSource,
+            contentProviderDataSource = contentProviderDataSource,
         )
 }

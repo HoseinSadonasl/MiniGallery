@@ -1,12 +1,12 @@
 package com.hotaku.media_datasource.di
 
 import android.content.ContentResolver
+import com.hotaku.data.datasource.ContentProviderDataSource
 import com.hotaku.data.datasource.MediaDataSource
-import com.hotaku.data.datasource.ProviderDataSource
 import com.hotaku.data.datasource.UpdateMediaDbDataSource
 import com.hotaku.database.dao.MediaDao
+import com.hotaku.media_datasource.ContentProviderDataSourceImpl
 import com.hotaku.media_datasource.MediaDataSourceImpl
-import com.hotaku.media_datasource.ProviderDataSourceImpl
 import com.hotaku.media_datasource.UpdateMediaDataSourceImpl
 import com.hotaku.media_datasource.mapper.MapMediaDataAsMediaEntity
 import com.hotaku.media_datasource.mapper.MapMediaDtoAsMediaData
@@ -46,11 +46,11 @@ internal object MediaDataSourceModule {
 
     @Provides
     @Singleton
-    fun providesProviderDataSource(
+    fun providesContentProviderDataSource(
         contentResolver: ContentResolver,
         mapMediaDtoAsMediaData: MapMediaDtoAsMediaData,
-    ): ProviderDataSource =
-        ProviderDataSourceImpl(
+    ): ContentProviderDataSource =
+        ContentProviderDataSourceImpl(
             contentResolver = contentResolver,
             mapMediaDtoAsMediaData = mapMediaDtoAsMediaData,
         )

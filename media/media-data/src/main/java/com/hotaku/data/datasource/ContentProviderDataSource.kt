@@ -2,6 +2,6 @@ package com.hotaku.data.datasource
 
 import com.hotaku.data.model.MediaData
 
-interface ProviderDataSource {
+interface ContentProviderDataSource {
     fun getMedia(): Result<List<MediaData>>
 }

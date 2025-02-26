@@ -8,7 +8,7 @@ import android.provider.MediaStore
 import com.hotaku.media_datasource.models.MediaDto
 import com.hotaku.media_datasource.utils.MediaQueries.getMediaUri
 
-internal fun ContentResolver.queryMedia(
+internal fun ContentResolver.queryMediaFromContentProvider(
     uri: Uri,
     projection: Array<String>? = null,
     selection: String? = null,

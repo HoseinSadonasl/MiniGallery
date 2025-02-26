@@ -1,6 +1,6 @@
 package com.hotaku.data.repository
 
-import com.hotaku.data.datasource.ProviderDataSource
+import com.hotaku.data.datasource.ContentProviderDataSource
 import com.hotaku.data.datasource.UpdateMediaDbDataSource
 import com.hotaku.data.model.MediaData
 import com.hotaku.media_domain.repository.UpdateLocalMediaRepository
@@ -10,11 +10,11 @@ internal class UpdateLocalLocalMediaRepositoryImpl
     @Inject
     constructor(
         private val updateMediaDbDataSource: UpdateMediaDbDataSource,
-        private val providerDataSource: ProviderDataSource,
+        private val contentProviderDataSource: ContentProviderDataSource,
     ) : UpdateLocalMediaRepository {
         override suspend fun update(): Result<Int> =
             runCatching {
-                val providerMedia: List<MediaData> = providerDataSource.getMedia().getOrThrow()
+                val providerMedia: List<MediaData> = contentProviderDataSource.getMedia().getOrThrow()
 
                 val newUris: List<String> = providerMedia.map { it.uriString }
                 val dbUris: List<String> = updateMediaDbDataSource.getMediaStringUris()

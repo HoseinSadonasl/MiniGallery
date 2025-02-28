@@ -35,7 +35,7 @@ class MapMediaAsMediaUiTest {
                 uriString = exceptedUriString,
                 displayName = "Hosein Sadon",
                 mimeType = MediaType.IMAGE,
-                duration = "60",
+                duration = 60,
                 dateAdded = Instant.ofEpochMilli(exceptedTime),
                 dateModified = Instant.ofEpochMilli(exceptedTime),
                 size = 1024,

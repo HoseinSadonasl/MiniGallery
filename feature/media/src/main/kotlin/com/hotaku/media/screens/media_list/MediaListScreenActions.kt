@@ -7,6 +7,8 @@ sealed interface MediaListScreenActions {
 
     data class OnMimeTypeChange(val mimeType: String) : MediaListScreenActions
 
+    data object OnRetrySynchronizeMedia : MediaListScreenActions
+
     data object OnHideSyncSection : MediaListScreenActions
 
     data class OnSetTopBarVisibility(val visible: Boolean) : MediaListScreenActions

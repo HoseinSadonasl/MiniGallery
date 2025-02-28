@@ -3,6 +3,7 @@ package com.hotaku.media.utils
 import com.hotaku.domain.utils.Error
 import com.hotaku.domain.utils.ErrorResult
 import com.hotaku.feature.media.R
+import com.hotaku.media_domain.util.SyncFailureReason
 import com.hotaku.ui.UiText
 
 fun Error.asUiError(): UiText =
@@ -17,4 +18,10 @@ fun Error.asUiError(): UiText =
                 ErrorResult.LocalError.SYNC_DATA_ERROR -> UiText.StringResource(R.string.all_sync_error)
             }
         }
+    }
+
+internal fun SyncFailureReason.asUiError(): UiText =
+    when (this) {
+        SyncFailureReason.LOW_STORAGE -> UiText.StringResource(resId = R.string.all_storage_low_error)
+        SyncFailureReason.UNKNOWN -> UiText.StringResource(R.string.all_unknown_error)
     }

@@ -3,12 +3,12 @@ package com.hotaku.media.screens.media_list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import com.hotaku.domain.utils.DataResult
 import com.hotaku.media.mapper.MapMediaUiAsMedia
 import com.hotaku.media.model.MediaUi
 import com.hotaku.media.utils.asUiError
 import com.hotaku.media_domain.usecase.DeleteMediaUseCase
 import com.hotaku.media_domain.usecase.SyncMediaUseCase
+import com.hotaku.media_domain.util.SyncDataState
 import com.hotaku.ui.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -34,14 +34,14 @@ internal class MediaListViewModel
         private var mediaListScreenViewModelState = MutableStateFlow(MediaListUiState())
         val mediaListScreenUiState: StateFlow<MediaListUiState> = mediaListScreenViewModelState
 
-        private var synchronizeViewModelState = MutableStateFlow<UiState<Int>>(UiState.Loading())
+        private var synchronizeViewModelState = MutableStateFlow<UiState<Int>?>(null)
         val synchronizeUiState =
             synchronizeViewModelState
                 .onStart { synchronizeMedia() }
                 .stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5000),
-                    initialValue = UiState.Loading(),
+                    initialValue = null,
                 )
 
         private var mediaViewModelState = MutableStateFlow<PagingData<MediaUi>>(PagingData.empty())
@@ -52,6 +52,7 @@ internal class MediaListViewModel
 
         fun onAction(action: MediaListScreenActions) {
             when (action) {
+                MediaListScreenActions.OnRetrySynchronizeMedia -> retrySync()
                 MediaListScreenActions.OnHideSyncSection -> setyncSectionStateFalse()
                 is MediaListScreenActions.OnMimeTypeChange -> setMimeType(action.mimeType)
                 is MediaListScreenActions.OnQueryChange -> setQuery(action.query)
@@ -66,6 +67,8 @@ internal class MediaListViewModel
                 MediaListScreenActions.OnShareMedia -> shareMedia()
             }
         }
+
+        private fun retrySync() = synchronizeMedia()
 
         private fun deleteMediaItem(mediaUi: MediaUi) {
             val media = listOf(mediaUi)
@@ -135,9 +138,10 @@ internal class MediaListViewModel
                 syncMediaUseCase.invoke().collect { result ->
                     synchronizeViewModelState.value =
                         when (result) {
-                            is DataResult.Loading -> UiState.Loading()
-                            is DataResult.Success -> UiState.Success(data = result.data ?: 0)
-                            is DataResult.Failure -> UiState.Failure(error = result.error.asUiError())
+                            SyncDataState.Idle -> null
+                            SyncDataState.Syncing -> UiState.Loading()
+                            is SyncDataState.SyncFailure -> UiState.Failure(error = result.reason.asUiError())
+                            is SyncDataState.SyncSuccess -> UiState.Success(data = result.itemsCount)
                         }
                 }
             }

@@ -1,9 +1,8 @@
 package com.hotaku.media_domain.usecase
 
-import com.hotaku.domain.utils.DataResult
-import com.hotaku.domain.utils.Error
+import com.hotaku.media_domain.util.SyncDataState
 import kotlinx.coroutines.flow.Flow
 
 interface SyncMediaUseCase {
-    operator fun invoke(): Flow<DataResult<Int, Error>>
+    operator fun invoke(): Flow<SyncDataState>
 }

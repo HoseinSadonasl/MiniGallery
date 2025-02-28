@@ -5,6 +5,7 @@
     <string name="all_io_error">An IO error occurred</string>
     <string name="all_sync_error">Sync data error</string>
     <string name="home_screen_state_synchronizing">Synchronizing...</string>
+    <string name="home_screen_state_synchronizing_retry">Retry</string>
     <string name="home_screen_media_sync_state_media_added">%1$s media added</string>
     <string name="home_screen_no_media">No media</string>
     <string name="home_screen_no_media_full_message">Looks like there\'s nothing to show here at the moment. Check back later or add something to get started!</string>
@@ -25,4 +26,5 @@
     <string name="all_dialog_warning">Warning!</string>
     <string name="delete_media_dialog_description_delete_this_media_file">Do you really want to delete this media file?</string>
     <string name="delete_media_dialog_delete_button">Delete</string>
+    <string name="all_storage_low_error">Synchronization failed. Your device\'s storage is too low. Please free up space and try again.</string>
 </resources>

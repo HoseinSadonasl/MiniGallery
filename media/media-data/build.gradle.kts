@@ -16,6 +16,7 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.media.mediaDomain)
     implementation(projects.core.common)
+    implementation(projects.core.datastore)
     implementation(libs.paging.common)
     implementation(libs.androidx.work)
     implementation(libs.hilt.work)

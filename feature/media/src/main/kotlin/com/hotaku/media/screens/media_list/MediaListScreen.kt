@@ -82,13 +82,13 @@ private fun MediaListScreen(
     screenEvents: Flow<MediaListScreenEvents>,
     screenState: StateFlow<MediaListUiState>,
     pagingMediaItemsState: StateFlow<PagingData<MediaUi>>,
-    synchronizeState: StateFlow<UiState<Int>>,
+    synchronizeState: StateFlow<UiState<Int>?>,
     navigateToMediaDetailScreen: () -> Unit,
     onAction: (MediaListScreenActions) -> Unit,
     onShowSnackBar: suspend (String) -> Unit,
 ) {
     val state: MediaListUiState by screenState.collectAsStateWithLifecycle()
-    val synchronize: UiState<Int> by synchronizeState.collectAsStateWithLifecycle()
+    val synchronize: UiState<Int>? by synchronizeState.collectAsStateWithLifecycle()
     val pagingMediaItems: LazyPagingItems<MediaUi> =
         pagingMediaItemsState.collectAsLazyPagingItems()
 
@@ -210,7 +210,7 @@ private fun MediaListScreen(
                                 AnimatedVisibility(
                                     visible = state.showSyncSection,
                                 ) {
-                                    SyncSection(synchronize)
+                                    synchronize?.let { SyncSection(synchronizeState = it, onAction = onAction) }
                                 }
                                 MediaGrid(
                                     modifier = Modifier.weight(1f),
@@ -314,12 +314,16 @@ private fun NoMediaPreview() {
 }
 
 @Composable
-private fun SyncSection(synchronizeState: UiState<Int>) {
+private fun SyncSection(
+    synchronizeState: UiState<Int>,
+    onAction: (MediaListScreenActions) -> Unit,
+) {
     when (synchronizeState) {
         is UiState.Failure -> {
             MediaSyncLabel(
                 icon = Icons.Default.Warning,
                 label = synchronizeState.error.asString(),
+                onRetry = { onAction(MediaListScreenActions.OnRetrySynchronizeMedia) },
             )
         }
 

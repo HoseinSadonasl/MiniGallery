@@ -2,7 +2,7 @@ package com.hotaku.media.utils
 
 import java.util.Locale
 
-object TimeUtils {
+internal object TimeUtils {
     fun Int.millisAsFormattedDuration(): String {
         val durationInSeconds = this.div(1000)
         val (hours, minutes, seconds) = durationInSeconds.getTimeUnits()

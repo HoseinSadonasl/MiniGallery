@@ -54,7 +54,7 @@ internal fun ImageThumbnail(
 }
 
 @Composable
-fun VideoThumbnail(item: MediaUi) {
+internal fun VideoThumbnail(item: MediaUi) {
     Box(
         modifier =
             Modifier

@@ -6,7 +6,7 @@ import com.hotaku.feature.media.R
 import com.hotaku.media_domain.util.SyncFailureReason
 import com.hotaku.ui.UiText
 
-fun Error.asUiError(): UiText =
+internal fun Error.asUiError(): UiText =
     when (val error = this as ErrorResult) {
         is ErrorResult.ApiError -> UiText.DynamicString("${error.message}(${error.code})")
         is ErrorResult.LocalError -> {

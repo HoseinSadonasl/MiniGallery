@@ -3,7 +3,7 @@ package com.hotaku.media_datasource.utils
 import android.net.Uri
 import android.provider.MediaStore
 
-internal object MediaQueries {
+internal object MediaQueryUtils {
     val MediaStoreFileUri: Uri = MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL)
 
     val MediaProjection =
@@ -21,7 +21,7 @@ internal object MediaQueries {
 
     const val SORT_MEDIA_BY_DATE_ADDED = MediaStore.Files.FileColumns.DATE_ADDED + " DESC"
 
-    internal fun String.getMediaUri(): Uri {
+    fun String.getMediaUri(): Uri {
         return if (contains("image")) {
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         } else {

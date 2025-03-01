@@ -43,7 +43,7 @@ internal fun MiniGalleryNavigationSuite(
 
 private fun NavDestination?.isRouteInHierarchy(route: Any): Boolean {
     if (this == null) return false
-    return hierarchy?.any { it.hasRoute(route::class) } ?: false
+    return hierarchy.any { it.hasRoute(route::class) }
 }
 
 private fun NavigationSuiteScope.navigationSuitItem(

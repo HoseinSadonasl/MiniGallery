@@ -119,10 +119,6 @@ private fun MediaListScreen(
         onAction(MediaListScreenActions.OnCollepseSearch)
     }
 
-    LaunchedEffect(state.query) {
-//        onAction(MediaListScreenActions.OnUpdateMediaList)
-    }
-
     LaunchedEffect(synchronize) {
         if (synchronize is UiState.Success) {
             pagingMediaItems.refresh()

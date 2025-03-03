@@ -1,7 +1,6 @@
-package com.hotaku.home.mapper
+package com.hotaku.ui.mappers
 
 import com.google.common.truth.Truth.assertThat
-import com.hotaku.media.mapper.MapMediaAsMediaUi
 import com.hotaku.media_domain.model.Media
 import com.hotaku.ui.MediaType
 import com.hotaku.ui.models.MediaUi

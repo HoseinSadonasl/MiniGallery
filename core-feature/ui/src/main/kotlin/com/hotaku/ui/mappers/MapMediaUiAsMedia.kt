@@ -1,11 +1,11 @@
-package com.hotaku.media.mapper
+package com.hotaku.ui.mappers
 
 import com.hotaku.common.mapper.Mapper
 import com.hotaku.media_domain.model.Media
 import com.hotaku.ui.models.MediaUi
 import javax.inject.Inject
 
-internal class MapMediaUiAsMedia
+class MapMediaUiAsMedia
     @Inject
     constructor() : Mapper<MediaUi, Media> {
         override fun map(from: MediaUi): Media {

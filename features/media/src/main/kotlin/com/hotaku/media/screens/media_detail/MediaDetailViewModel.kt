@@ -3,8 +3,8 @@ package com.hotaku.media.screens.media_detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import com.hotaku.media.mapper.MapMediaUiAsMedia
 import com.hotaku.media_domain.usecase.DeleteMediaUseCase
+import com.hotaku.ui.mappers.MapMediaUiAsMedia
 import com.hotaku.ui.models.MediaUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel

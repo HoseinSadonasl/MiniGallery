@@ -10,6 +10,7 @@ android {
 }
 
 dependencies {
+    api(projects.core.common)
     implementation(projects.media.mediaDomain)
     implementation(projects.coreFeature.designsystem)
     implementation(libs.paging.compose)

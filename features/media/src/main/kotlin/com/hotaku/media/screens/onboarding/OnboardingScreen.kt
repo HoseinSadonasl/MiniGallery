@@ -1,4 +1,4 @@
-package com.hotaku.media.screens.permissions
+package com.hotaku.media.screens.onboarding
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,21 +20,21 @@ import com.hotaku.features.media.R
 import com.hotaku.ui.conposables.OnScreenMessage
 
 @Composable
-internal fun PermissionsScreen(
+internal fun OnboardingScreen(
     modifier: Modifier = Modifier,
     permissionState: Boolean,
     onRequestPermissions: () -> Unit,
     navigateToMediaScreen: () -> Unit,
 ) {
     if (permissionState) navigateToMediaScreen()
-    PermissionsScreen(
+    OnboardingScreen(
         modifier = modifier,
         onRequestPermissions = { onRequestPermissions() },
     )
 }
 
 @Composable
-private fun PermissionsScreen(
+private fun OnboardingScreen(
     modifier: Modifier = Modifier,
     onRequestPermissions: () -> Unit,
 ) {
@@ -61,7 +61,7 @@ private fun PermissionsScreen(
                 onClick = onRequestPermissions,
             ) {
                 Text(
-                    text = stringResource(R.string.permissions_screen_grant_permissions_button_text),
+                    text = stringResource(R.string.onboarding_screen_grant_permissions_button_text),
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }
@@ -73,6 +73,6 @@ private fun PermissionsScreen(
 @Composable
 private fun PermissionScreenPreview() {
     MiniGalleryTheme {
-        PermissionsScreen { }
+        OnboardingScreen { }
     }
 }

@@ -7,7 +7,7 @@
     <string name="home_screen_no_media">No media</string>
     <string name="home_screen_no_media_full_message">Looks like there\'s nothing to show here at the moment. Check back later or add something to get started!</string>
     <string name="home_screen_an_error_occurred">An error occurred</string>
-    <string name="permissions_screen_grant_permissions_button_text">Grant permissions</string>
+    <string name="onboarding_screen_grant_permissions_button_text">Grant permissions</string>
     <string name="home_screentop_bar_title_all_media">All Media</string>
     <string name="home_screen_search_media">Search media</string>
     <string name="albums_screen_top_app_bar_title">Albums</string>

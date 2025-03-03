@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.hotaku.feature.media"
+    namespace = "com.hotaku.features.media"
 }
 
 dependencies {

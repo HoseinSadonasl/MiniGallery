@@ -25,7 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import com.hotaku.feature.media.R
+import com.hotaku.features.media.R
 import com.hotaku.media.model.MediaUi
 import com.hotaku.media.utils.MediaType
 import com.hotaku.ui.conposables.ShimmerPlaceHolder

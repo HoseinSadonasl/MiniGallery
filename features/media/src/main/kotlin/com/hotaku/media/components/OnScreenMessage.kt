@@ -29,7 +29,7 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.designsystem.theme.MiniGalleryTheme
-import com.hotaku.feature.media.R
+import com.hotaku.features.media.R
 
 @Composable
 fun OnScreenMessage(

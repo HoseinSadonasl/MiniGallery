@@ -7,7 +7,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.feature.media)
+    implementation(projects.features.media)
     implementation(libs.navigation.compose)
     implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
 }

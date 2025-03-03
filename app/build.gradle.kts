@@ -41,7 +41,7 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.database)
     implementation(projects.core.datastore)
-    implementation(projects.feature.media)
+    implementation(projects.features.media)
     implementation(projects.coreFeature.designsystem)
     implementation(projects.coreFeature.navigation)
     implementation(projects.coreFeature.ui)

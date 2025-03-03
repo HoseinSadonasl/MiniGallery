@@ -2,7 +2,7 @@ package com.hotaku.media.utils
 
 import com.hotaku.domain.utils.Error
 import com.hotaku.domain.utils.ErrorResult
-import com.hotaku.feature.media.R
+import com.hotaku.features.media.R
 import com.hotaku.media_domain.util.SyncFailureReason
 import com.hotaku.ui.UiText
 

@@ -23,7 +23,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.hotaku.designsystem.theme.MiniGalleryTheme
-import com.hotaku.feature.media.R
+import com.hotaku.features.media.R
 
 @Composable
 internal fun MediaSyncLabel(

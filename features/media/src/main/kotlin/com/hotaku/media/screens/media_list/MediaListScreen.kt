@@ -35,7 +35,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.designsystem.theme.MiniGalleryTheme
-import com.hotaku.feature.media.R
+import com.hotaku.features.media.R
 import com.hotaku.media.components.MediaDetail
 import com.hotaku.media.components.MediaGrid
 import com.hotaku.media.components.MediaOptions

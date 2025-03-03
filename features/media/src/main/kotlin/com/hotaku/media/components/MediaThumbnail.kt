@@ -26,7 +26,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import coil3.compose.AsyncImage
-import com.hotaku.feature.media.R
+import com.hotaku.features.media.R
 import com.hotaku.media.model.MediaUi
 import com.hotaku.media.utils.TimeUtils.millisAsFormattedDuration
 import com.hotaku.media.utils.asThumbnailImageBitmap

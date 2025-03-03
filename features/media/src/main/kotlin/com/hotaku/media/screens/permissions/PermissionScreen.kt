@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.designsystem.theme.MiniGalleryTheme
-import com.hotaku.feature.media.R
+import com.hotaku.features.media.R
 import com.hotaku.media.components.OnScreenMessage
 
 @Composable

@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hotaku.designsystem.theme.MiniGalleryTheme
-import com.hotaku.feature.media.R
+import com.hotaku.features.media.R
 import com.hotaku.media.components.ImageThumbnail
 import com.hotaku.media.components.MediaGrid
 import com.hotaku.media.components.OnScreenMessage

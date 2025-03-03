@@ -1,4 +1,4 @@
-package com.hotaku.media.components
+package com.hotaku.ui.conposables
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -31,14 +31,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hotaku.designsystem.theme.MiniGalleryTheme
-import com.hotaku.media.model.MediaUi
-import com.hotaku.media.utils.MediaType
-import com.hotaku.ui.conposables.ShimmerPlaceHolder
+import com.hotaku.ui.MediaType
+import com.hotaku.ui.models.MediaUi
 import kotlinx.coroutines.delay
 import java.time.Instant
 
 @Composable
-internal fun MediaDetail(
+fun MediaDetail(
     modifier: Modifier = Modifier,
     isCompact: Boolean,
     media: MediaUi,
@@ -126,7 +125,7 @@ internal fun MediaDetail(
 }
 
 @Composable
-internal fun MediaOptions(
+fun MediaOptions(
     modifier: Modifier = Modifier,
     onShareMedia: () -> Unit,
     onDeleteMedia: () -> Unit,

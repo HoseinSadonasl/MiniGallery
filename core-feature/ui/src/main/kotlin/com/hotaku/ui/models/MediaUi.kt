@@ -1,9 +1,9 @@
-package com.hotaku.media.model
+package com.hotaku.ui.models
 
-import com.hotaku.media.utils.MediaType
+import com.hotaku.ui.MediaType
 import java.time.Instant
 
-internal data class MediaUi(
+data class MediaUi(
     val mediaId: Long,
     val uriString: String,
     val displayName: String,

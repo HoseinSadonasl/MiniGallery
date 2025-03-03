@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.features.media.R
-import com.hotaku.media.components.OnScreenMessage
+import com.hotaku.ui.conposables.OnScreenMessage
 
 @Composable
 internal fun PermissionsScreen(
@@ -53,8 +53,8 @@ private fun PermissionsScreen(
                     Modifier.fillMaxWidth(
                         fraction = if (windowWidth != WindowWidthSizeClass.COMPACT) .5f else 1f,
                     ),
-                title = stringResource(id = R.string.permissions_screen_message_title),
-                fulMessage = stringResource(id = R.string.permissions_screen_message),
+                title = stringResource(id = com.hotaku.core_feature.ui.R.string.permissions_screen_message_title),
+                fulMessage = stringResource(id = com.hotaku.core_feature.ui.R.string.permissions_screen_message),
             )
 
             FilledTonalButton(

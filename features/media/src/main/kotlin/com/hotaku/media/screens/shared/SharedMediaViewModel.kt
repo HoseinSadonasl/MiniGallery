@@ -6,8 +6,8 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.hotaku.media.mapper.MapMediaAsMediaUi
-import com.hotaku.media.model.MediaUi
 import com.hotaku.media_domain.usecase.GetMediaUseCase
+import com.hotaku.ui.models.MediaUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

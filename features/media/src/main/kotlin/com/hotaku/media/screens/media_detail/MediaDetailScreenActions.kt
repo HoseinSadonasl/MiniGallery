@@ -1,6 +1,6 @@
 package com.hotaku.media.screens.media_detail
 
-import com.hotaku.media.model.MediaUi
+import com.hotaku.ui.models.MediaUi
 
 internal sealed interface MediaDetailScreenActions {
     data class OnSelectedIndexChanged(val index: Int) : MediaDetailScreenActions

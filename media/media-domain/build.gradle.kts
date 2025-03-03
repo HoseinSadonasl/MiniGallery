@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.core.domain)
+    api(projects.core.domain)
     implementation(libs.paging.common)
     implementation(libs.hilt.core)
     testImplementation(libs.junit)

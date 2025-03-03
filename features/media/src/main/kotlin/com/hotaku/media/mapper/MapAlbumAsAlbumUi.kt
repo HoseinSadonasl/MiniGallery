@@ -2,8 +2,8 @@ package com.hotaku.media.mapper
 
 import com.hotaku.common.mapper.Mapper
 import com.hotaku.media.model.AlbumUi
-import com.hotaku.media.utils.asMediaType
 import com.hotaku.media_domain.model.Album
+import com.hotaku.ui.asMediaType
 import javax.inject.Inject
 
 internal class MapAlbumAsAlbumUi

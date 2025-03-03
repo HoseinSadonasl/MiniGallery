@@ -11,12 +11,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.window.core.layout.WindowWidthSizeClass
-import com.hotaku.media.components.MediaDetail
-import com.hotaku.media.components.MediaOptions
-import com.hotaku.media.components.MediaPreviewPager
-import com.hotaku.media.utils.rememberTrashLauncherForResult
-import com.hotaku.media.utils.sendIntent
-import com.hotaku.media.utils.trashMediaItemByUri
+import com.hotaku.ui.conposables.MediaDetail
+import com.hotaku.ui.conposables.MediaOptions
+import com.hotaku.ui.conposables.MediaPreviewPager
+import com.hotaku.ui.rememberTrashLauncherForResult
+import com.hotaku.ui.sendIntent
+import com.hotaku.ui.trashMediaItemByUri
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable

@@ -10,7 +10,7 @@ android {
 }
 
 dependencies {
-
+    implementation(projects.media.mediaDomain)
     implementation(projects.coreFeature.designsystem)
     implementation(libs.paging.compose)
     implementation(libs.coil.compose)

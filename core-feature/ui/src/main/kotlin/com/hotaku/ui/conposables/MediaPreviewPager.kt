@@ -1,4 +1,4 @@
-package com.hotaku.media.components
+package com.hotaku.ui.conposables
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.VerticalPager
@@ -6,10 +6,10 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import com.hotaku.media.model.MediaUi
+import com.hotaku.ui.models.MediaUi
 
 @Composable
-internal fun MediaPreviewPager(
+fun MediaPreviewPager(
     modifier: Modifier = Modifier,
     currentPage: Int,
     pagerMediaItems: List<MediaUi>,

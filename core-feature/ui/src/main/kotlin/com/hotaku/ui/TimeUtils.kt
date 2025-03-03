@@ -1,8 +1,8 @@
-package com.hotaku.media.utils
+package com.hotaku.ui
 
 import java.util.Locale
 
-internal object TimeUtils {
+object TimeUtils {
     fun Int.millisAsFormattedDuration(): String {
         val durationInSeconds = this.div(1000)
         val (hours, minutes, seconds) = durationInSeconds.getTimeUnits()

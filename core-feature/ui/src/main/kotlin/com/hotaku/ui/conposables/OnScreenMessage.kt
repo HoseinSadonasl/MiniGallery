@@ -1,4 +1,4 @@
-package com.hotaku.media.components
+package com.hotaku.ui.conposables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,8 +28,8 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowWidthSizeClass
+import com.hotaku.core_feature.ui.R
 import com.hotaku.designsystem.theme.MiniGalleryTheme
-import com.hotaku.features.media.R
 
 @Composable
 fun OnScreenMessage(

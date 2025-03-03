@@ -1,4 +1,4 @@
-package com.hotaku.media.components
+package com.hotaku.ui.conposables
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -25,14 +25,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import com.hotaku.features.media.R
-import com.hotaku.media.model.MediaUi
-import com.hotaku.media.utils.MediaType
-import com.hotaku.ui.conposables.ShimmerPlaceHolder
+import com.hotaku.core_feature.ui.R
+import com.hotaku.ui.MediaType
+import com.hotaku.ui.models.MediaUi
 import kotlin.random.Random
 
 @Composable
-internal fun MediaGrid(
+fun MediaGrid(
     modifier: Modifier = Modifier,
     pagingMediaItems: LazyPagingItems<MediaUi>,
     onScrolled: (Boolean) -> Unit,

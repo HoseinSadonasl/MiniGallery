@@ -1,4 +1,4 @@
-package com.hotaku.media.components
+package com.hotaku.ui.conposables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -16,7 +16,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import coil3.compose.AsyncImage
-import com.hotaku.media.utils.asThumbnailImageBitmap
+import com.hotaku.ui.asThumbnailImageBitmap
 
 @Composable
 internal fun Video(

@@ -1,12 +1,11 @@
-package com.hotaku.media.utils
+package com.hotaku.ui
 
+import com.hotaku.core_feature.ui.R
 import com.hotaku.domain.utils.Error
 import com.hotaku.domain.utils.ErrorResult
-import com.hotaku.features.media.R
 import com.hotaku.media_domain.util.SyncFailureReason
-import com.hotaku.ui.UiText
 
-internal fun Error.asUiError(): UiText =
+fun Error.asUiError(): UiText =
     when (val error = this as ErrorResult) {
         is ErrorResult.ApiError -> UiText.DynamicString("${error.message}(${error.code})")
         is ErrorResult.LocalError -> {
@@ -20,7 +19,7 @@ internal fun Error.asUiError(): UiText =
         }
     }
 
-internal fun SyncFailureReason.asUiError(): UiText =
+fun SyncFailureReason.asUiError(): UiText =
     when (this) {
         SyncFailureReason.LOW_STORAGE -> UiText.StringResource(resId = R.string.all_storage_low_error)
         SyncFailureReason.UNKNOWN -> UiText.StringResource(R.string.all_unknown_error)

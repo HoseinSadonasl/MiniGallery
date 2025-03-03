@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.features.media.R
+import com.hotaku.ui.conposables.noRippleClickable
 
 @Composable
 internal fun MediaSyncLabel(

@@ -1,6 +1,6 @@
 package com.hotaku.media.model
 
-import com.hotaku.media.utils.MediaType
+import com.hotaku.ui.MediaType
 
 internal data class AlbumUi(
     val displayName: String,

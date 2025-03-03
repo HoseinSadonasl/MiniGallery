@@ -1,4 +1,4 @@
-package com.hotaku.media.components
+package com.hotaku.ui.conposables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,13 +26,13 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import coil3.compose.AsyncImage
-import com.hotaku.features.media.R
-import com.hotaku.media.model.MediaUi
-import com.hotaku.media.utils.TimeUtils.millisAsFormattedDuration
-import com.hotaku.media.utils.asThumbnailImageBitmap
+import com.hotaku.core_feature.ui.R
+import com.hotaku.ui.TimeUtils.millisAsFormattedDuration
+import com.hotaku.ui.asThumbnailImageBitmap
+import com.hotaku.ui.models.MediaUi
 
 @Composable
-internal fun ImageThumbnail(
+fun ImageThumbnail(
     modifier: Modifier = Modifier,
     itemUri: String,
 ) {
@@ -54,7 +54,7 @@ internal fun ImageThumbnail(
 }
 
 @Composable
-internal fun VideoThumbnail(item: MediaUi) {
+fun VideoThumbnail(item: MediaUi) {
     Box(
         modifier =
             Modifier

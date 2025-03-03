@@ -40,16 +40,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.features.media.R
-import com.hotaku.media.components.ImageThumbnail
-import com.hotaku.media.components.MediaGrid
-import com.hotaku.media.components.OnScreenMessage
-import com.hotaku.media.components.VideoThumbnail
 import com.hotaku.media.model.AlbumUi
-import com.hotaku.media.utils.MediaType
+import com.hotaku.ui.MediaType
 import com.hotaku.ui.UiState
 import com.hotaku.ui.conposables.DynamicTopAppBarColumn
+import com.hotaku.ui.conposables.ImageThumbnail
+import com.hotaku.ui.conposables.MediaGrid
+import com.hotaku.ui.conposables.OnScreenMessage
 import com.hotaku.ui.conposables.ShimmerPlaceHolder
 import com.hotaku.ui.conposables.TopAppBar
+import com.hotaku.ui.conposables.VideoThumbnail
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable

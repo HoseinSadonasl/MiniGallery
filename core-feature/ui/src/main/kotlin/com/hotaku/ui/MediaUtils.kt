@@ -1,4 +1,4 @@
-package com.hotaku.media.utils
+package com.hotaku.ui
 
 import android.app.Activity.RESULT_OK
 import android.content.Context
@@ -15,10 +15,10 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.net.toUri
-import com.hotaku.media.model.MediaUi
+import com.hotaku.ui.models.MediaUi
 
 @Composable
-internal fun Uri.asThumbnailImageBitmap(size: Size = Size(320, 320)): ImageBitmap {
+fun Uri.asThumbnailImageBitmap(size: Size = Size(320, 320)): ImageBitmap {
     val context = LocalContext.current
     val thumbnail =
         context.contentResolver.loadThumbnail(this, size, null)
@@ -26,13 +26,13 @@ internal fun Uri.asThumbnailImageBitmap(size: Size = Size(320, 320)): ImageBitma
 }
 
 @Composable
-internal fun rememberTrashLauncherForResult(block: () -> Unit) =
+fun rememberTrashLauncherForResult(block: () -> Unit) =
     rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult(),
         onResult = { if (it.resultCode == RESULT_OK) block() },
     )
 
-internal fun String.trashMediaItemByUri(
+fun String.trashMediaItemByUri(
     context: Context,
     trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
 ) {
@@ -42,7 +42,7 @@ internal fun String.trashMediaItemByUri(
     )
 }
 
-internal fun List<String>.trashMediaByUri(
+fun List<String>.trashMediaByUri(
     context: Context,
     trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
 ) {
@@ -63,7 +63,7 @@ internal fun List<String>.trashMediaByUri(
     trashLauncher.launch(intentSenderRequest)
 }
 
-internal fun MediaUi.sendIntent(
+fun MediaUi.sendIntent(
     context: Context,
     intentAction: String,
 ) {

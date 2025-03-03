@@ -1,30 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="all_unknown_error">Unknown error</string>
-    <string name="all_disk_full">Disk is full</string>
-    <string name="all_io_error">An IO error occurred</string>
-    <string name="all_sync_error">Sync data error</string>
+
     <string name="home_screen_state_synchronizing">Synchronizing...</string>
     <string name="home_screen_state_synchronizing_retry">Retry</string>
     <string name="home_screen_media_sync_state_media_added">%1$s media added</string>
     <string name="home_screen_no_media">No media</string>
     <string name="home_screen_no_media_full_message">Looks like there\'s nothing to show here at the moment. Check back later or add something to get started!</string>
     <string name="home_screen_an_error_occurred">An error occurred</string>
-    <string name="permissions_screen_message">Hi! MiniGallery needs access to your photos and media to work. Please grant media permissions if you\'d like to use it. Thanks!</string>
     <string name="permissions_screen_grant_permissions_button_text">Grant permissions</string>
     <string name="home_screentop_bar_title_all_media">All Media</string>
     <string name="home_screen_search_media">Search media</string>
-    <string name="permissions_screen_message_title">Media Permission requierd!</string>
     <string name="albums_screen_top_app_bar_title">Albums</string>
     <string name="albums_screen_no_albums">No Albums</string>
     <string name="albums_screen_no_albums_full_message">Looks like there\\\'s nothing to show here at the moment. Check back later or add something to get started!</string>
     <string name="albums_screen_error_while_getting_albums">Ops!</string>
     <string name="albums_screen_error_while_getting_albums_full_message">Looks like an error occurred while getting albums.</string>
-    <string name="media_grid_list_an_error_occured">An error occurred</string>
-    <string name="albums_screen_error_while_getting_media">Ops!</string>
     <string name="media_list_unknown_media">Unknown media</string>
     <string name="all_dialog_warning">Warning!</string>
     <string name="delete_media_dialog_description_delete_this_media_file">Do you really want to delete this media file?</string>
     <string name="delete_media_dialog_delete_button">Delete</string>
-    <string name="all_storage_low_error">Synchronization failed. Your device\'s storage is too low. Please free up space and try again.</string>
+
 </resources>

@@ -1,7 +1,7 @@
 package com.hotaku.media.screens.media_detail
 
 import androidx.paging.PagingData
-import com.hotaku.media.model.MediaUi
+import com.hotaku.ui.models.MediaUi
 
 internal data class MediaDetailUiState(
     val media: PagingData<MediaUi> = PagingData.empty(),

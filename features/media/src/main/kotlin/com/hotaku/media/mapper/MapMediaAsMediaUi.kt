@@ -1,9 +1,9 @@
 package com.hotaku.media.mapper
 
 import com.hotaku.common.mapper.Mapper
-import com.hotaku.media.model.MediaUi
-import com.hotaku.media.utils.asMediaType
 import com.hotaku.media_domain.model.Media
+import com.hotaku.ui.asMediaType
+import com.hotaku.ui.models.MediaUi
 import java.time.Instant
 import javax.inject.Inject
 

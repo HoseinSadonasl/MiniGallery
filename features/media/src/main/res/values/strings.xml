@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="home_screen_state_synchronizing">Synchronizing...</string>
     <string name="home_screen_state_synchronizing_retry">Retry</string>
     <string name="home_screen_media_sync_state_media_added">%1$s media added</string>
     <string name="home_screen_no_media">No media</string>
     <string name="home_screen_no_media_full_message">Looks like there\'s nothing to show here at the moment. Check back later or add something to get started!</string>
-    <string name="home_screen_an_error_occurred">An error occurred</string>
     <string name="onboarding_screen_grant_permissions_button_text">Grant permissions</string>
     <string name="home_screentop_bar_title_all_media">All Media</string>
     <string name="home_screen_search_media">Search media</string>
@@ -15,9 +13,4 @@
     <string name="albums_screen_no_albums_full_message">Looks like there\\\'s nothing to show here at the moment. Check back later or add something to get started!</string>
     <string name="albums_screen_error_while_getting_albums">Ops!</string>
     <string name="albums_screen_error_while_getting_albums_full_message">Looks like an error occurred while getting albums.</string>
-    <string name="media_list_unknown_media">Unknown media</string>
-    <string name="all_dialog_warning">Warning!</string>
-    <string name="delete_media_dialog_description_delete_this_media_file">Do you really want to delete this media file?</string>
-    <string name="delete_media_dialog_delete_button">Delete</string>
-
 </resources>

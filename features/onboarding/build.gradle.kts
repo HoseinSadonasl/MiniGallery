@@ -6,11 +6,13 @@ plugins {
 }
 
 android {
-    namespace = "com.hotaku.features.media"
+    namespace = "com.hotaku.features.onboarding"
 }
 
 dependencies {
     implementation(projects.media.mediaDomain)
+    implementation(projects.core.domain)
+    implementation(projects.core.common)
     implementation(projects.coreFeature.ui)
     implementation(projects.coreFeature.designsystem)
     implementation(libs.paging.compose)

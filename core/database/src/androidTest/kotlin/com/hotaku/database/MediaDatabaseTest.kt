@@ -53,7 +53,7 @@ class MediaDatabaseTest {
                     ),
                 )
 
-            dao.insertAll(media = mediaList)
+            dao.upsertAll(media = mediaList)
 
             val savedMediaList = dao.getAll(limit = 1, offset = 0)
 
@@ -79,7 +79,7 @@ class MediaDatabaseTest {
                     ),
                 )
 
-            dao.insertAll(media = mediaList)
+            dao.upsertAll(media = mediaList)
 
             val savedMediaList = dao.getAll(mimeType = "Image", limit = 1, offset = 0)
 
@@ -105,7 +105,7 @@ class MediaDatabaseTest {
                     ),
                 )
 
-            dao.insertAll(media = mediaList)
+            dao.upsertAll(media = mediaList)
 
             val savedMediaList = dao.getAll(query = "SampleName1", limit = 1, offset = 0)
 
@@ -131,7 +131,7 @@ class MediaDatabaseTest {
                     ),
                 )
 
-            dao.insertAll(media = mediaList)
+            dao.upsertAll(media = mediaList)
 
             val savedMediaList = dao.getAll(query = "SampleName1", limit = 2, offset = 0)
 
@@ -157,7 +157,7 @@ class MediaDatabaseTest {
                     ),
                 )
 
-            dao.insertAll(media = mediaList)
+            dao.upsertAll(media = mediaList)
 
             val exceptedUris = mediaList.map { it.uriString }
 
@@ -185,7 +185,7 @@ class MediaDatabaseTest {
                     ),
                 )
 
-            dao.insertAll(media = mediaList)
+            dao.upsertAll(media = mediaList)
 
             val urisToDelete = mediaList.map { it.uriString }
 
@@ -215,7 +215,7 @@ class MediaDatabaseTest {
                     ),
                 )
 
-            dao.insertAll(media = mediaList)
+            dao.upsertAll(media = mediaList)
 
             val albums = dao.getAlbums()
 

@@ -18,7 +18,7 @@ internal class UpdateMediaDataSourceImpl
 
         override fun insertMediaToDatabase(media: List<MediaData>) {
             media.map { mapMediaDataAsMediaEntity.map(it) }.also {
-                mediaDao.insertAll(it)
+                mediaDao.upsertAll(it)
             }
         }
     }

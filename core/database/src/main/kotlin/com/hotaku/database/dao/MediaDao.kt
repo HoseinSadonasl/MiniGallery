@@ -10,7 +10,7 @@ import com.hotaku.database.entity.MediaEntity
 @Dao
 interface MediaDao {
     @Upsert
-    fun insertAll(media: List<MediaEntity>)
+    fun upsertAll(media: List<MediaEntity>)
 
     @Upsert
     fun upsertMedia(media: MediaEntity)

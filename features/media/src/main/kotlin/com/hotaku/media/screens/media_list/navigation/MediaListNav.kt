@@ -14,6 +14,8 @@ import com.hotaku.media.navigation.sharedHiltViewModel
 import com.hotaku.media.screens.media_detail.navigation.navigateToMediaDetailScreen
 import com.hotaku.media.screens.media_list.MediaListScreen
 import com.hotaku.media.screens.media_list.MediaListViewModel
+import com.hotaku.media.screens.onboarding.navigation.OnboardingRoute
+import com.hotaku.media.screens.onboarding.navigation.navigateToOnboardingScreen
 import com.hotaku.media.screens.shared.SharedMediaViewModel
 import kotlinx.serialization.Serializable
 
@@ -67,7 +69,13 @@ internal fun NavGraphBuilder.mediaListNav(navHostController: NavHostController) 
                     launchSingleTop = true
                 }
             },
-            onShowSnackBar = {},
+            navigateTounboardingScreen = {
+                navHostController.navigateToOnboardingScreen {
+                    popUpTo<OnboardingRoute> {
+                        inclusive = true
+                    }
+                }
+            },
         )
     }
 

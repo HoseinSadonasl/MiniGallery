@@ -7,24 +7,16 @@ import com.hotaku.media.screens.albums.navigation.albumsNav
 import com.hotaku.media.screens.media_detail.navigation.mediaDetailsNav
 import com.hotaku.media.screens.media_list.navigation.MediaListScreenRRoute
 import com.hotaku.media.screens.media_list.navigation.mediaListNav
-import com.hotaku.media.screens.onboarding.navigation.OnboardingRoute
 import com.hotaku.media.screens.onboarding.navigation.onboardingNav
 import kotlinx.serialization.Serializable
 
 @Serializable
 object MediaGraph {
-    fun NavGraphBuilder.mediaGraph(
-        navHostController: NavHostController,
-        onShowSnackBar: suspend (String) -> Unit,
-        permissionState: Boolean,
-        onRequestPermissions: () -> Unit,
-    ) {
+    fun NavGraphBuilder.mediaGraph(navHostController: NavHostController) {
         navigation<MediaGraph>(
-            startDestination = if (permissionState) MediaListScreenRRoute else OnboardingRoute,
+            startDestination = MediaListScreenRRoute,
         ) {
             onboardingNav(
-                permissionState = permissionState,
-                onRequestPermissions = onRequestPermissions,
                 navHostController = navHostController,
             )
             mediaListNav(navHostController = navHostController)

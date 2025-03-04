@@ -1,4 +1,4 @@
-package com.hotaku.minigallery.utils
+package com.hotaku.ui
 
 import android.Manifest
 import android.content.Context
@@ -6,8 +6,8 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.ContextCompat
 
-internal object PermissionUtils {
-    private val requiredPermissions
+object PermissionUtils {
+    val requiredMediaPermissions
         get() =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 arrayOf(
@@ -20,11 +20,13 @@ internal object PermissionUtils {
                 )
             }
 
-    fun permissionsToRequest(context: Context) =
-        requiredPermissions.filterNot { permission ->
-            ContextCompat.checkSelfPermission(
-                context,
-                permission,
-            ) == PackageManager.PERMISSION_GRANTED
-        }
+    fun permissionsToRequest(
+        context: Context,
+        permissions: Array<String>,
+    ) = permissions.filterNot { permission ->
+        ContextCompat.checkSelfPermission(
+            context,
+            permission,
+        ) == PackageManager.PERMISSION_GRANTED
+    }
 }

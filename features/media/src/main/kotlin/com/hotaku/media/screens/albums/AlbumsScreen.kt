@@ -159,6 +159,7 @@ private fun AlbumsScreen(
 @Composable
 private fun NoAlbums() {
     OnScreenMessage(
+        modifier = Modifier.fillMaxSize(),
         title = stringResource(id = R.string.albums_screen_no_albums),
         fulMessage = stringResource(id = R.string.albums_screen_no_albums_full_message),
     )
@@ -167,6 +168,7 @@ private fun NoAlbums() {
 @Composable
 private fun AlbumsLoadError() {
     OnScreenMessage(
+        modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.error,
         title = stringResource(id = R.string.albums_screen_error_while_getting_albums),
         fulMessage = stringResource(id = R.string.albums_screen_error_while_getting_albums_full_message),

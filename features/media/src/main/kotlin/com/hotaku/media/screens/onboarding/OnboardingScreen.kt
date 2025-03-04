@@ -1,5 +1,7 @@
 package com.hotaku.media.screens.onboarding
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,35 +12,77 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowWidthSizeClass
-import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.features.media.R
+import com.hotaku.ui.PermissionUtils.requiredMediaPermissions
 import com.hotaku.ui.conposables.OnScreenMessage
 
 @Composable
 internal fun OnboardingScreen(
     modifier: Modifier = Modifier,
-    permissionState: Boolean,
-    onRequestPermissions: () -> Unit,
-    navigateToMediaScreen: () -> Unit,
+    onboardingViewModel: OnboardingViewModel,
+    navigateToMediaListScreen: () -> Unit,
 ) {
-    if (permissionState) navigateToMediaScreen()
     OnboardingScreen(
         modifier = modifier,
-        onRequestPermissions = { onRequestPermissions() },
+        viewModel = onboardingViewModel,
+        onAction = onboardingViewModel::onAction,
+        navigateToMediaListScreen = navigateToMediaListScreen,
     )
 }
 
 @Composable
 private fun OnboardingScreen(
     modifier: Modifier = Modifier,
-    onRequestPermissions: () -> Unit,
+    viewModel: OnboardingViewModel,
+    onAction: (OnboardingActions) -> Unit,
+    navigateToMediaListScreen: () -> Unit,
 ) {
+    val state by viewModel.onboardingState.collectAsStateWithLifecycle()
+
     val windowWidth = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
+
+    val permissionLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestMultiplePermissions(),
+            onResult = { result ->
+                result.entries.forEach { entry ->
+                    entry.value.let {
+                        viewModel.onAction(
+                            OnboardingActions.OnRemovePermissionItemState(permission = entry.key),
+                        )
+                    }
+                }
+            },
+        )
+
+    LaunchedEffect(Unit) {
+        viewModel.onAction(OnboardingActions.OnAddPermissionsToRequest(requiredMediaPermissions.asList()))
+    }
+
+    LaunchedEffect(state.mediaPermissions) {
+        if (state.mediaPermissions?.isEmpty() == true) navigateToMediaListScreen()
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.onboardingScreenEvent.collect { event ->
+            when (event) {
+                OnboardingScreenEvents.RequestPermissions -> {
+                    state.mediaPermissions?.toTypedArray()?.let { permissionsArray ->
+                        permissionLauncher.launch(
+                            input = permissionsArray,
+                        )
+                    }
+                }
+            }
+        }
+    }
 
     Surface(
         modifier = modifier.fillMaxSize(),
@@ -50,15 +94,18 @@ private fun OnboardingScreen(
         ) {
             OnScreenMessage(
                 modifier =
-                    Modifier.fillMaxWidth(
-                        fraction = if (windowWidth != WindowWidthSizeClass.COMPACT) .5f else 1f,
-                    ),
+                    Modifier
+                        .fillMaxWidth(
+                            fraction = if (windowWidth != WindowWidthSizeClass.COMPACT) .5f else 1f,
+                        ),
                 title = stringResource(id = com.hotaku.core_feature.ui.R.string.permissions_screen_message_title),
                 fulMessage = stringResource(id = com.hotaku.core_feature.ui.R.string.permissions_screen_message),
             )
 
             FilledTonalButton(
-                onClick = onRequestPermissions,
+                onClick = {
+                    onAction(OnboardingActions.OnRequestPermissions)
+                },
             ) {
                 Text(
                     text = stringResource(R.string.onboarding_screen_grant_permissions_button_text),
@@ -66,13 +113,5 @@ private fun OnboardingScreen(
                 )
             }
         }
-    }
-}
-
-@PreviewScreenSizes
-@Composable
-private fun PermissionScreenPreview() {
-    MiniGalleryTheme {
-        OnboardingScreen { }
     }
 }

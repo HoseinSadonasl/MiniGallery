@@ -37,6 +37,8 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.features.media.R
 import com.hotaku.media.components.MediaSyncLabel
+import com.hotaku.ui.PermissionUtils
+import com.hotaku.ui.PermissionUtils.requiredMediaPermissions
 import com.hotaku.ui.UiState
 import com.hotaku.ui.asString
 import com.hotaku.ui.conposables.AnimatedSearchTextField
@@ -61,7 +63,7 @@ internal fun MediaListScreen(
     modifier: Modifier = Modifier,
     mediaListViewModel: MediaListViewModel,
     navigateToMediaDetailScreen: () -> Unit,
-    onShowSnackBar: suspend (String) -> Unit,
+    navigateTounboardingScreen: () -> Unit,
 ) {
     MediaListScreen(
         modifier = modifier,
@@ -71,7 +73,7 @@ internal fun MediaListScreen(
         synchronizeState = mediaListViewModel.synchronizeUiState,
         onAction = mediaListViewModel::onAction,
         navigateToMediaDetailScreen = navigateToMediaDetailScreen,
-        onShowSnackBar = { onShowSnackBar(it) },
+        navigateTounboardingScreen = navigateTounboardingScreen,
     )
 }
 
@@ -85,7 +87,7 @@ private fun MediaListScreen(
     synchronizeState: StateFlow<UiState<Int>?>,
     navigateToMediaDetailScreen: () -> Unit,
     onAction: (MediaListScreenActions) -> Unit,
-    onShowSnackBar: suspend (String) -> Unit,
+    navigateTounboardingScreen: () -> Unit,
 ) {
     val state: MediaListUiState by screenState.collectAsStateWithLifecycle()
     val synchronize: UiState<Int>? by synchronizeState.collectAsStateWithLifecycle()
@@ -117,6 +119,15 @@ private fun MediaListScreen(
         focusManager.clearFocus()
         onAction(MediaListScreenActions.OnQueryChange(query = ""))
         onAction(MediaListScreenActions.OnCollepseSearch)
+    }
+
+    LaunchedEffect(Unit) {
+        PermissionUtils.permissionsToRequest(
+            context = context,
+            permissions = requiredMediaPermissions,
+        ).let { permissions ->
+            if (permissions.isNotEmpty()) navigateTounboardingScreen()
+        }
     }
 
     LaunchedEffect(synchronize) {
@@ -294,6 +305,7 @@ private fun NoMedia() {
         contentAlignment = Alignment.Center,
     ) {
         OnScreenMessage(
+            modifier = Modifier.fillMaxSize(),
             title = stringResource(id = R.string.home_screen_no_media),
             fulMessage = stringResource(id = R.string.home_screen_no_media_full_message),
         )

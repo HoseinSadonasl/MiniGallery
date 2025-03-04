@@ -23,7 +23,7 @@
         android:windowSoftInputMode="adjustResize"
         tools:targetApi="31">
         <activity
-            android:name=".main.MainActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.MiniGallery">

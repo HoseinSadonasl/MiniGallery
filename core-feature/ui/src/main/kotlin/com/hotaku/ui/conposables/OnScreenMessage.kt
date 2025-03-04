@@ -40,7 +40,7 @@ fun OnScreenMessage(
 ) {
     val windowSize = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier,
         contentAlignment = Alignment.Center,
     ) {
         MessageSection(

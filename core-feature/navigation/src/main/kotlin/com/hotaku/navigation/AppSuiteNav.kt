@@ -29,11 +29,7 @@ import com.hotaku.media.navigation.MediaGraph.mediaGraph
 import com.hotaku.media.screens.media_list.navigation.MediaListScreenRRoute
 
 @Composable
-fun AppSuiteNav(
-    navHostController: NavHostController,
-    permissionState: Boolean,
-    onRequestPermissions: () -> Unit,
-) {
+fun AppSuiteNav(navHostController: NavHostController) {
     val direction: LayoutDirection = LocalLayoutDirection.current
     val snackbarHostState: SnackbarHostState by remember { mutableStateOf(SnackbarHostState()) }
 
@@ -78,9 +74,6 @@ fun AppSuiteNav(
                                 ),
                         ),
                     navHostController = navHostController,
-                    snackbarHostState = snackbarHostState,
-                    permissionState = permissionState,
-                    onRequestPermissions = onRequestPermissions,
                 )
             }
         },
@@ -102,9 +95,6 @@ private val topLevelNavOptions: NavOptions
 private fun MiniGalleryNavHost(
     modifier: Modifier = Modifier,
     navHostController: NavHostController,
-    snackbarHostState: SnackbarHostState,
-    permissionState: Boolean,
-    onRequestPermissions: () -> Unit,
 ) {
     NavHost(
         modifier = modifier,
@@ -113,13 +103,6 @@ private fun MiniGalleryNavHost(
     ) {
         mediaGraph(
             navHostController = navHostController,
-            onShowSnackBar = { message ->
-                snackbarHostState.showSnackbar(
-                    message = message,
-                )
-            },
-            permissionState = permissionState,
-            onRequestPermissions = onRequestPermissions,
         )
     }
 }

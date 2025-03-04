@@ -256,7 +256,7 @@ private fun MediaListScreen(
                                 MediaPreviewPager(
                                     modifier = Modifier,
                                     currentPage = index,
-                                    pagerMediaItems = pagingMediaItems.itemSnapshotList.items,
+                                    pagerMediaItems = pagingMediaItems,
                                     onCurrentPageChanged = { currentIndex ->
                                         onAction(
                                             MediaListScreenActions.OnMediaListItemClick(
@@ -264,7 +264,7 @@ private fun MediaListScreen(
                                             ),
                                         )
                                     },
-                                ) { pageIndex, media ->
+                                ) { media ->
                                     MediaDetail(
                                         isCompact = windowWidth == WindowWidthSizeClass.COMPACT,
                                         media = media,

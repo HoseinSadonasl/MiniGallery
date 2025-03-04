@@ -6,20 +6,21 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.paging.compose.LazyPagingItems
 import com.hotaku.ui.models.MediaUi
 
 @Composable
 fun MediaPreviewPager(
     modifier: Modifier = Modifier,
     currentPage: Int,
-    pagerMediaItems: List<MediaUi>,
+    pagerMediaItems: LazyPagingItems<MediaUi>,
     onCurrentPageChanged: (Int) -> Unit = {},
-    content: @Composable (Int, MediaUi) -> Unit,
+    content: @Composable (MediaUi) -> Unit,
 ) {
     val mediaPagerState =
         rememberPagerState(
             initialPage = currentPage,
-            pageCount = { pagerMediaItems.size },
+            pageCount = { pagerMediaItems.itemCount },
         )
 
     LaunchedEffect(currentPage) {
@@ -37,6 +38,6 @@ fun MediaPreviewPager(
                 .fillMaxSize(),
         key = { it },
     ) { page ->
-        content(page, pagerMediaItems[page])
+        pagerMediaItems[page]?.let { content(it) }
     }
 }

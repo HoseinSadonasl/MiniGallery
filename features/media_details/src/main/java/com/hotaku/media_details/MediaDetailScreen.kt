@@ -89,11 +89,11 @@ private fun MediaDetailScreen(
         MediaPreviewPager(
             modifier = Modifier,
             currentPage = state.selectedMediaItemIndex,
-            pagerMediaItems = mediaListState.itemSnapshotList.items,
+            pagerMediaItems = mediaListState,
             onCurrentPageChanged = { pageIndex ->
                 onAction(MediaDetailScreenActions.OnSelectedIndexChanged(index = pageIndex))
             },
-        ) { page, media ->
+        ) { media ->
             MediaDetail(
                 isCompact = windowWidth == WindowWidthSizeClass.COMPACT,
                 media = media,

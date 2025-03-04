@@ -42,7 +42,7 @@ interface MediaDao {
 
     @Query(
         "SELECT" +
-            " bucketDisplayName, COUNT(*) AS count," +
+            " COUNT(*) AS count," +
             " bucketDisplayName AS displayName," +
             " MAX(uriString) AS thumbnailUriString," +
             " MAX(mimeType) AS thumbnailType" +

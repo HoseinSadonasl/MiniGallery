@@ -48,7 +48,6 @@ dependencies {
     implementation(projects.media.mediaDatasource)
     implementation(projects.media.mediaData)
     implementation(projects.media.mediaDomain)
-
     testImplementation(libs.junit)
     testImplementation(libs.mockk.android)
     testImplementation(libs.mockk.agent)

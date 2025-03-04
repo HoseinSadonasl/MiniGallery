@@ -5,6 +5,3 @@ plugins {
 android {
     namespace = "com.hotaku.core_feature.designsystem"
 }
-
-dependencies {
-}

@@ -9,7 +9,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.preferences.data.store)
     implementation(libs.coroutines.android)

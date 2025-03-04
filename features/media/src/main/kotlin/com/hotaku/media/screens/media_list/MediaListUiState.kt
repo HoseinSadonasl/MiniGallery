@@ -7,4 +7,5 @@ internal data class MediaListUiState(
     val selectedMediaIndex: Int? = null,
     val mimeType: String = "",
     val query: String = "",
+    val albumName: String = "",
 )

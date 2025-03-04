@@ -3,6 +3,8 @@ package com.hotaku.media.screens.media_list
 import com.hotaku.ui.models.MediaUi
 
 internal sealed interface MediaListScreenActions {
+    data object OnUpdateUpdateMedia : MediaListScreenActions
+
     data class OnQueryChange(val query: String) : MediaListScreenActions
 
     data class OnMimeTypeChange(val mimeType: String) : MediaListScreenActions

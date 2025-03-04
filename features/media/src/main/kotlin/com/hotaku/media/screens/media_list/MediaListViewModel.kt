@@ -3,11 +3,15 @@ package com.hotaku.media.screens.media_list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.hotaku.media_domain.usecase.DeleteMediaUseCase
+import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_domain.usecase.SyncMediaUseCase
 import com.hotaku.media_domain.util.SyncDataState
 import com.hotaku.ui.UiState
 import com.hotaku.ui.asUiError
+import com.hotaku.ui.mappers.MapMediaAsMediaUi
 import com.hotaku.ui.mappers.MapMediaUiAsMedia
 import com.hotaku.ui.models.MediaUi
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +19,8 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -28,6 +33,8 @@ internal class MediaListViewModel
     @Inject
     constructor(
         private val syncMediaUseCase: SyncMediaUseCase,
+        private val mediaUseCase: GetMediaUseCase,
+        private val mapMediaAsMediaUi: MapMediaAsMediaUi,
         private val deleteMediaUseCase: DeleteMediaUseCase,
         private val mapMediaUiAsMedia: MapMediaUiAsMedia,
     ) : ViewModel() {
@@ -45,13 +52,21 @@ internal class MediaListViewModel
                 )
 
         private var mediaViewModelState = MutableStateFlow<PagingData<MediaUi>>(PagingData.empty())
-        val mediaUiState = mediaViewModelState.asStateFlow()
+        val mediaUiState =
+            mediaViewModelState
+                .onStart { updateMediaState() }
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5_000),
+                    initialValue = PagingData.empty(),
+                )
 
         private var viewModelEvents = Channel<MediaListScreenEvents>()
         val mediaScreenEvent = viewModelEvents.receiveAsFlow()
 
         fun onAction(action: MediaListScreenActions) {
             when (action) {
+                MediaListScreenActions.OnUpdateUpdateMedia -> updateMediaState()
                 MediaListScreenActions.OnRetrySynchronizeMedia -> retrySync()
                 MediaListScreenActions.OnHideSyncSection -> setyncSectionStateFalse()
                 is MediaListScreenActions.OnMimeTypeChange -> setMimeType(action.mimeType)
@@ -65,6 +80,25 @@ internal class MediaListViewModel
                 is MediaListScreenActions.OnDeleteMediaItem -> deleteMediaItem(mediaUi = action.mediaItem)
                 MediaListScreenActions.OnOpenMedia -> showMedia()
                 MediaListScreenActions.OnShareMedia -> shareMedia()
+            }
+        }
+
+        private fun updateMediaState() {
+            viewModelScope.launch {
+                mediaUseCase.invoke(
+                    mimeType = mediaListScreenUiState.value.mimeType,
+                    query = mediaListScreenUiState.value.query,
+                    albumName = mediaListScreenUiState.value.albumName,
+                )
+                    .cachedIn(viewModelScope)
+                    .map { pagingData ->
+                        pagingData.map {
+                            mapMediaAsMediaUi.map(it)
+                        }
+                    }
+                    .collectLatest { media ->
+                        mediaViewModelState.value = media
+                    }
             }
         }
 

@@ -62,7 +62,7 @@ import kotlinx.coroutines.flow.collectLatest
 internal fun MediaListScreen(
     modifier: Modifier = Modifier,
     mediaListViewModel: MediaListViewModel,
-    navigateToMediaDetailScreen: () -> Unit,
+    navigateToMediaDetailScreen: (Int?) -> Unit,
     navigateTounboardingScreen: () -> Unit,
 ) {
     MediaListScreen(
@@ -85,7 +85,7 @@ private fun MediaListScreen(
     screenState: StateFlow<MediaListUiState>,
     pagingMediaItemsState: StateFlow<PagingData<MediaUi>>,
     synchronizeState: StateFlow<UiState<Int>?>,
-    navigateToMediaDetailScreen: () -> Unit,
+    navigateToMediaDetailScreen: (Int?) -> Unit,
     onAction: (MediaListScreenActions) -> Unit,
     navigateTounboardingScreen: () -> Unit,
 ) {
@@ -142,12 +142,19 @@ private fun MediaListScreen(
         state.selectedMediaIndex?.let {
             onAction(MediaListScreenActions.OnSetTopBarVisibility(visible = false))
             if (windowWidth == WindowWidthSizeClass.COMPACT) {
-                navigateToMediaDetailScreen()
+                navigateToMediaDetailScreen(state.selectedMediaIndex)
                 onAction(MediaListScreenActions.OnClearSelectedMedia)
             } else {
                 navigator.navigateTo(ThreePaneScaffoldRole.Secondary, it)
             }
         }
+    }
+
+    LaunchedEffect(
+        key1 = state.mimeType,
+        key2 = state.query,
+    ) {
+        onAction(MediaListScreenActions.OnUpdateUpdateMedia)
     }
 
     LaunchedEffect(screenEvents) {
@@ -167,7 +174,7 @@ private fun MediaListScreen(
                 }
 
                 MediaListScreenEvents.OnNavigateToMediaDetail -> {
-                    navigateToMediaDetailScreen()
+                    navigateToMediaDetailScreen(state.selectedMediaIndex)
                 }
 
                 MediaListScreenEvents.OnRefreshList -> {

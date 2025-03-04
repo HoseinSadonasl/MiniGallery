@@ -181,10 +181,6 @@ internal class MediaListViewModel
             }
         }
 
-        fun setMediaState(mediaState: PagingData<MediaUi>) {
-            mediaViewModelState.value = mediaState
-        }
-
         private fun setMimeType(mimeType: String) {
             mediaListScreenViewModelState.update {
                 it.copy(mimeType = mimeType)

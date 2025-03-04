@@ -56,7 +56,7 @@ import kotlinx.coroutines.flow.collectLatest
 internal fun AlbumsScreen(
     modifier: Modifier = Modifier,
     albumsViewModel: AlbumsViewModel,
-    navigateToMediaDetailScreen: () -> Unit,
+    navigateToMediaDetailScreen: (Int?, String) -> Unit,
 ) {
     AlbumsScreen(
         modifier = modifier,
@@ -71,7 +71,7 @@ internal fun AlbumsScreen(
 private fun AlbumsScreen(
     modifier: Modifier = Modifier,
     albumsViewModel: AlbumsViewModel,
-    navigateToMediaDetailScreen: () -> Unit,
+    navigateToMediaDetailScreen: (Int?, String) -> Unit,
     onAction: (AlbumsScreenActions) -> Unit,
 ) {
     val state by albumsViewModel.albumsUiState.collectAsStateWithLifecycle()
@@ -89,14 +89,20 @@ private fun AlbumsScreen(
         albumsViewModel.albumsUiEvent.collectLatest { event ->
             when (event) {
                 is AlbumsScreenEvents.OnNavigateToMediaDetailScreen -> {
-                    navigateToMediaDetailScreen()
+                    state.selectedAlbum?.displayName?.let { selectedAlbum ->
+                        navigateToMediaDetailScreen(state.selectedMediaIndex, selectedAlbum)
+                    }
                 }
             }
         }
     }
 
     LaunchedEffect(state.selectedAlbum) {
-        if (state.selectedAlbum != null && mediaListState.itemSnapshotList.items.isNotEmpty()) {
+        onAction(AlbumsScreenActions.OnUpdateMediaList)
+    }
+
+    LaunchedEffect(mediaListState.loadState) {
+        state.selectedAlbum?.let {
             navigator.navigateTo(ThreePaneScaffoldRole.Secondary, state.selectedAlbum?.displayName)
         }
     }

@@ -23,13 +23,11 @@ import kotlinx.coroutines.flow.collectLatest
 internal fun MediaDetailScreen(
     modifier: Modifier = Modifier,
     mediaDetailViewModel: MediaDetailViewModel,
-    selectedMediaItemIndex: Int,
     navigateUp: () -> Unit,
 ) {
     MediaDetailScreen(
         modifier = modifier,
         mediaDetailViewModel = mediaDetailViewModel,
-        selectedMediaItemIndex = selectedMediaItemIndex,
         navigateUp = navigateUp,
         onAction = mediaDetailViewModel::onAction,
     )
@@ -39,7 +37,6 @@ internal fun MediaDetailScreen(
 private fun MediaDetailScreen(
     modifier: Modifier = Modifier,
     mediaDetailViewModel: MediaDetailViewModel,
-    selectedMediaItemIndex: Int,
     navigateUp: () -> Unit,
     onAction: (MediaDetailScreenActions) -> Unit,
 ) {
@@ -91,7 +88,7 @@ private fun MediaDetailScreen(
     ) {
         MediaPreviewPager(
             modifier = Modifier,
-            currentPage = selectedMediaItemIndex,
+            currentPage = state.selectedMediaItemIndex,
             pagerMediaItems = mediaListState.itemSnapshotList.items,
             onCurrentPageChanged = { pageIndex ->
                 onAction(MediaDetailScreenActions.OnSelectedIndexChanged(index = pageIndex))

@@ -3,18 +3,23 @@ package com.hotaku.media.screens.albums
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.hotaku.domain.utils.DataResult
 import com.hotaku.media.mapper.MapAlbumAsAlbumUi
 import com.hotaku.media.model.AlbumUi
 import com.hotaku.media_domain.usecase.GetAlbumsUseCase
+import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.ui.UiState
 import com.hotaku.ui.asUiError
+import com.hotaku.ui.mappers.MapMediaAsMediaUi
 import com.hotaku.ui.models.MediaUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -27,6 +32,8 @@ internal class AlbumsViewModel
     @Inject
     constructor(
         private val getAlbumsUseCase: GetAlbumsUseCase,
+        private val mediaUseCase: GetMediaUseCase,
+        private val mapMediaAsMediaUi: MapMediaAsMediaUi,
         private val mapAlbumAsAlbumUi: MapAlbumAsAlbumUi,
     ) : ViewModel() {
         private var albumsViewModelState = MutableStateFlow(AlbumsUiState())
@@ -40,16 +47,42 @@ internal class AlbumsViewModel
                 )
 
         private var mediaViewModelState = MutableStateFlow<PagingData<MediaUi>>(PagingData.empty())
-        val mediaUiState = mediaViewModelState.asStateFlow()
+        val mediaUiState =
+            mediaViewModelState
+                .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5_000),
+                    initialValue = PagingData.empty(),
+                )
 
         private val albumsDetailsViewModelEvent = Channel<AlbumsScreenEvents>()
         val albumsUiEvent = albumsDetailsViewModelEvent.receiveAsFlow()
 
         fun onAction(action: AlbumsScreenActions) {
             when (action) {
+                AlbumsScreenActions.OnUpdateMediaList -> updateMediaState()
                 is AlbumsScreenActions.OnAlbumClick -> getAlbumMedia(action.album)
                 AlbumsScreenActions.OnCloseAlbum -> closeAlbum()
                 is AlbumsScreenActions.OnMediaItemClick -> openMediaInDetail(action.mediaItemIndex)
+            }
+        }
+
+        private fun updateMediaState() {
+            viewModelScope.launch {
+                mediaUseCase.invoke(
+                    mimeType = albumsViewModelState.value.mimeType,
+                    query = albumsViewModelState.value.query,
+                    albumName = albumsViewModelState.value.selectedAlbum?.displayName.orEmpty(),
+                )
+                    .cachedIn(viewModelScope)
+                    .map { pagingData ->
+                        pagingData.map {
+                            mapMediaAsMediaUi.map(it)
+                        }
+                    }
+                    .collectLatest { media ->
+                        mediaViewModelState.value = media
+                    }
             }
         }
 
@@ -70,6 +103,7 @@ internal class AlbumsViewModel
 
         private fun closeAlbum() {
             getAlbumMedia(album = null)
+            mediaViewModelState.value = PagingData.empty()
         }
 
         private fun getAlbumMedia(album: AlbumUi?) {
@@ -78,10 +112,6 @@ internal class AlbumsViewModel
                     selectedAlbum = album,
                 )
             }
-        }
-
-        fun setMediaState(mediaState: PagingData<MediaUi>) {
-            mediaViewModelState.value = mediaState
         }
 
         private fun updateAlbums() {

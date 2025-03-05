@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
@@ -44,6 +45,7 @@ import com.hotaku.ui.UiState
 import com.hotaku.ui.asString
 import com.hotaku.ui.conposables.AnimatedSearchTextField
 import com.hotaku.ui.conposables.DynamicTopAppBarColumn
+import com.hotaku.ui.conposables.EmptyPaneMessage
 import com.hotaku.ui.conposables.MediaDetail
 import com.hotaku.ui.conposables.MediaGrid
 import com.hotaku.ui.conposables.MediaOptions
@@ -324,6 +326,14 @@ private fun MediaListScreen(
                                         },
                                     )
                                 }
+                            } ?: Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                EmptyPaneMessage(
+                                    icon = Icons.Outlined.Info,
+                                    message = stringResource(R.string.media_screen_empty_pane_message),
+                                )
                             }
                         }
                     },

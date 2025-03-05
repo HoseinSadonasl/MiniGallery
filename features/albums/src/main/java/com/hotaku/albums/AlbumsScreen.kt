@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -44,6 +45,7 @@ import com.hotaku.features.albums.R
 import com.hotaku.ui.MediaType
 import com.hotaku.ui.UiState
 import com.hotaku.ui.conposables.DynamicTopAppBarColumn
+import com.hotaku.ui.conposables.EmptyPaneMessage
 import com.hotaku.ui.conposables.ImageThumbnail
 import com.hotaku.ui.conposables.MediaGrid
 import com.hotaku.ui.conposables.OnScreenMessage
@@ -150,6 +152,14 @@ private fun AlbumsScreen(
                                     onAction(AlbumsScreenActions.OnMediaItemClick(itemIndex))
                                 },
                                 onItemLongClick = {},
+                            )
+                        } ?: Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            EmptyPaneMessage(
+                                icon = Icons.Outlined.Info,
+                                message = stringResource(R.string.albums_screen_empty_pane_message),
                             )
                         }
                     }

@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="onboarding_screen_grant_permissions_button_text">Grant permissions</string>
+    <string name="permissions_screen_message_title">Media Permission requierd!</string>
+    <string name="permissions_screen_message">Hi! MiniGallery needs access to your photos and media to work. Please grant media permissions if you\'d like to use it. Thanks!</string>
 </resources>

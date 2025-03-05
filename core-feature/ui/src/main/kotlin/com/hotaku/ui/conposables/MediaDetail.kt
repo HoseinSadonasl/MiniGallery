@@ -136,7 +136,7 @@ private fun MediapreviewPreview() {
             media =
                 MediaUi(
                     mediaId = 7907,
-                    uriString = "https://picsum.photos/200/300",
+                    uriString = "",
                     displayName = "Nola Gillespie",
                     mimeType = MediaType.VIDEO,
                     duration = 213343,

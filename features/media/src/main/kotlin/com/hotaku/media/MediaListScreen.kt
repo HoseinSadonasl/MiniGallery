@@ -196,7 +196,7 @@ private fun MediaListScreen(
         show = state.isTopBarVisible,
         animatableTopContent = {
             TopAppBar(
-                title = stringResource(R.string.home_screentop_bar_title_all_media),
+                title = stringResource(R.string.media_list_screen_top_bar_title_all_media),
                 content = {
                     AnimatedSearchTextField(
                         expanded = state.isSearchExpanded,
@@ -211,7 +211,7 @@ private fun MediaListScreen(
                         onValueChange = { query ->
                             onAction(MediaListScreenActions.OnQueryChange(query = query))
                         },
-                        placeHolderText = stringResource(R.string.home_screen_search_media),
+                        placeHolderText = stringResource(R.string.media_list_screen_search_media),
                     )
                 },
             )
@@ -332,7 +332,7 @@ private fun MediaListScreen(
                             ) {
                                 EmptyPaneMessage(
                                     icon = Icons.Outlined.Info,
-                                    message = stringResource(R.string.media_screen_empty_pane_message),
+                                    message = stringResource(R.string.media_list_screen_empty_pane_message),
                                 )
                             }
                         }
@@ -351,8 +351,8 @@ private fun NoMedia() {
     ) {
         OnScreenMessage(
             modifier = Modifier.fillMaxSize(),
-            title = stringResource(id = R.string.home_screen_no_media),
-            fulMessage = stringResource(id = R.string.home_screen_no_media_full_message),
+            title = stringResource(id = R.string.media_list_screen_no_media),
+            fulMessage = stringResource(id = R.string.media_list_screen_no_media_full_message),
         )
     }
 }
@@ -383,7 +383,7 @@ private fun SyncSection(
         is UiState.Loading -> {
             MediaSyncLabel(
                 isSyncing = true,
-                label = stringResource(R.string.home_screen_state_synchronizing),
+                label = stringResource(R.string.media_list_screen_state_synchronizing),
             )
         }
 
@@ -392,7 +392,7 @@ private fun SyncSection(
                 icon = Icons.Default.Done,
                 label =
                     stringResource(
-                        R.string.home_screen_media_sync_state_media_added,
+                        R.string.media_list_screen_media_sync_state_media_added,
                         synchronizeState.data,
                     ),
             )

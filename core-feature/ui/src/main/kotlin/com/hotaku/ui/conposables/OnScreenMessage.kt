@@ -20,12 +20,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.core_feature.ui.R
@@ -130,8 +130,8 @@ private fun ScreenMessagePreview() {
         ) {
             OnScreenMessage(
                 modifier = Modifier.align(Alignment.Center),
-                title = stringResource(id = R.string.permissions_screen_message_title),
-                fulMessage = stringResource(id = R.string.permissions_screen_message),
+                title = LoremIpsum(6).values.toList().first().toString(),
+                fulMessage = LoremIpsum(30).values.toList().first().toString(),
             )
         }
     }

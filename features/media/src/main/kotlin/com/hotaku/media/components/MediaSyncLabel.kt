@@ -69,7 +69,7 @@ internal fun MediaSyncLabel(
             Spacer(Modifier.width(8.dp))
             Text(
                 modifier = Modifier.noRippleClickable { onRetry() },
-                text = stringResource(R.string.home_screen_state_synchronizing_retry),
+                text = stringResource(R.string.media_list_screen_state_synchronizing_retry),
                 style = MaterialTheme.typography.labelMedium,
                 textDecoration = TextDecoration.Underline,
                 color = MaterialTheme.colorScheme.onSurface,

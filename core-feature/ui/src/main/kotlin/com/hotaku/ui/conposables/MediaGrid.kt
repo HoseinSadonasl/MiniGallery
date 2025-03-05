@@ -70,7 +70,7 @@ private fun MediaGridImpl(
         val errorMessage: String? = loadState.error.localizedMessage
         OnScreenMessage(
             modifier = Modifier.fillMaxSize(),
-            title = stringResource(id = R.string.albums_screen_error_while_getting_media),
+            title = stringResource(id = R.string.media_grid_list_error_while_getting_media),
             fulMessage = errorMessage ?: stringResource(id = R.string.media_grid_list_an_error_occured),
         )
     } else {

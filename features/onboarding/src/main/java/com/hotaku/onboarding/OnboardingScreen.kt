@@ -98,8 +98,8 @@ private fun OnboardingScreen(
                         .fillMaxWidth(
                             fraction = if (windowWidth != WindowWidthSizeClass.COMPACT) .5f else 1f,
                         ),
-                title = stringResource(id = com.hotaku.core_feature.ui.R.string.permissions_screen_message_title),
-                fulMessage = stringResource(id = com.hotaku.core_feature.ui.R.string.permissions_screen_message),
+                title = stringResource(id = R.string.permissions_screen_message_title),
+                fulMessage = stringResource(id = R.string.permissions_screen_message),
             )
 
             FilledTonalButton(

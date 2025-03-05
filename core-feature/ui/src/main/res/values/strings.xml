@@ -6,9 +6,7 @@
     <string name="all_sync_error">Sync data error</string>
     <string name="dialog_button_label_confirm">Confirm</string>
     <string name="dialog_button_label_cancel">Cancel</string>
-    <string name="albums_screen_error_while_getting_media">Ops!</string>
+    <string name="media_grid_list_error_while_getting_media">Ops!</string>
     <string name="media_grid_list_an_error_occured">An error occurred</string>
-    <string name="permissions_screen_message_title">Media Permission requierd!</string>
-    <string name="permissions_screen_message">Hi! MiniGallery needs access to your photos and media to work. Please grant media permissions if you\'d like to use it. Thanks!</string>
     <string name="all_storage_low_error">Synchronization failed. Your device\'s storage is too low. Please free up space and try again.</string>
 </resources>

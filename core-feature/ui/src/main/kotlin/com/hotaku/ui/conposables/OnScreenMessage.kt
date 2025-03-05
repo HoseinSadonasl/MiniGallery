@@ -38,6 +38,21 @@ fun OnScreenMessage(
     title: String,
     fulMessage: String,
 ) {
+    OnScreenMessageImpl(
+        modifier = modifier,
+        color = color,
+        title = title,
+        fulMessage = fulMessage,
+    )
+}
+
+@Composable
+private fun OnScreenMessageImpl(
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    title: String,
+    fulMessage: String,
+) {
     val windowSize = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
     Box(
         modifier = modifier,

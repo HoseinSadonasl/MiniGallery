@@ -22,7 +22,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 
 @Composable
-fun ShimmerPlaceHolder(modifier: Modifier = Modifier) {
+fun ShimmerPlaceHolder(modifier: Modifier = Modifier) = ShimmerPlaceHolderImpl(modifier = modifier)
+
+@Composable
+private fun ShimmerPlaceHolderImpl(modifier: Modifier = Modifier) {
     val infiniteTransition: InfiniteTransition =
         rememberInfiniteTransition(label = "infinite color")
     val shimmerPosition by infiniteTransition.animateFloat(

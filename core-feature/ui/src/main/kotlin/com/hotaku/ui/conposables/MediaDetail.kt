@@ -5,16 +5,11 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -26,10 +21,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.ui.MediaType
 import com.hotaku.ui.models.MediaUi
@@ -38,6 +31,25 @@ import java.time.Instant
 
 @Composable
 fun MediaDetail(
+    modifier: Modifier = Modifier,
+    isCompact: Boolean,
+    media: MediaUi,
+    onPlayVideo: () -> Unit,
+    onClose: () -> Unit,
+    floatOptions: @Composable () -> Unit,
+) {
+    MediaDetailImpl(
+        modifier = modifier,
+        isCompact = isCompact,
+        media = media,
+        onPlayVideo = onPlayVideo,
+        onClose = onClose,
+        floatOptions = floatOptions,
+    )
+}
+
+@Composable
+private fun MediaDetailImpl(
     modifier: Modifier = Modifier,
     isCompact: Boolean,
     media: MediaUi,
@@ -120,42 +132,6 @@ fun MediaDetail(
                     floatOptions()
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun MediaOptions(
-    modifier: Modifier = Modifier,
-    onShareMedia: () -> Unit,
-    onDeleteMedia: () -> Unit,
-    extraActions: @Composable () -> Unit = {},
-) {
-    Row(
-        modifier =
-            modifier
-                .padding(15.dp)
-                .clip(RoundedCornerShape(percent = 50))
-                .background(MaterialTheme.colorScheme.surfaceContainer.copy(alpha = .5f))
-                .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        extraActions()
-        IconButton(
-            onClick = onShareMedia,
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Share,
-                contentDescription = "Share Media",
-            )
-        }
-        IconButton(
-            onClick = onDeleteMedia,
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Delete,
-                contentDescription = "Delete Media",
-            )
         }
     }
 }

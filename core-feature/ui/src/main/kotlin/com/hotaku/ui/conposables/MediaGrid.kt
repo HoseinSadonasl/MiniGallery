@@ -38,6 +38,23 @@ fun MediaGrid(
     onItemClick: (Int) -> Unit,
     onItemLongClick: () -> Unit,
 ) {
+    MediaGridImpl(
+        modifier = modifier,
+        pagingMediaItems = pagingMediaItems,
+        onScrolled = onScrolled,
+        onItemClick = onItemClick,
+        onItemLongClick = onItemLongClick,
+    )
+}
+
+@Composable
+private fun MediaGridImpl(
+    modifier: Modifier = Modifier,
+    pagingMediaItems: LazyPagingItems<MediaUi>,
+    onScrolled: (Boolean) -> Unit,
+    onItemClick: (Int) -> Unit,
+    onItemLongClick: () -> Unit,
+) {
     val loadState: LoadState = pagingMediaItems.loadState.refresh
 
     val lazyGridState: LazyGridState = rememberLazyGridState()

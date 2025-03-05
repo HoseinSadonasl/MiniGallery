@@ -17,6 +17,23 @@ fun MediaPreviewPager(
     onCurrentPageChanged: (Int) -> Unit = {},
     content: @Composable (MediaUi) -> Unit,
 ) {
+    MediaPreviewPagerImpl(
+        modifier = modifier,
+        currentPage = currentPage,
+        pagerMediaItems = pagerMediaItems,
+        onCurrentPageChanged = onCurrentPageChanged,
+        content = content,
+    )
+}
+
+@Composable
+private fun MediaPreviewPagerImpl(
+    modifier: Modifier = Modifier,
+    currentPage: Int,
+    pagerMediaItems: LazyPagingItems<MediaUi>,
+    onCurrentPageChanged: (Int) -> Unit = {},
+    content: @Composable (MediaUi) -> Unit,
+) {
     val mediaPagerState =
         rememberPagerState(
             initialPage = currentPage,

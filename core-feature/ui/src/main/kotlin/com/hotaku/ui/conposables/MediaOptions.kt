@@ -2,6 +2,7 @@ package com.hotaku.ui.conposables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -21,7 +22,7 @@ fun MediaOptions(
     modifier: Modifier = Modifier,
     onShareMedia: () -> Unit,
     onDeleteMedia: () -> Unit,
-    extraActions: @Composable () -> Unit = {},
+    extraActions: @Composable RowScope.() -> Unit = {},
 ) {
     MediaOptionsImpl(
         modifier = modifier,
@@ -36,7 +37,7 @@ private fun MediaOptionsImpl(
     modifier: Modifier = Modifier,
     onShareMedia: () -> Unit,
     onDeleteMedia: () -> Unit,
-    extraActions: @Composable () -> Unit = {},
+    extraActions: @Composable RowScope.() -> Unit = {},
 ) {
     Row(
         modifier =

@@ -25,7 +25,9 @@ internal sealed interface MediaListScreenActions {
 
     data object OnClearSelectedMedia : MediaListScreenActions
 
-    data object OnOpenMedia : MediaListScreenActions
+    data object OnOpenMediaDetails : MediaListScreenActions
+
+    data object OnPlayVideo : MediaListScreenActions
 
     data object OnShareMedia : MediaListScreenActions
 

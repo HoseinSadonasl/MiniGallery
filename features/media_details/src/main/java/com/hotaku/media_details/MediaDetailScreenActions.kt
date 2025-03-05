@@ -5,7 +5,7 @@ import com.hotaku.ui.models.MediaUi
 internal sealed interface MediaDetailScreenActions {
     data class OnSelectedIndexChanged(val index: Int) : MediaDetailScreenActions
 
-    data object OnViewMedia : MediaDetailScreenActions
+    data object OnPlayVideo : MediaDetailScreenActions
 
     data object OnShareMedia : MediaDetailScreenActions
 

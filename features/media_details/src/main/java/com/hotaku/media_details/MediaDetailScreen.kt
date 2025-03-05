@@ -1,7 +1,10 @@
 package com.hotaku.media_details
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Box
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -11,11 +14,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.window.core.layout.WindowWidthSizeClass
+import com.hotaku.ui.MediaType
 import com.hotaku.ui.conposables.MediaDetail
 import com.hotaku.ui.conposables.MediaOptions
 import com.hotaku.ui.conposables.MediaPreviewPager
 import com.hotaku.ui.rememberTrashLauncherForResult
-import com.hotaku.ui.sendIntent
+import com.hotaku.ui.sendPlayIntent
+import com.hotaku.ui.sendShareIntent
 import com.hotaku.ui.trashMediaItemByUri
 import kotlinx.coroutines.flow.collectLatest
 
@@ -64,20 +69,14 @@ private fun MediaDetailScreen(
     LaunchedEffect(mediaDetailViewModel.mediaDetailUiEvents) {
         mediaDetailViewModel.mediaDetailUiEvents.collectLatest { event ->
             when (event) {
-                MediaDetailScreenEvents.OnViewMedia -> {
-                    mediaListState.peek(state.selectedMediaItemIndex)?.sendIntent(
-                        context = context,
-                        intentAction = Intent.ACTION_VIEW,
-                    )
-                }
-                MediaDetailScreenEvents.OnShareMedia -> {
-                    mediaListState.peek(state.selectedMediaItemIndex)?.sendIntent(
-                        context = context,
-                        intentAction = Intent.ACTION_SEND,
-                    )
-                }
                 MediaDetailScreenEvents.OnRefreshMedia -> {
                     mediaListState.refresh()
+                }
+                MediaDetailScreenEvents.OnShareMedia -> {
+                    mediaListState.peek(state.selectedMediaItemIndex)?.sendShareIntent(context = context)
+                }
+                MediaDetailScreenEvents.OnPlayVideo -> {
+                    mediaListState.peek(state.selectedMediaItemIndex)?.sendPlayIntent(context = context)
                 }
             }
         }
@@ -97,9 +96,6 @@ private fun MediaDetailScreen(
             MediaDetail(
                 isCompact = windowWidth == WindowWidthSizeClass.COMPACT,
                 media = media,
-                onPlayVideo = {
-                    onAction(MediaDetailScreenActions.OnViewMedia)
-                },
                 onClose = navigateUp,
                 floatOptions = {
                     MediaOptions(
@@ -111,6 +107,20 @@ private fun MediaDetailScreen(
                                 context = context,
                                 trashLauncher = trashLauncher,
                             )
+                        },
+                        extraActions = {
+                            if (media.mimeType == MediaType.VIDEO) {
+                                IconButton(
+                                    onClick = {
+                                        onAction(MediaDetailScreenActions.OnPlayVideo)
+                                    },
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.PlayArrow,
+                                        contentDescription = "Play Video",
+                                    )
+                                }
+                            }
                         },
                     )
                 },

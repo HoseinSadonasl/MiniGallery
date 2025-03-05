@@ -34,7 +34,6 @@ fun MediaDetail(
     modifier: Modifier = Modifier,
     isCompact: Boolean,
     media: MediaUi,
-    onPlayVideo: () -> Unit,
     onClose: () -> Unit,
     floatOptions: @Composable () -> Unit,
 ) {
@@ -42,7 +41,6 @@ fun MediaDetail(
         modifier = modifier,
         isCompact = isCompact,
         media = media,
-        onPlayVideo = onPlayVideo,
         onClose = onClose,
         floatOptions = floatOptions,
     )
@@ -53,7 +51,6 @@ private fun MediaDetailImpl(
     modifier: Modifier = Modifier,
     isCompact: Boolean,
     media: MediaUi,
-    onPlayVideo: () -> Unit,
     onClose: () -> Unit,
     floatOptions: @Composable () -> Unit,
 ) {
@@ -81,18 +78,11 @@ private fun MediaDetailImpl(
             }
 
             MediaType.IMAGE -> {
-                Image(
-                    itemUri = media.uriString,
-                )
+                Image(itemUri = media.uriString)
             }
 
             MediaType.VIDEO -> {
-                Video(
-                    itemUri = media.uriString,
-                    onVideoClick = {
-                        onPlayVideo()
-                    },
-                )
+                Video(itemUri = media.uriString)
             }
         }
         AnimatedVisibility(
@@ -155,7 +145,6 @@ private fun MediapreviewPreview() {
                     size = 2566,
                     bucketDisplayName = "Ismael McCarthy",
                 ),
-            onPlayVideo = {},
             onClose = {},
             floatOptions = {},
         )

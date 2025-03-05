@@ -62,7 +62,6 @@ internal class MediaDetailViewModel
             when (action) {
                 is MediaDetailScreenActions.OnNameChange -> setName(newName = action.newName)
                 is MediaDetailScreenActions.OnSelectedIndexChanged -> setSelectedIndex(action.index)
-                MediaDetailScreenActions.OnViewMedia -> viewMedia()
                 MediaDetailScreenActions.OnShareMedia -> shareMedia()
                 is MediaDetailScreenActions.OnDeleteMedia -> deleteMedia(media = action.mediaItem)
                 MediaDetailScreenActions.OnOOpenMenu -> openMenuPopup()
@@ -70,7 +69,12 @@ internal class MediaDetailViewModel
                 MediaDetailScreenActions.OnRenameClick -> openRenameDialog()
                 MediaDetailScreenActions.OnSubmitRenameClick -> openRenameDialog(open = false)
                 MediaDetailScreenActions.OnUpdateMedia -> updateMedia()
+                MediaDetailScreenActions.OnPlayVideo -> playVideo()
             }
+        }
+
+        private fun playVideo() {
+            sendEvent(MediaDetailScreenEvents.OnPlayVideo)
         }
 
         private fun getInitialDataFromSavedState() {
@@ -113,10 +117,6 @@ internal class MediaDetailViewModel
 
         private fun shareMedia() {
             sendEvent(MediaDetailScreenEvents.OnShareMedia)
-        }
-
-        private fun viewMedia() {
-            sendEvent(MediaDetailScreenEvents.OnViewMedia)
         }
 
         private fun openMenuPopup(open: Boolean = true) {

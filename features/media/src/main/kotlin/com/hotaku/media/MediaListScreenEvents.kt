@@ -8,4 +8,6 @@ interface MediaListScreenEvents {
     object OnShareMediaList : MediaListScreenEvents
 
     object OnNavigateToMediaDetail : MediaListScreenEvents
+
+    object OnPlayVideo : MediaListScreenEvents
 }

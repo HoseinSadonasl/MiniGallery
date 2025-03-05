@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.PlayArrow
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,7 +22,6 @@ import com.hotaku.ui.asThumbnailImageBitmap
 internal fun Video(
     modifier: Modifier = Modifier,
     itemUri: String,
-    onVideoClick: () -> Unit,
 ) {
     val thumbnail = itemUri.toUri().asThumbnailImageBitmap()
 
@@ -32,10 +31,7 @@ internal fun Video(
         Image(
             bitmap = thumbnail,
             contentDescription = null,
-            modifier =
-                modifier
-                    .matchParentSize()
-                    .noRippleClickable { onVideoClick() },
+            modifier = modifier.matchParentSize(),
             contentScale = ContentScale.Crop,
         )
         Icon(
@@ -44,7 +40,7 @@ internal fun Video(
                     .padding(16.dp)
                     .align(Alignment.TopStart)
                     .alpha(.6f),
-            imageVector = Icons.Outlined.PlayArrow,
+            imageVector = Icons.Filled.PlayArrow,
             contentDescription = "video",
             tint = Color.Gray,
         )

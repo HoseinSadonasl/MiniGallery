@@ -78,9 +78,14 @@ internal class MediaListViewModel
                 MediaListScreenActions.OnMediaListItemLongClick -> {}
                 MediaListScreenActions.OnClearSelectedMedia -> clearSelectedMedia()
                 is MediaListScreenActions.OnDeleteMediaItem -> deleteMediaItem(mediaUi = action.mediaItem)
-                MediaListScreenActions.OnOpenMedia -> showMedia()
+                MediaListScreenActions.OnOpenMediaDetails -> showOpenDetails()
                 MediaListScreenActions.OnShareMedia -> shareMedia()
+                MediaListScreenActions.OnPlayVideo -> playVideo()
             }
+        }
+
+        private fun playVideo() {
+            sendEvent(MediaListScreenEvents.OnPlayVideo)
         }
 
         private fun updateMediaState() {
@@ -118,7 +123,7 @@ internal class MediaListViewModel
             }
         }
 
-        private fun showMedia() {
+        private fun showOpenDetails() {
             sendEvent(MediaListScreenEvents.OnNavigateToMediaDetail)
         }
 

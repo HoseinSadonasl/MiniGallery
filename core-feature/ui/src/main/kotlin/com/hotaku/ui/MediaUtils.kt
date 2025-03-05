@@ -63,16 +63,18 @@ fun List<String>.trashMediaByUri(
     trashLauncher.launch(intentSenderRequest)
 }
 
-fun MediaUi.sendIntent(
-    context: Context,
-    intentAction: String,
-) {
+fun MediaUi.sendShareIntent(context: Context) {
     val sendIntent =
         Intent().apply {
-            action = intentAction
+            action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_STREAM, Uri.parse(uriString))
             type = "$mimeType/*"
         }
     val intentToShare = Intent.createChooser(sendIntent, displayName)
     context.startActivity(intentToShare)
+}
+
+fun MediaUi.sendPlayIntent(context: Context) {
+    val sendIntent = Intent(Intent.ACTION_VIEW, uriString.toUri())
+    context.startActivity(sendIntent)
 }

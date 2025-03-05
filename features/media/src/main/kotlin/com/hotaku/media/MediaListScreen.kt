@@ -1,6 +1,5 @@
 package com.hotaku.media
 
-import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
@@ -8,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,6 +37,7 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.features.media.R
 import com.hotaku.media.components.MediaSyncLabel
+import com.hotaku.ui.MediaType
 import com.hotaku.ui.PermissionUtils
 import com.hotaku.ui.PermissionUtils.requiredMediaPermissions
 import com.hotaku.ui.UiState
@@ -51,7 +52,8 @@ import com.hotaku.ui.conposables.OnScreenMessage
 import com.hotaku.ui.conposables.TopAppBar
 import com.hotaku.ui.models.MediaUi
 import com.hotaku.ui.rememberTrashLauncherForResult
-import com.hotaku.ui.sendIntent
+import com.hotaku.ui.sendPlayIntent
+import com.hotaku.ui.sendShareIntent
 import com.hotaku.ui.trashMediaItemByUri
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -166,10 +168,7 @@ private fun MediaListScreen(
 
                 MediaListScreenEvents.OnShareMediaList -> {
                     state.selectedMediaIndex?.let {
-                        pagingMediaItems[it]?.sendIntent(
-                            context = context,
-                            intentAction = Intent.ACTION_SEND,
-                        )
+                        pagingMediaItems[it]?.sendShareIntent(context = context)
                     }
                 }
 
@@ -179,6 +178,12 @@ private fun MediaListScreen(
 
                 MediaListScreenEvents.OnRefreshList -> {
                     pagingMediaItems.refresh()
+                }
+
+                MediaListScreenEvents.OnPlayVideo -> {
+                    state.selectedMediaIndex?.let {
+                        pagingMediaItems[it]?.sendPlayIntent(context = context)
+                    }
                 }
             }
         }
@@ -268,9 +273,6 @@ private fun MediaListScreen(
                                     MediaDetail(
                                         isCompact = windowWidth == WindowWidthSizeClass.COMPACT,
                                         media = media,
-                                        onPlayVideo = {
-                                            // play video
-                                        },
                                         onClose = {
                                             onAction(MediaListScreenActions.OnClearSelectedMedia)
                                         },
@@ -286,18 +288,36 @@ private fun MediaListScreen(
                                                     )
                                                 },
                                                 extraActions = {
-                                                    IconButton(
-                                                        onClick = {
-                                                            onAction(MediaListScreenActions.OnOpenMedia)
-                                                        },
-                                                    ) {
-                                                        Icon(
-                                                            imageVector =
-                                                                ImageVector.vectorResource(
-                                                                    id = R.drawable.media_preview_full_screen,
-                                                                ),
-                                                            contentDescription = "Open full screen",
-                                                        )
+                                                    when (media.mimeType) {
+                                                        MediaType.VIDEO -> {
+                                                            IconButton(
+                                                                onClick = {
+                                                                    onAction(MediaListScreenActions.OnPlayVideo)
+                                                                },
+                                                            ) {
+                                                                Icon(
+                                                                    imageVector = Icons.Filled.PlayArrow,
+                                                                    contentDescription = "Play video",
+                                                                )
+                                                            }
+                                                        }
+                                                        MediaType.IMAGE -> {
+                                                            IconButton(
+                                                                onClick = {
+                                                                    onAction(MediaListScreenActions.OnOpenMediaDetails)
+                                                                },
+                                                            ) {
+                                                                Icon(
+                                                                    imageVector =
+                                                                        ImageVector.vectorResource(
+                                                                            id = R.drawable.media_preview_full_screen,
+                                                                        ),
+                                                                    contentDescription = "Open full screen",
+                                                                )
+                                                            }
+                                                        }
+
+                                                        MediaType.UNKNOWN -> Unit
                                                     }
                                                 },
                                             )

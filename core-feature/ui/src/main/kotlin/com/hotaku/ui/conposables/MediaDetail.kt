@@ -74,7 +74,7 @@ private fun MediaDetailImpl(
     ) {
         when (media.mimeType) {
             MediaType.UNKNOWN -> {
-                ShimmerPlaceHolder()
+                MediaPlaceHolder()
             }
 
             MediaType.IMAGE -> {

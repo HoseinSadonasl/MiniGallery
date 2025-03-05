@@ -48,8 +48,8 @@ import com.hotaku.ui.conposables.DynamicTopAppBarColumn
 import com.hotaku.ui.conposables.EmptyPaneMessage
 import com.hotaku.ui.conposables.ImageThumbnail
 import com.hotaku.ui.conposables.MediaGrid
+import com.hotaku.ui.conposables.MediaPlaceHolder
 import com.hotaku.ui.conposables.OnScreenMessage
-import com.hotaku.ui.conposables.ShimmerPlaceHolder
 import com.hotaku.ui.conposables.TopAppBar
 import com.hotaku.ui.conposables.VideoThumbnail
 import kotlinx.coroutines.flow.collectLatest
@@ -229,7 +229,9 @@ private fun AlbumsGridList(
             ) {
                 when (albumsListState) {
                     is UiState.Loading -> {
-                        loadingItems()
+                        items(6) {
+                            MediaPlaceHolder(modifier = Modifier.clip(MaterialTheme.shapes.medium))
+                        }
                     }
                     is UiState.Success -> {
                         albumsListItems(
@@ -282,12 +284,7 @@ private fun LazyGridScope.albumsListItems(
                 }
 
                 else -> {
-                    ShimmerPlaceHolder(
-                        modifier =
-                            Modifier
-                                .fillMaxSize()
-                                .clip(MaterialTheme.shapes.medium),
-                    )
+                    MediaPlaceHolder(modifier = Modifier.clip(MaterialTheme.shapes.medium))
                 }
             }
             Row(
@@ -314,13 +311,5 @@ private fun LazyGridScope.albumsListItems(
                 )
             }
         }
-    }
-}
-
-private fun LazyGridScope.loadingItems() {
-    items(6) {
-        ShimmerPlaceHolder(
-            modifier = Modifier.clip(MaterialTheme.shapes.medium),
-        )
     }
 }

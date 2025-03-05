@@ -105,7 +105,7 @@ private fun MediaGridList(
         when (loadState) {
             LoadState.Loading -> {
                 items(50) {
-                    ShimmerPlaceHolder()
+                    MediaPlaceHolder()
                 }
             }
 

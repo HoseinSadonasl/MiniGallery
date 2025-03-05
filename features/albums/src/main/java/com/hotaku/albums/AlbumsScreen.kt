@@ -98,11 +98,8 @@ private fun AlbumsScreen(
     }
 
     LaunchedEffect(state.selectedAlbum) {
-        onAction(AlbumsScreenActions.OnUpdateMediaList)
-    }
-
-    LaunchedEffect(mediaListState.loadState) {
         state.selectedAlbum?.let {
+            onAction(AlbumsScreenActions.OnUpdateMediaList)
             navigator.navigateTo(ThreePaneScaffoldRole.Secondary, state.selectedAlbum?.displayName)
         }
     }

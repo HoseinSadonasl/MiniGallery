@@ -1,15 +1,6 @@
 package com.hotaku.designsystem.theme
 
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.Color
-
-val LocalMiniGalleryColors = compositionLocalOf { Colors() }
-
-data class Colors(
-    val yellow: Color = Color(0xFFFFCA28),
-    val green: Color = Color(0xFF66BB6A),
-    val red: Color = Color(0xFFEF5350),
-)
 
 val primaryLight = Color(0xFF060606)
 val onPrimaryLight = Color(0xFFFFFFFF)

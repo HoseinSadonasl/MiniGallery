@@ -77,7 +77,7 @@ internal fun MediaListScreen(
         synchronizeState = mediaListViewModel.synchronizeUiState,
         onAction = mediaListViewModel::onAction,
         navigateToMediaDetailScreen = navigateToMediaDetailScreen,
-        navigateTounboardingScreen = navigateToOnboardingScreen,
+        navigateToOnboardingScreen = navigateToOnboardingScreen,
     )
 }
 
@@ -91,7 +91,7 @@ private fun MediaListScreen(
     synchronizeState: StateFlow<UiState<Int>?>,
     navigateToMediaDetailScreen: (Int?) -> Unit,
     onAction: (MediaListScreenActions) -> Unit,
-    navigateTounboardingScreen: () -> Unit,
+    navigateToOnboardingScreen: () -> Unit,
 ) {
     val state: MediaListUiState by screenState.collectAsStateWithLifecycle()
     val synchronize: UiState<Int>? by synchronizeState.collectAsStateWithLifecycle()
@@ -130,7 +130,7 @@ private fun MediaListScreen(
             context = context,
             permissions = requiredMediaPermissions,
         ).let { permissions ->
-            if (permissions.isNotEmpty()) navigateTounboardingScreen()
+            if (permissions.isNotEmpty()) navigateToOnboardingScreen()
         }
     }
 

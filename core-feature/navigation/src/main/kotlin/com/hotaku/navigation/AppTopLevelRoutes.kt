@@ -6,6 +6,7 @@ import com.hotaku.albums.navigation.AlbumsScreenRoute
 import com.hotaku.core_feature.navigation.R
 import com.hotaku.media.navigation.MediaListScreenRRoute
 
+@Suppress("MatchingDeclarationName")
 internal data class TopLevelRoute(
     @StringRes val label: Int,
     @DrawableRes val icon: Int,

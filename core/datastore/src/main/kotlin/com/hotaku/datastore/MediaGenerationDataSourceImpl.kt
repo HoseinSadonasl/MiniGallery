@@ -3,7 +3,7 @@ package com.hotaku.datastore
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import com.hotaku.datastore.AppKeys.MEDIA_DATABASE_GENERATION
+import com.hotaku.datastore.AppPreferencesKeys.MEDIA_DATABASE_GENERATION
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 

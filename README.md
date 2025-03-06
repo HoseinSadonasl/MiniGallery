@@ -1,10 +1,10 @@
 
-# **Mini Gallery** ![enter image description here](https://raw.githubusercontent.com/HoseinSadonasl/MiniGallery/refs/heads/develop/repo-media/mini-gallery-banner.png)
+# **Mini Gallery** 
 An open-source Android project written with Kotlin, this project showcases a robust way to build Android apps using the latest tools and libraries with Clean Architecture and MVI pattern.
 
 ## 🌅 Screenshots
-|  ![Mini gallery shot1]()|![Mini gallery shot2]()  | ![Mini gallery shot3]() |
 
+![MiniGaller](https://raw.githubusercontent.com/HoseinSadonasl/MiniGallery/refs/heads/develop/repo-media/minigallery-screenshots.png)
 
 ## 🧑🏻‍💻 Development
 - The application is entirely written in [Kotlin](https://kotlinlang.org/).

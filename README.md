@@ -24,10 +24,15 @@ This project is built using [Clean Architecture](https://blog.cleancoder.com/unc
 ## 📱 Presentation Pattern
 This project employs the Model-View-Intent (MVI) pattern in its presentation modules. MVI's benefits include a single, immutable state for data consistency, a clear unidirectional data flow for easier debugging, and enhanced testability.
 
+## 📋 To Do List
+- [ ] Write tests
+- [ ] Pinch to zoom
+- [ ] Add Media Player
+
 ## 👥 Contributing
 I sincerely welcome your contributions to the MiniGallery project! I would love to have your help in making MiniGallery better. My main goal with this project is to learn and share knowledge in the field of Android development. Please note that this project may have technical debt, but this is an excellent opportunity to learn and help improve the project.
 
-To get started, please follow the contribution guidelines outlined in [this](https://github.com/HoseinSadonasl/MiniGallery) file.
+To get started, please follow the contribution guidelines outlined in [this](https://github.com/HoseinSadonasl/MiniGallery/blob/develop/CONTRIBUTING.md) file.
 
 ## 🤝 Let's Connect
 Connect with me through  [Linkedin](https://www.linkedin.com/in/hoseinsadonasl) or [Telegram](https://t.me/hoseinasl93).

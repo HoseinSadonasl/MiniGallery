@@ -3,7 +3,6 @@ package com.hotaku.media_domain.usecase
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.hotaku.domain.utils.DataResult
-import com.hotaku.domain.utils.ErrorResult
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -26,7 +25,7 @@ class SyncMediaUseCaseImplTest {
     @Test
     fun invoke_whenSynchronizeFails_shouldEmitLocalErrorResult() =
         runTest {
-            val expectedErrorResult = ErrorResult.LocalError.SYNC_DATA_ERROR
+//            val expectedErrorResult = ErrorResult.LocalError.SYNC_DATA_ERROR
 //            coEvery { syncMediaUseCase.invoke() } returns flowOf(DataResult.Failure(error = expectedErrorResult))
 
             syncMediaUseCase.invoke().test {

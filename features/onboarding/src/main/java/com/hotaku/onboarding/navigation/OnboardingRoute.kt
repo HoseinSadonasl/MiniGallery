@@ -21,13 +21,7 @@ fun NavGraphBuilder.onboardingNav(navigateToMediaListScreen: () -> Unit) =
 
         OnboardingScreen(
             onboardingViewModel = onboardingViewModel,
-            navigateToMediaListScreen = {
-//                navHostController.navigateToMediaListScreen {
-//                    popUpTo<MediaListScreenRRoute> {
-//                        inclusive = true
-//                    }
-//                }
-            },
+            navigateToMediaListScreen = navigateToMediaListScreen,
         )
     }
 

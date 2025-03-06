@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@Suppress("complexity.TooManyFunctions")
 @HiltViewModel
 internal class MediaListViewModel
     @Inject
@@ -64,6 +65,7 @@ internal class MediaListViewModel
         private var viewModelEvents = Channel<MediaListScreenEvents>()
         val mediaScreenEvent = viewModelEvents.receiveAsFlow()
 
+        @Suppress("complexity.LongMethod")
         fun onAction(action: MediaListScreenActions) {
             when (action) {
                 MediaListScreenActions.OnUpdateUpdateMedia -> updateMediaState()

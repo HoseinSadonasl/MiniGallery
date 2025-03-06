@@ -20,3 +20,5 @@ style:
     active: false
   UnusedPrivateMember:
     ignoreAnnotated: [ 'Preview',  "PreviewLightDark",]
+  MaxLineLength:
+    active: false

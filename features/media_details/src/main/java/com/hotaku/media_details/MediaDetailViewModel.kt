@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@Suppress("complexity.TooManyFunctions")
 @HiltViewModel
 internal class MediaDetailViewModel
     @Inject

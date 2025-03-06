@@ -1,5 +1,5 @@
-# **Mini Gallery**
-[Mini gallery banner](https://github.com/HoseinSadonasl/MiniGallery/blob/develop/repo-media/mini-gallery-banner.png)
+
+# **Mini Gallery** ![enter image description here](https://raw.githubusercontent.com/HoseinSadonasl/MiniGallery/refs/heads/develop/repo-media/mini-gallery-banner.png)
 An open-source Android project written with Kotlin, this project showcases a robust way to build Android apps using the latest tools and libraries with Clean Architecture and MVI pattern.
 
 ## 🌅 Screenshots
@@ -8,7 +8,7 @@ An open-source Android project written with Kotlin, this project showcases a rob
 
 ## 🧑🏻‍💻 Development
 - The application is entirely written in [Kotlin](https://kotlinlang.org/).
-- [Jetpack Compose](https://developer.android.com/compose) for the UI and It’s fully Responsive(Thanks to the
+- [Jetpack Compose](https://developer.android.com/compose) for the UI and It’s fully Responsive(Thanks to the  
   Adaptive Layout).
 - [Coroutines](https://kotlinlang.org/docs/coroutines-overview.html) for Asynchronous processing.
 - Dependency injection with [Hilt](https://developer.android.com/training/dependency-injection/hilt-android).
@@ -27,7 +27,7 @@ This project employs the Model-View-Intent (MVI) pattern in its presentation mod
 ## 👥 Contributing
 I sincerely welcome your contributions to the MiniGallery project! I would love to have your help in making MiniGallery better. My main goal with this project is to learn and share knowledge in the field of Android development. Please note that this project may have technical debt, but this is an excellent opportunity to learn and help improve the project.
 
-To get started, please follow the contribution guidelines outlined in [this](https://github.com/HoseinSadonasl/MiniGallery)  file.
+To get started, please follow the contribution guidelines outlined in [this](https://github.com/HoseinSadonasl/MiniGallery) file.
 
 ## 🤝 Let's Connect
 Connect with me through  [Linkedin](https://www.linkedin.com/in/hoseinsadonasl) or [Telegram](https://t.me/hoseinasl93).

@@ -5,14 +5,19 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -22,7 +27,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.ui.MediaType
 import com.hotaku.ui.models.MediaUi
@@ -91,30 +98,14 @@ private fun MediaDetailImpl(
             exit = fadeOut(),
         ) {
             Box(
-                Modifier.fillMaxSize().statusBarsPadding(),
+                Modifier
+                    .fillMaxSize()
+                    .statusBarsPadding(),
             ) {
                 if (isCompact) {
-                    IconButton(
-                        modifier = Modifier.align(Alignment.TopStart),
-                        onClick = onClose,
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                            contentDescription = "Navigate back",
-                            tint = Color.Gray,
-                        )
-                    }
+                    CompactTopBar(media = media, onClose = onClose)
                 } else {
-                    IconButton(
-                        modifier = Modifier.align(Alignment.TopEnd),
-                        onClick = onClose,
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Close,
-                            contentDescription = "Close preview",
-                            tint = Color.Gray,
-                        )
-                    }
+                    ExpendedTopBar(media = media, onClose = onClose)
                 }
                 Box(
                     modifier = Modifier.align(Alignment.Center),
@@ -122,6 +113,65 @@ private fun MediaDetailImpl(
                     floatOptions()
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun CompactTopBar(
+    media: MediaUi,
+    onClose: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        IconButton(
+            onClick = onClose,
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                contentDescription = "Navigate back",
+                tint = Color.Gray,
+            )
+        }
+        Spacer(Modifier.width(8.dp))
+        Text(
+            modifier = Modifier.weight(1f),
+            text = media.displayName,
+            style = MaterialTheme.typography.titleMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+@Composable
+private fun ExpendedTopBar(
+    media: MediaUi,
+    onClose: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Spacer(Modifier.width(8.dp))
+        Text(
+            modifier = Modifier.weight(1f),
+            text = media.displayName,
+            style = MaterialTheme.typography.titleMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Spacer(Modifier.weight(1f))
+        IconButton(
+            onClick = onClose,
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Close,
+                contentDescription = "Close preview",
+                tint = Color.Gray,
+            )
         }
     }
 }

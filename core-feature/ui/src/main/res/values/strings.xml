@@ -9,4 +9,6 @@
     <string name="media_grid_list_error_while_getting_media">Ops!</string>
     <string name="media_grid_list_an_error_occured">An error occurred</string>
     <string name="all_storage_low_error">Synchronization failed. Your device\'s storage is too low. Please free up space and try again.</string>
+    <string name="media_options_item_rename">Rename</string>
+    <string name="media_options_item_details">Details</string>
 </resources>

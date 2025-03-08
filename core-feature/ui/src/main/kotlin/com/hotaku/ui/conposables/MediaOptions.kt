@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,12 +24,14 @@ fun MediaOptions(
     onShareMedia: () -> Unit,
     onDeleteMedia: () -> Unit,
     extraActions: @Composable RowScope.() -> Unit = {},
+    moreAction: (() -> Unit)? = null,
 ) {
     MediaOptionsImpl(
         modifier = modifier,
         onShareMedia = onShareMedia,
         onDeleteMedia = onDeleteMedia,
         extraActions = extraActions,
+        moreAction = moreAction,
     )
 }
 
@@ -38,6 +41,7 @@ private fun MediaOptionsImpl(
     onShareMedia: () -> Unit,
     onDeleteMedia: () -> Unit,
     extraActions: @Composable RowScope.() -> Unit = {},
+    moreAction: (() -> Unit)? = null,
 ) {
     Row(
         modifier =
@@ -64,6 +68,16 @@ private fun MediaOptionsImpl(
                 imageVector = Icons.Outlined.Delete,
                 contentDescription = "Delete Media",
             )
+        }
+        moreAction?.let {
+            IconButton(
+                onClick = it,
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Home,
+                    contentDescription = "More",
+                )
+            }
         }
     }
 }

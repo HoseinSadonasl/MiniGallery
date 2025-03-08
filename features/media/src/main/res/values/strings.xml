@@ -8,4 +8,5 @@
     <string name="media_list_screen_top_bar_title_all_media">All Media</string>
     <string name="media_list_screen_search_media">Search media</string>
     <string name="media_list_screen_empty_pane_message">Select a media to show preview</string>
+    <string name="media_list_screen_menu_option_rename">Rename</string>
 </resources>

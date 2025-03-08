@@ -38,6 +38,9 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.features.media.R
 import com.hotaku.media.components.MediaSyncLabel
+import com.hotaku.ui.MediaDialogs.Idle
+import com.hotaku.ui.MediaDialogs.RenameMediaDialog
+import com.hotaku.ui.MediaOptionsMenuItems
 import com.hotaku.ui.MediaType
 import com.hotaku.ui.PermissionUtils
 import com.hotaku.ui.PermissionUtils.requiredMediaPermissions
@@ -51,6 +54,8 @@ import com.hotaku.ui.conposables.MediaGrid
 import com.hotaku.ui.conposables.MediaOptions
 import com.hotaku.ui.conposables.MediaPreviewPager
 import com.hotaku.ui.conposables.OnScreenMessage
+import com.hotaku.ui.conposables.OptionMenuItem
+import com.hotaku.ui.conposables.OptionsMenu
 import com.hotaku.ui.conposables.TopAppBar
 import com.hotaku.ui.models.MediaUi
 import com.hotaku.ui.rememberTrashLauncherForResult
@@ -191,6 +196,13 @@ private fun MediaListScreen(
         }
     }
 
+    when (state.mediaDialog) {
+        RenameMediaDialog -> {
+            // TODO: Implement rename media dialog
+        }
+        Idle -> Unit
+    }
+
     DynamicTopAppBarColumn(
         modifier = modifier,
         show = state.isTopBarVisible,
@@ -279,6 +291,30 @@ private fun MediaListScreen(
                                             onAction(MediaListScreenActions.OnClearSelectedMedia)
                                         },
                                         floatOptions = {
+                                            OptionsMenu(
+                                                expend = state.isMenuVisible,
+                                                nodeButton = {
+                                                },
+                                                options = {
+                                                    MediaOptionsMenuItems.entries.forEach { item ->
+                                                        OptionMenuItem(
+                                                            option = item.text.asString(),
+                                                        ) {
+                                                            when (item) {
+                                                                MediaOptionsMenuItems.RENAME -> {
+                                                                    onAction(MediaListScreenActions.OnOpenRenameMediaDialog)
+                                                                }
+                                                                MediaOptionsMenuItems.DETAILS -> {
+                                                                    onAction(MediaListScreenActions.ShowDetails)
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                onDismissRequest = {
+                                                    onAction(MediaListScreenActions.OnCloseMenu)
+                                                },
+                                            )
                                             MediaOptions(
                                                 onShareMedia = {
                                                     onAction(MediaListScreenActions.OnShareMedia)
@@ -321,6 +357,9 @@ private fun MediaListScreen(
 
                                                         MediaType.UNKNOWN -> Unit
                                                     }
+                                                },
+                                                moreAction = {
+                                                    onAction(MediaListScreenActions.OnOpenMenu)
                                                 },
                                             )
                                         },

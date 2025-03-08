@@ -9,6 +9,7 @@ import com.hotaku.media_domain.usecase.DeleteMediaUseCase
 import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_domain.usecase.SyncMediaUseCase
 import com.hotaku.media_domain.util.SyncDataState
+import com.hotaku.ui.MediaDialogs
 import com.hotaku.ui.UiState
 import com.hotaku.ui.asUiError
 import com.hotaku.ui.mappers.MapMediaAsMediaUi
@@ -83,6 +84,26 @@ internal class MediaListViewModel
                 MediaListScreenActions.OnOpenMediaDetails -> showOpenDetails()
                 MediaListScreenActions.OnShareMedia -> shareMedia()
                 MediaListScreenActions.OnPlayVideo -> playVideo()
+                MediaListScreenActions.OnOpenMenu -> showMenu()
+                MediaListScreenActions.OnCloseMenu -> showMenu(show = false)
+                MediaListScreenActions.OnHideDiaDialog -> showRenameDialog(mediaDialog = MediaDialogs.Idle)
+                MediaListScreenActions.OnOpenRenameMediaDialog -> showRenameDialog(mediaDialog = MediaDialogs.RenameMediaDialog)
+                MediaListScreenActions.ShowDetails -> showDetails()
+            }
+        }
+
+        private fun showDetails() {
+        }
+
+        private fun showRenameDialog(mediaDialog: MediaDialogs) {
+            mediaListScreenViewModelState.update {
+                it.copy(mediaDialog = mediaDialog)
+            }
+        }
+
+        private fun showMenu(show: Boolean = true) {
+            mediaListScreenViewModelState.update {
+                it.copy(isMenuVisible = show)
             }
         }
 

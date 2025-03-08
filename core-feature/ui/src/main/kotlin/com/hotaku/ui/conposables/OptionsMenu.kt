@@ -3,6 +3,7 @@ package com.hotaku.ui.conposables
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -12,14 +13,14 @@ import androidx.compose.ui.window.PopupProperties
 fun OptionsMenu(
     modifier: Modifier = Modifier,
     expend: Boolean,
-    nodeButton: @Composable () -> Unit,
+    node: @Composable () -> Unit,
     options: @Composable () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     OptionsMenuImpl(
         modifier = modifier,
         expend = expend,
-        nodeButton = nodeButton,
+        nodeButton = node,
         options = options,
         onDismissRequest = onDismissRequest,
     )
@@ -40,6 +41,7 @@ private fun OptionsMenuImpl(
         DropdownMenu(
             expanded = expend,
             onDismissRequest = onDismissRequest,
+            shape = MaterialTheme.shapes.medium,
             properties =
                 PopupProperties(
                     focusable = true,

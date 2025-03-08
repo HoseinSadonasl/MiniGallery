@@ -71,6 +71,16 @@ internal class MediaDetailViewModel
                 MediaDetailScreenActions.OnSubmitRenameClick -> openRenameDialog(open = false)
                 MediaDetailScreenActions.OnUpdateMedia -> updateMedia()
                 MediaDetailScreenActions.OnPlayVideo -> playVideo()
+                MediaDetailScreenActions.OnHideOptions -> showOptions(show = false)
+                MediaDetailScreenActions.OnShowOptions -> showOptions()
+            }
+        }
+
+        private fun showOptions(show: Boolean = true) {
+            mediaDetailViewModlState.update {
+                it.copy(
+                    isOptionsVisible = show,
+                )
             }
         }
 

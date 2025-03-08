@@ -1,10 +1,15 @@
 package com.hotaku.media
 
+import android.content.Context
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.IntentSenderRequest
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.PlayArrow
@@ -21,6 +26,7 @@ import androidx.compose.material3.adaptive.navigation.rememberSupportingPaneScaf
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -46,17 +52,21 @@ import com.hotaku.ui.PermissionUtils
 import com.hotaku.ui.PermissionUtils.requiredMediaPermissions
 import com.hotaku.ui.UiState
 import com.hotaku.ui.asString
+import com.hotaku.ui.conposables.AnimatedMediaDetailCompactTopBar
+import com.hotaku.ui.conposables.AnimatedMediaDetailExpendedTopBar
 import com.hotaku.ui.conposables.AnimatedSearchTextField
 import com.hotaku.ui.conposables.DynamicTopAppBarColumn
 import com.hotaku.ui.conposables.EmptyPaneMessage
 import com.hotaku.ui.conposables.MediaDetail
+import com.hotaku.ui.conposables.MediaDetailPager
+import com.hotaku.ui.conposables.MediaDetailSurface
 import com.hotaku.ui.conposables.MediaGrid
 import com.hotaku.ui.conposables.MediaOptions
-import com.hotaku.ui.conposables.MediaPreviewPager
 import com.hotaku.ui.conposables.OnScreenMessage
 import com.hotaku.ui.conposables.OptionMenuItem
 import com.hotaku.ui.conposables.OptionsMenu
 import com.hotaku.ui.conposables.TopAppBar
+import com.hotaku.ui.conposables.noRippleClickable
 import com.hotaku.ui.models.MediaUi
 import com.hotaku.ui.rememberTrashLauncherForResult
 import com.hotaku.ui.sendPlayIntent
@@ -271,100 +281,16 @@ private fun MediaListScreen(
                     },
                     supportingPane = {
                         AnimatedPane {
-                            navigator.currentDestination?.content?.let { index ->
-                                MediaPreviewPager(
-                                    modifier = Modifier,
-                                    currentPage = index,
-                                    pagerMediaItems = pagingMediaItems,
-                                    onCurrentPageChanged = { currentIndex ->
-                                        onAction(
-                                            MediaListScreenActions.OnMediaListItemClick(
-                                                mediaItemIndex = currentIndex,
-                                            ),
-                                        )
-                                    },
-                                ) { media ->
-                                    MediaDetail(
-                                        isCompact = windowWidth == WindowWidthSizeClass.COMPACT,
-                                        media = media,
-                                        onClose = {
-                                            onAction(MediaListScreenActions.OnClearSelectedMedia)
-                                        },
-                                        floatOptions = {
-                                            OptionsMenu(
-                                                expend = state.isMenuVisible,
-                                                nodeButton = {
-                                                },
-                                                options = {
-                                                    MediaOptionsMenuItems.entries.forEach { item ->
-                                                        OptionMenuItem(
-                                                            option = item.text.asString(),
-                                                        ) {
-                                                            when (item) {
-                                                                MediaOptionsMenuItems.RENAME -> {
-                                                                    onAction(MediaListScreenActions.OnOpenRenameMediaDialog)
-                                                                }
-                                                                MediaOptionsMenuItems.DETAILS -> {
-                                                                    onAction(MediaListScreenActions.ShowDetails)
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                },
-                                                onDismissRequest = {
-                                                    onAction(MediaListScreenActions.OnCloseMenu)
-                                                },
-                                            )
-                                            MediaOptions(
-                                                onShareMedia = {
-                                                    onAction(MediaListScreenActions.OnShareMedia)
-                                                },
-                                                onDeleteMedia = {
-                                                    media.uriString.trashMediaItemByUri(
-                                                        context = context,
-                                                        trashLauncher = trashLauncher,
-                                                    )
-                                                },
-                                                extraActions = {
-                                                    when (media.mimeType) {
-                                                        MediaType.VIDEO -> {
-                                                            IconButton(
-                                                                onClick = {
-                                                                    onAction(MediaListScreenActions.OnPlayVideo)
-                                                                },
-                                                            ) {
-                                                                Icon(
-                                                                    imageVector = Icons.Filled.PlayArrow,
-                                                                    contentDescription = "Play video",
-                                                                )
-                                                            }
-                                                        }
-                                                        MediaType.IMAGE -> {
-                                                            IconButton(
-                                                                onClick = {
-                                                                    onAction(MediaListScreenActions.OnOpenMediaDetails)
-                                                                },
-                                                            ) {
-                                                                Icon(
-                                                                    imageVector =
-                                                                        ImageVector.vectorResource(
-                                                                            id = R.drawable.media_preview_full_screen,
-                                                                        ),
-                                                                    contentDescription = "Open full screen",
-                                                                )
-                                                            }
-                                                        }
-
-                                                        MediaType.UNKNOWN -> Unit
-                                                    }
-                                                },
-                                                moreAction = {
-                                                    onAction(MediaListScreenActions.OnOpenMenu)
-                                                },
-                                            )
-                                        },
-                                    )
-                                }
+                            navigator.currentDestination?.content?.let { mediaItemIndex ->
+                                SupportingPaneContent(
+                                    windowWidth = windowWidth,
+                                    pagingMediaItems = pagingMediaItems,
+                                    state = state,
+                                    onAction = onAction,
+                                    index = mediaItemIndex,
+                                    context = context,
+                                    trashLauncher = trashLauncher,
+                                )
                             } ?: Box(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center,
@@ -375,6 +301,174 @@ private fun MediaListScreen(
                                 )
                             }
                         }
+                    },
+                )
+            }
+        },
+    )
+}
+
+@Composable
+private fun SupportingPaneContent(
+    windowWidth: WindowWidthSizeClass,
+    pagingMediaItems: LazyPagingItems<MediaUi>,
+    state: MediaListUiState,
+    onAction: (MediaListScreenActions) -> Unit,
+    index: Int,
+    context: Context,
+    trashLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
+) {
+    LaunchedEffect(state.isOptionsVisible, state.isMenuVisible) {
+        delay(1500)
+        if (state.isOptionsVisible && !state.isMenuVisible) {
+            onAction(MediaListScreenActions.OnHideOptions)
+        }
+    }
+
+    val title: String =
+        remember(
+            key1 = pagingMediaItems.itemCount,
+            key2 = state.selectedMediaIndex,
+        ) {
+            if (pagingMediaItems.itemCount > 0) {
+                pagingMediaItems.peek(state.selectedMediaIndex ?: 0)?.displayName.orEmpty()
+            } else {
+                ""
+            }
+        }
+
+    MediaDetailSurface(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .noRippleClickable {
+                    onAction(MediaListScreenActions.OnShowOptions)
+                },
+        topContent = {
+            Box(
+                modifier = Modifier.then(if (!state.isTopBarVisible) Modifier.statusBarsPadding() else Modifier),
+            ) {
+                if (windowWidth == WindowWidthSizeClass.COMPACT) {
+                    AnimatedMediaDetailCompactTopBar(
+                        title = title,
+                        show = state.isOptionsVisible,
+                        onClose = {
+                            onAction(MediaListScreenActions.OnClearSelectedMedia)
+                        },
+                    )
+                } else {
+                    AnimatedMediaDetailExpendedTopBar(
+                        title = title,
+                        show = state.isOptionsVisible,
+                        onClose = {
+                            onAction(MediaListScreenActions.OnClearSelectedMedia)
+                        },
+                    )
+                }
+            }
+        },
+        content = {
+            MediaDetailPager(
+                modifier = Modifier,
+                currentPage = index,
+                pagerMediaItems = pagingMediaItems,
+                onCurrentPageChanged = { currentIndex ->
+                    onAction(
+                        MediaListScreenActions.OnMediaListItemClick(
+                            mediaItemIndex = currentIndex,
+                        ),
+                    )
+                },
+            ) { media ->
+                MediaDetail(
+                    showFloatOptions = state.isOptionsVisible,
+                    media = media,
+                    floatOptions = {
+                        OptionsMenu(
+                            expend = state.isMenuVisible,
+                            node = {
+                                MediaOptions(
+                                    onShareMedia = {
+                                        onAction(
+                                            MediaListScreenActions.OnShareMedia,
+                                        )
+                                    },
+                                    onDeleteMedia = {
+                                        media.uriString.trashMediaItemByUri(
+                                            context = context,
+                                            trashLauncher = trashLauncher,
+                                        )
+                                    },
+                                    extraActions = {
+                                        when (media.mimeType) {
+                                            MediaType.VIDEO -> {
+                                                IconButton(
+                                                    onClick = {
+                                                        onAction(
+                                                            MediaListScreenActions.OnPlayVideo,
+                                                        )
+                                                    },
+                                                ) {
+                                                    Icon(
+                                                        imageVector = Icons.Filled.PlayArrow,
+                                                        contentDescription = "Play video",
+                                                    )
+                                                }
+                                            }
+
+                                            MediaType.IMAGE -> {
+                                                IconButton(
+                                                    onClick = {
+                                                        onAction(
+                                                            MediaListScreenActions.OnOpenMediaDetails,
+                                                        )
+                                                    },
+                                                ) {
+                                                    Icon(
+                                                        imageVector =
+                                                            ImageVector.vectorResource(
+                                                                id = R.drawable.media_preview_full_screen,
+                                                            ),
+                                                        contentDescription = "Open full screen",
+                                                    )
+                                                }
+                                            }
+
+                                            MediaType.UNKNOWN -> Unit
+                                        }
+                                    },
+                                    moreAction = {
+                                        onAction(
+                                            MediaListScreenActions.OnOpenMenu,
+                                        )
+                                    },
+                                )
+                            },
+                            options = {
+                                MediaOptionsMenuItems.entries.forEach { item ->
+                                    OptionMenuItem(
+                                        option = item.text.asString(),
+                                    ) {
+                                        when (item) {
+                                            MediaOptionsMenuItems.RENAME -> {
+                                                onAction(
+                                                    MediaListScreenActions.OnOpenRenameMediaDialog,
+                                                )
+                                            }
+
+                                            MediaOptionsMenuItems.DETAILS -> {
+                                                onAction(
+                                                    MediaListScreenActions.ShowDetails,
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            onDismissRequest = {
+                                onAction(MediaListScreenActions.OnCloseMenu)
+                            },
+                        )
                     },
                 )
             }

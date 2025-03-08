@@ -21,5 +21,9 @@ internal sealed interface MediaDetailScreenActions {
 
     data class OnDeleteMedia(val mediaItem: MediaUi) : MediaDetailScreenActions
 
+    data object OnShowOptions : MediaDetailScreenActions
+
+    data object OnHideOptions : MediaDetailScreenActions
+
     data object OnUpdateMedia : MediaDetailScreenActions
 }

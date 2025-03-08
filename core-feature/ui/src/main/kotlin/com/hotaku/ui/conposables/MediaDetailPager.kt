@@ -10,7 +10,7 @@ import androidx.paging.compose.LazyPagingItems
 import com.hotaku.ui.models.MediaUi
 
 @Composable
-fun MediaPreviewPager(
+fun MediaDetailPager(
     modifier: Modifier = Modifier,
     currentPage: Int,
     pagerMediaItems: LazyPagingItems<MediaUi>,

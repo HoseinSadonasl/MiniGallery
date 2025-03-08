@@ -3,52 +3,26 @@ package com.hotaku.ui.conposables
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.ui.MediaType
 import com.hotaku.ui.models.MediaUi
-import kotlinx.coroutines.delay
-import java.time.Instant
 
 @Composable
 fun MediaDetail(
     modifier: Modifier = Modifier,
-    isCompact: Boolean,
+    showFloatOptions: Boolean,
     media: MediaUi,
-    onClose: () -> Unit,
     floatOptions: @Composable () -> Unit,
 ) {
     MediaDetailImpl(
         modifier = modifier,
-        isCompact = isCompact,
+        showFloatOptions = showFloatOptions,
         media = media,
-        onClose = onClose,
         floatOptions = floatOptions,
     )
 }
@@ -56,27 +30,14 @@ fun MediaDetail(
 @Composable
 private fun MediaDetailImpl(
     modifier: Modifier = Modifier,
-    isCompact: Boolean,
+    showFloatOptions: Boolean,
     media: MediaUi,
-    onClose: () -> Unit,
     floatOptions: @Composable () -> Unit,
 ) {
-    var showFloatOptions by remember { mutableStateOf(true) }
-
-    LaunchedEffect(showFloatOptions) {
-        if (showFloatOptions) {
-            delay(1_500)
-            showFloatOptions = false
-        }
-    }
-
     Box(
         modifier =
             modifier
-                .fillMaxSize()
-                .noRippleClickable {
-                    showFloatOptions = !showFloatOptions
-                },
+                .fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
         when (media.mimeType) {
@@ -99,104 +60,10 @@ private fun MediaDetailImpl(
         ) {
             Box(
                 Modifier
-                    .fillMaxSize()
                     .statusBarsPadding(),
             ) {
-                if (isCompact) {
-                    CompactTopBar(media = media, onClose = onClose)
-                } else {
-                    ExpendedTopBar(media = media, onClose = onClose)
-                }
-                Box(
-                    modifier = Modifier.align(Alignment.Center),
-                ) {
-                    floatOptions()
-                }
+                floatOptions()
             }
         }
-    }
-}
-
-@Composable
-private fun CompactTopBar(
-    media: MediaUi,
-    onClose: () -> Unit,
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        IconButton(
-            onClick = onClose,
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                contentDescription = "Navigate back",
-                tint = Color.Gray,
-            )
-        }
-        Spacer(Modifier.width(8.dp))
-        Text(
-            modifier = Modifier.weight(1f),
-            text = media.displayName,
-            style = MaterialTheme.typography.titleMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-    }
-}
-
-@Composable
-private fun ExpendedTopBar(
-    media: MediaUi,
-    onClose: () -> Unit,
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Spacer(Modifier.width(8.dp))
-        Text(
-            modifier = Modifier.weight(1f),
-            text = media.displayName,
-            style = MaterialTheme.typography.titleMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Spacer(Modifier.weight(1f))
-        IconButton(
-            onClick = onClose,
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Close,
-                contentDescription = "Close preview",
-                tint = Color.Gray,
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun MediapreviewPreview() {
-    MiniGalleryTheme {
-        MediaDetail(
-            modifier = Modifier.background(MaterialTheme.colorScheme.background),
-            isCompact = false,
-            media =
-                MediaUi(
-                    mediaId = 7907,
-                    uriString = "",
-                    displayName = "Nola Gillespie",
-                    mimeType = MediaType.VIDEO,
-                    duration = 213343,
-                    dateAdded = Instant.now(),
-                    dateModified = Instant.now(),
-                    size = 2566,
-                    bucketDisplayName = "Ismael McCarthy",
-                ),
-            onClose = {},
-            floatOptions = {},
-        )
     }
 }

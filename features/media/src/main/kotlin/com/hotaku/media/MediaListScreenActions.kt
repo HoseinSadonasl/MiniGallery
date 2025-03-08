@@ -42,4 +42,8 @@ internal sealed interface MediaListScreenActions {
     data object OnOpenRenameMediaDialog : MediaListScreenActions
 
     data object ShowDetails : MediaListScreenActions
+
+    data object OnHideOptions : MediaListScreenActions
+
+    data object OnShowOptions : MediaListScreenActions
 }

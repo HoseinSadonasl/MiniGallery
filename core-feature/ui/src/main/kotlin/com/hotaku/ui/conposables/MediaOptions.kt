@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -74,7 +74,7 @@ private fun MediaOptionsImpl(
                 onClick = it,
             ) {
                 Icon(
-                    imageVector = Icons.Outlined.Home,
+                    imageVector = Icons.Outlined.MoreVert,
                     contentDescription = "More",
                 )
             }

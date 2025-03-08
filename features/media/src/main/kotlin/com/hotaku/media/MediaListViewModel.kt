@@ -89,6 +89,16 @@ internal class MediaListViewModel
                 MediaListScreenActions.OnHideDiaDialog -> showRenameDialog(mediaDialog = MediaDialogs.Idle)
                 MediaListScreenActions.OnOpenRenameMediaDialog -> showRenameDialog(mediaDialog = MediaDialogs.RenameMediaDialog)
                 MediaListScreenActions.ShowDetails -> showDetails()
+                MediaListScreenActions.OnHideOptions -> showOptions(show = false)
+                MediaListScreenActions.OnShowOptions -> showOptions()
+            }
+        }
+
+        private fun showOptions(show: Boolean = true) {
+            mediaListScreenViewModelState.update {
+                it.copy(
+                    isOptionsVisible = show,
+                )
             }
         }
 

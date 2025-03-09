@@ -7,6 +7,10 @@ internal sealed interface MediaListScreenActions {
 
     data class OnQueryChange(val query: String) : MediaListScreenActions
 
+    data class OnMediaNameQueryChange(val query: String) : MediaListScreenActions
+
+    data object OnMediaNameClearQuery : MediaListScreenActions
+
     data class OnMimeTypeChange(val mimeType: String) : MediaListScreenActions
 
     data object OnRetrySynchronizeMedia : MediaListScreenActions
@@ -35,7 +39,7 @@ internal sealed interface MediaListScreenActions {
 
     data object OnOpenMenu : MediaListScreenActions
 
-    data object OnCloseMenu : MediaListScreenActions
+    data object OnHideMenu : MediaListScreenActions
 
     data object OnHideDiaDialog : MediaListScreenActions
 
@@ -46,4 +50,6 @@ internal sealed interface MediaListScreenActions {
     data object OnHideOptions : MediaListScreenActions
 
     data object OnShowOptions : MediaListScreenActions
+
+    data class OnRenameMediaItem(val media: MediaUi) : MediaListScreenActions
 }

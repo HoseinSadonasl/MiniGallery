@@ -5,8 +5,8 @@ import com.hotaku.media_domain.usecase.DeleteMediaUseCase
 import com.hotaku.media_domain.usecase.DeleteMediaUseCaseImpl
 import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_domain.usecase.GetMediaUseCaseImpl
-import com.hotaku.media_domain.usecase.UpdateMediaUseCase
-import com.hotaku.media_domain.usecase.UpdateMediaUseCaseImpl
+import com.hotaku.media_domain.usecase.RenameMediaUseCase
+import com.hotaku.media_domain.usecase.RenameMediaUseCaseImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,8 +25,8 @@ internal object MediaDomainModule {
 
     @Provides
     @Singleton
-    fun provideUpdateMediaUseCase(mediaRepository: MediaRepository): UpdateMediaUseCase =
-        UpdateMediaUseCaseImpl(
+    fun provideUpdateMediaUseCase(mediaRepository: MediaRepository): RenameMediaUseCase =
+        RenameMediaUseCaseImpl(
             mediaRepository = mediaRepository,
         )
 

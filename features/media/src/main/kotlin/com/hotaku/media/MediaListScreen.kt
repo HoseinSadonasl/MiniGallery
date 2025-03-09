@@ -57,6 +57,7 @@ import com.hotaku.ui.conposables.AnimatedMediaDetailExpendedTopBar
 import com.hotaku.ui.conposables.AnimatedSearchTextField
 import com.hotaku.ui.conposables.DynamicTopAppBarColumn
 import com.hotaku.ui.conposables.EmptyPaneMessage
+import com.hotaku.ui.conposables.InputDialog
 import com.hotaku.ui.conposables.MediaDetail
 import com.hotaku.ui.conposables.MediaDetailPager
 import com.hotaku.ui.conposables.MediaDetailSurface
@@ -68,10 +69,12 @@ import com.hotaku.ui.conposables.OptionsMenu
 import com.hotaku.ui.conposables.TopAppBar
 import com.hotaku.ui.conposables.noRippleClickable
 import com.hotaku.ui.models.MediaUi
+import com.hotaku.ui.rememberRenameLauncherForResult
 import com.hotaku.ui.rememberTrashLauncherForResult
 import com.hotaku.ui.sendPlayIntent
 import com.hotaku.ui.sendShareIntent
 import com.hotaku.ui.trashMediaItemByUri
+import com.hotaku.ui.writeMediaRequest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -126,6 +129,15 @@ private fun MediaListScreen(
             state.selectedMediaIndex?.let {
                 pagingMediaItems.peek(it)?.let { mediaItem ->
                     onAction(MediaListScreenActions.OnDeleteMediaItem(mediaItem = mediaItem))
+                }
+            }
+        }
+
+    val renameLauncher =
+        rememberRenameLauncherForResult {
+            state.selectedMediaIndex?.let {
+                pagingMediaItems.peek(it)?.let { mediaItem ->
+                    onAction(MediaListScreenActions.OnRenameMediaItem(media = mediaItem))
                 }
             }
         }
@@ -208,7 +220,14 @@ private fun MediaListScreen(
 
     when (state.mediaDialog) {
         RenameMediaDialog -> {
-            // TODO: Implement rename media dialog
+            onAction(MediaListScreenActions.OnHideMenu)
+            RenameDialog(
+                state = state,
+                onAction = onAction,
+                pagingMediaItems = pagingMediaItems,
+                context = context,
+                renameLauncher = renameLauncher,
+            )
         }
         Idle -> Unit
     }
@@ -304,6 +323,40 @@ private fun MediaListScreen(
                     },
                 )
             }
+        },
+    )
+}
+
+@Composable
+private fun RenameDialog(
+    state: MediaListUiState,
+    onAction: (MediaListScreenActions) -> Unit,
+    pagingMediaItems: LazyPagingItems<MediaUi>,
+    context: Context,
+    renameLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
+) {
+    InputDialog(
+        title = stringResource(com.hotaku.core_feature.ui.R.string.input_dialog_title_rename),
+        inputPlaceHolder = stringResource(com.hotaku.core_feature.ui.R.string.input_dialog_placeholder_rename),
+        inputValue = state.mediaNameQuery,
+        onInputChange = { value ->
+            onAction(MediaListScreenActions.OnMediaNameQueryChange(query = value))
+        },
+        onConfirm = {
+            state.selectedMediaIndex?.let {
+                pagingMediaItems[it]?.uriString?.writeMediaRequest(
+                    context = context,
+                    trashLauncher = renameLauncher,
+                )
+            }
+            onAction(MediaListScreenActions.OnHideDiaDialog)
+        },
+        onCancel = {
+            onAction(MediaListScreenActions.OnHideDiaDialog)
+        },
+        onDismissRequest = {
+            onAction(MediaListScreenActions.OnHideDiaDialog)
+            onAction(MediaListScreenActions.OnMediaNameClearQuery)
         },
     )
 }
@@ -466,7 +519,7 @@ private fun SupportingPaneContent(
                                 }
                             },
                             onDismissRequest = {
-                                onAction(MediaListScreenActions.OnCloseMenu)
+                                onAction(MediaListScreenActions.OnHideMenu)
                             },
                         )
                     },

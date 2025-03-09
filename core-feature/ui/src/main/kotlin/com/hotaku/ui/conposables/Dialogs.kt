@@ -3,6 +3,7 @@ package com.hotaku.ui.conposables
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
@@ -27,6 +28,7 @@ fun InputDialog(
     title: String,
     description: String? = null,
     inputPlaceHolder: String,
+    inputValue: String,
     onInputChange: (String) -> Unit,
     confirmButtonLabel: String = stringResource(id = R.string.dialog_button_label_confirm),
     cancelButtonLabel: String = stringResource(id = R.string.dialog_button_label_cancel),
@@ -38,13 +40,14 @@ fun InputDialog(
         modifier = modifier,
         title = title,
         description = description,
+        inputValue = inputValue,
+        onInputChange = onInputChange,
         confirmButtonLabel = confirmButtonLabel,
         cancelButtonLabel = cancelButtonLabel,
         onConfirm = onConfirm,
         onCancel = onCancel,
         onDismissRequest = onDismissRequest,
         inputPlaceHolder = inputPlaceHolder,
-        onInputChange = onInputChange,
     )
 }
 
@@ -54,6 +57,7 @@ private fun InputDialogImpl(
     title: String,
     description: String?,
     inputPlaceHolder: String,
+    inputValue: String,
     onInputChange: (String) -> Unit,
     confirmButtonLabel: String,
     cancelButtonLabel: String,
@@ -87,8 +91,9 @@ private fun InputDialogImpl(
                 }
                 Spacer(Modifier.height(16.dp))
                 TextField(
+                    modifier = Modifier.fillMaxWidth(),
                     placeHolderText = inputPlaceHolder,
-                    value = "",
+                    value = inputValue,
                     onValueChange = onInputChange,
                 )
                 Spacer(Modifier.height(16.dp))
@@ -97,14 +102,14 @@ private fun InputDialogImpl(
                         modifier = Modifier.weight(1f),
                     )
                     TextButton(
-                        onClick = onConfirm,
-                    ) {
-                        Text(text = confirmButtonLabel)
-                    }
-                    TextButton(
                         onClick = onCancel,
                     ) {
                         Text(text = cancelButtonLabel)
+                    }
+                    TextButton(
+                        onClick = onConfirm,
+                    ) {
+                        Text(text = confirmButtonLabel)
                     }
                 }
             }
@@ -120,6 +125,7 @@ private fun InputDialogPreview() {
             title = "Title",
             description = LoremIpsum(4).values.first(),
             inputPlaceHolder = "Input Placeholder",
+            inputValue = "",
             onInputChange = {},
             onConfirm = {},
             onCancel = {},

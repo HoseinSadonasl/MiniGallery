@@ -7,6 +7,7 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import com.hotaku.media_domain.usecase.DeleteMediaUseCase
 import com.hotaku.media_domain.usecase.GetMediaUseCase
+import com.hotaku.media_domain.usecase.RenameMediaUseCase
 import com.hotaku.media_domain.usecase.SyncMediaUseCase
 import com.hotaku.media_domain.util.SyncDataState
 import com.hotaku.ui.MediaDialogs
@@ -36,6 +37,7 @@ internal class MediaListViewModel
     constructor(
         private val syncMediaUseCase: SyncMediaUseCase,
         private val mediaUseCase: GetMediaUseCase,
+        private val renameMediaUseCase: RenameMediaUseCase,
         private val mapMediaAsMediaUi: MapMediaAsMediaUi,
         private val deleteMediaUseCase: DeleteMediaUseCase,
         private val mapMediaUiAsMedia: MapMediaUiAsMedia,
@@ -85,12 +87,38 @@ internal class MediaListViewModel
                 MediaListScreenActions.OnShareMedia -> shareMedia()
                 MediaListScreenActions.OnPlayVideo -> playVideo()
                 MediaListScreenActions.OnOpenMenu -> showMenu()
-                MediaListScreenActions.OnCloseMenu -> showMenu(show = false)
+                MediaListScreenActions.OnHideMenu -> showMenu(show = false)
                 MediaListScreenActions.OnHideDiaDialog -> showRenameDialog(mediaDialog = MediaDialogs.Idle)
                 MediaListScreenActions.OnOpenRenameMediaDialog -> showRenameDialog(mediaDialog = MediaDialogs.RenameMediaDialog)
                 MediaListScreenActions.ShowDetails -> showDetails()
                 MediaListScreenActions.OnHideOptions -> showOptions(show = false)
                 MediaListScreenActions.OnShowOptions -> showOptions()
+                is MediaListScreenActions.OnRenameMediaItem -> renameMediaItem(media = action.media)
+                is MediaListScreenActions.OnMediaNameQueryChange -> setMediaNameQuery(query = action.query)
+                MediaListScreenActions.OnMediaNameClearQuery -> setMediaNameQuery(query = "")
+            }
+        }
+
+        private fun setMediaNameQuery(query: String) {
+            mediaListScreenViewModelState.update {
+                it.copy(
+                    mediaNameQuery = query,
+                )
+            }
+        }
+
+        private fun renameMediaItem(media: MediaUi) {
+            mediaListScreenViewModelState.value.mediaNameQuery.isNotBlank().let { newName ->
+                val media = media.copy(displayName = mediaListScreenViewModelState.value.mediaNameQuery)
+                viewModelScope.launch {
+                    renameMediaUseCase.invoke(
+                        media = mapMediaUiAsMedia.map(media),
+                    ).let { success ->
+                        if (success) {
+                            sendEvent(MediaListScreenEvents.OnRefreshList)
+                        }
+                    }
+                }
             }
         }
 
@@ -107,7 +135,10 @@ internal class MediaListViewModel
 
         private fun showRenameDialog(mediaDialog: MediaDialogs) {
             mediaListScreenViewModelState.update {
-                it.copy(mediaDialog = mediaDialog)
+                it.copy(
+                    mediaDialog = mediaDialog,
+                    isMenuVisible = false,
+                )
             }
         }
 

@@ -11,7 +11,7 @@ interface MediaRepository {
         albumName: String,
     ): Flow<PagingData<Media>>
 
-    suspend fun updateMedia(media: Media)
+    suspend fun renameMedia(media: Media): Boolean
 
     suspend fun deleteMedia(media: List<Media>)
 }

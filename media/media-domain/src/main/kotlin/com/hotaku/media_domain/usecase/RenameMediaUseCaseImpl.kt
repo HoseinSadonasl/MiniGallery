@@ -4,10 +4,10 @@ import com.hotaku.media_domain.model.Media
 import com.hotaku.media_domain.repository.MediaRepository
 import javax.inject.Inject
 
-internal class UpdateMediaUseCaseImpl
+internal class RenameMediaUseCaseImpl
     @Inject
     constructor(
         private val mediaRepository: MediaRepository,
-    ) : UpdateMediaUseCase {
-        override suspend fun invoke(media: Media) = mediaRepository.updateMedia(media = media)
+    ) : RenameMediaUseCase {
+        override suspend fun invoke(media: Media) = mediaRepository.renameMedia(media = media)
     }

@@ -13,4 +13,5 @@ internal data class MediaListUiState(
     val mimeType: String = "",
     val query: String = "",
     val albumName: String = "",
+    val mediaNameQuery: String = "",
 )

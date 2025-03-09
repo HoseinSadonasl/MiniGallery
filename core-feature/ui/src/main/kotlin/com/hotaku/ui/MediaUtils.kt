@@ -1,10 +1,12 @@
 package com.hotaku.ui
 
 import android.app.Activity.RESULT_OK
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore.createTrashRequest
+import android.provider.MediaStore.createWriteRequest
 import android.util.Size
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -27,6 +29,13 @@ fun Uri.asThumbnailImageBitmap(size: Size = Size(320, 320)): ImageBitmap {
 
 @Composable
 fun rememberTrashLauncherForResult(block: () -> Unit) =
+    rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult(),
+        onResult = { if (it.resultCode == RESULT_OK) block() },
+    )
+
+@Composable
+fun rememberRenameLauncherForResult(block: () -> Unit) =
     rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult(),
         onResult = { if (it.resultCode == RESULT_OK) block() },
@@ -55,11 +64,7 @@ fun List<String>.trashMediaByUri(
             true,
         )
 
-    val intentSenderRequest =
-        IntentSenderRequest.Builder(deleteRequest.intentSender)
-            .setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION, 0)
-            .build()
-
+    val intentSenderRequest = deleteRequest.createRequest()
     trashLauncher.launch(intentSenderRequest)
 }
 
@@ -78,3 +83,34 @@ fun MediaUi.sendPlayIntent(context: Context) {
     val sendIntent = Intent(Intent.ACTION_VIEW, uriString.toUri())
     context.startActivity(sendIntent)
 }
+
+fun String.writeMediaRequest(
+    context: Context,
+    trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
+) {
+    listOf(this).writeGroupOfMediaRequest(
+        context = context,
+        trashLauncher = trashLauncher,
+    )
+}
+
+fun List<String>.writeGroupOfMediaRequest(
+    context: Context,
+    trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
+) {
+    val resolver = context.contentResolver
+
+    val writeRequest =
+        createWriteRequest(
+            resolver,
+            this.map { it.toUri() },
+        )
+
+    val intentSenderRequest = writeRequest.createRequest()
+    trashLauncher.launch(intentSenderRequest)
+}
+
+private fun PendingIntent.createRequest() =
+    IntentSenderRequest.Builder(this.intentSender)
+        .setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION, 0)
+        .build()

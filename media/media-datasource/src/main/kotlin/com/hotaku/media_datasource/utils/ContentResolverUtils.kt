@@ -2,9 +2,11 @@ package com.hotaku.media_datasource.utils
 
 import android.content.ContentResolver
 import android.content.ContentUris
+import android.content.ContentValues
 import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
+import androidx.core.net.toUri
 import com.hotaku.media_datasource.models.MediaDto
 import com.hotaku.media_datasource.utils.MediaQueryUtils.getMediaUri
 
@@ -56,4 +58,15 @@ private fun Cursor.processCursor(): List<MediaDto> {
         ).also { mediaList.add(it) }
     }
     return mediaList
+}
+
+internal fun ContentResolver.renameMedia(
+    mediaUriString: String,
+    name: String,
+) = runCatching {
+    val contentValues =
+        ContentValues().apply {
+            put(MediaStore.Files.FileColumns.DISPLAY_NAME, name)
+        }
+    update(mediaUriString.toUri(), contentValues, null) > 0
 }

@@ -6,6 +6,8 @@
     <string name="all_sync_error">Sync data error</string>
     <string name="dialog_button_label_confirm">Confirm</string>
     <string name="dialog_button_label_cancel">Cancel</string>
+    <string name="input_dialog_title_rename">Rename media</string>
+    <string name="input_dialog_placeholder_rename">Enter new name</string>
     <string name="media_grid_list_error_while_getting_media">Ops!</string>
     <string name="media_grid_list_an_error_occured">An error occurred</string>
     <string name="all_storage_low_error">Synchronization failed. Your device\'s storage is too low. Please free up space and try again.</string>

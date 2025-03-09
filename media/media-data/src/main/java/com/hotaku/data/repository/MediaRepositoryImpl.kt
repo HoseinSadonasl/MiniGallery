@@ -4,11 +4,15 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
+import com.hotaku.common.di.Dispatcher
+import com.hotaku.common.di.MiniGalleryDispatchers
 import com.hotaku.data.datasource.MediaDataSource
+import com.hotaku.data.datasource.UpdateMediaContentProviderDataSource
 import com.hotaku.data.mapper.MapMediaAsMediaData
 import com.hotaku.data.mapper.MapMediaDataAsMedia
 import com.hotaku.media_domain.model.Media
 import com.hotaku.media_domain.repository.MediaRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -19,8 +23,10 @@ internal class MediaRepositoryImpl
     @Inject
     constructor(
         private val mediaDataSource: MediaDataSource,
+        private val updateMediaContentProviderDataSource: UpdateMediaContentProviderDataSource,
         private val mapMediaDataAsMedia: MapMediaDataAsMedia,
         private val mapMediaAsMediaData: MapMediaAsMediaData,
+        @Dispatcher(MiniGalleryDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
     ) : MediaRepository {
         override fun getMedia(
             mimeType: String,
@@ -43,10 +49,18 @@ internal class MediaRepositoryImpl
                 },
             ).flow.map { data -> data.map { mediaData -> mapMediaDataAsMedia.map(mediaData) } }
 
-        override suspend fun updateMedia(media: Media) =
+        override suspend fun renameMedia(media: Media): Boolean =
             withContext(NonCancellable) {
-                mapMediaAsMediaData.map(media).let { mediaData ->
-                    mediaDataSource.updateMedia(mediaData = mediaData)
+                updateMediaContentProviderDataSource.renameMedia(
+                    mediaUriString = media.uriString,
+                    name = media.displayName,
+                ).onSuccess {
+                    withContext(ioDispatcher) {
+                        mediaDataSource.updateMedia(mapMediaAsMediaData.map(media))
+                    }
+                }.getOrElse {
+                    it.printStackTrace()
+                    false
                 }
             }
 

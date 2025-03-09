@@ -1,6 +1,9 @@
 package com.hotaku.data.di
 
+import com.hotaku.common.di.Dispatcher
+import com.hotaku.common.di.MiniGalleryDispatchers
 import com.hotaku.data.datasource.MediaDataSource
+import com.hotaku.data.datasource.UpdateMediaContentProviderDataSource
 import com.hotaku.data.mapper.MapMediaAsMediaData
 import com.hotaku.data.mapper.MapMediaDataAsMedia
 import com.hotaku.data.repository.MediaRepositoryImpl
@@ -9,6 +12,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
 @Module
@@ -20,10 +24,14 @@ internal object MediaDataModule {
         mediaDataSource: MediaDataSource,
         mediaAsDomain: MapMediaDataAsMedia,
         mapMediaAsMediaData: MapMediaAsMediaData = MapMediaAsMediaData(),
+        updateMediaContentProviderDataSource: UpdateMediaContentProviderDataSource,
+        @Dispatcher(MiniGalleryDispatchers.IO) ioDispatcher: CoroutineDispatcher,
     ): MediaRepository =
         MediaRepositoryImpl(
             mediaDataSource = mediaDataSource,
             mapMediaDataAsMedia = mediaAsDomain,
             mapMediaAsMediaData = mapMediaAsMediaData,
+            updateMediaContentProviderDataSource = updateMediaContentProviderDataSource,
+            ioDispatcher = ioDispatcher,
         )
 }

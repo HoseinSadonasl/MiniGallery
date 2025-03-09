@@ -24,7 +24,7 @@ import com.hotaku.ui.conposables.MediaDetailPager
 import com.hotaku.ui.conposables.MediaDetailSurface
 import com.hotaku.ui.conposables.MediaOptions
 import com.hotaku.ui.conposables.noRippleClickable
-import com.hotaku.ui.rememberTrashLauncherForResult
+import com.hotaku.ui.rememberLauncherForStartIntentSenderForResult
 import com.hotaku.ui.sendPlayIntent
 import com.hotaku.ui.sendShareIntent
 import com.hotaku.ui.trashMediaItemByUri
@@ -69,7 +69,7 @@ private fun MediaDetailScreen(
         }
 
     val trashLauncher =
-        rememberTrashLauncherForResult {
+        rememberLauncherForStartIntentSenderForResult {
             state.selectedMediaItemIndex.let { index ->
                 pagerMediaItems.peek(index)?.let { media ->
                     onAction(

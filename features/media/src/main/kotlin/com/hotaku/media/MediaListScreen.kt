@@ -69,8 +69,7 @@ import com.hotaku.ui.conposables.OptionsMenu
 import com.hotaku.ui.conposables.TopAppBar
 import com.hotaku.ui.conposables.noRippleClickable
 import com.hotaku.ui.models.MediaUi
-import com.hotaku.ui.rememberRenameLauncherForResult
-import com.hotaku.ui.rememberTrashLauncherForResult
+import com.hotaku.ui.rememberLauncherForStartIntentSenderForResult
 import com.hotaku.ui.sendPlayIntent
 import com.hotaku.ui.sendShareIntent
 import com.hotaku.ui.trashMediaItemByUri
@@ -125,7 +124,7 @@ private fun MediaListScreen(
     val navigator = rememberSupportingPaneScaffoldNavigator<Int>()
 
     val trashLauncher =
-        rememberTrashLauncherForResult {
+        rememberLauncherForStartIntentSenderForResult {
             state.selectedMediaIndex?.let {
                 pagingMediaItems.peek(it)?.let { mediaItem ->
                     onAction(MediaListScreenActions.OnDeleteMediaItem(mediaItem = mediaItem))
@@ -134,7 +133,7 @@ private fun MediaListScreen(
         }
 
     val renameLauncher =
-        rememberRenameLauncherForResult {
+        rememberLauncherForStartIntentSenderForResult {
             state.selectedMediaIndex?.let {
                 pagingMediaItems.peek(it)?.let { mediaItem ->
                     onAction(MediaListScreenActions.OnRenameMediaItem(media = mediaItem))

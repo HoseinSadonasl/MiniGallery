@@ -28,14 +28,7 @@ fun Uri.asThumbnailImageBitmap(size: Size = Size(320, 320)): ImageBitmap {
 }
 
 @Composable
-fun rememberTrashLauncherForResult(block: () -> Unit) =
-    rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartIntentSenderForResult(),
-        onResult = { if (it.resultCode == RESULT_OK) block() },
-    )
-
-@Composable
-fun rememberRenameLauncherForResult(block: () -> Unit) =
+fun rememberLauncherForStartIntentSenderForResult(block: () -> Unit) =
     rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult(),
         onResult = { if (it.resultCode == RESULT_OK) block() },

@@ -26,6 +26,8 @@ class MapMediaAsMediaUiTest {
                 dateAdded = exceptedTime,
                 dateModified = exceptedTime,
                 size = 1024,
+                isTrash = false,
+                isFavorite = false,
                 bucketDisplayName = "sampleBucketDisplayName",
             )
         val expectedModel =

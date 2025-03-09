@@ -21,6 +21,8 @@ class MapMediaAsMediaUi
                     dateAdded = Instant.ofEpochMilli(dateAdded),
                     dateModified = Instant.ofEpochMilli(dateModified),
                     size = size,
+                    isTrash = isTrash,
+                    isFavorite = isFavorite,
                     bucketDisplayName = bucketDisplayName,
                 )
             }

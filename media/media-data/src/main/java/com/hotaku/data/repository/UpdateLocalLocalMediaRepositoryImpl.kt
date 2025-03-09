@@ -14,7 +14,7 @@ internal class UpdateLocalLocalMediaRepositoryImpl
     ) : UpdateLocalMediaRepository {
         override suspend fun update(): Result<Int> =
             runCatching {
-                val providerMedia: List<MediaData> = contentProviderDataSource.getMedia().getOrThrow()
+                val providerMedia: List<MediaData> = contentProviderDataSource.getMedia()
 
                 val newUris: List<String> = providerMedia.map { it.uriString }
                 val dbUris: List<String> = updateMediaDbDataSource.getMediaStringUris()

@@ -10,6 +10,7 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import com.hotaku.common.Logger.debugLogStackTrace
 import com.hotaku.common.di.Dispatcher
 import com.hotaku.common.di.MiniGalleryDispatchers
 import com.hotaku.media_domain.repository.UpdateLocalMediaRepository
@@ -39,7 +40,7 @@ internal class SyncWorker
                         )
                     } ?: Result.failure()
                 } catch (exception: IOException) {
-                    exception.printStackTrace()
+                    exception.debugLogStackTrace(kClass = this@SyncWorker::class)
                     Result.failure()
                 }
             }

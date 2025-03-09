@@ -16,6 +16,8 @@ internal object MediaQueryUtils {
             MediaStore.Files.FileColumns.DATE_TAKEN,
             MediaStore.Files.FileColumns.DATE_MODIFIED,
             MediaStore.Files.FileColumns.SIZE,
+            MediaStore.Files.FileColumns.IS_TRASHED,
+            MediaStore.Files.FileColumns.IS_FAVORITE,
             MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,
         )
 

@@ -13,7 +13,6 @@ object PermissionUtils {
                 arrayOf(
                     Manifest.permission.READ_MEDIA_VIDEO,
                     Manifest.permission.READ_MEDIA_IMAGES,
-                    Manifest.permission.ACCESS_MEDIA_LOCATION,
                 )
             } else {
                 arrayOf(

@@ -19,6 +19,8 @@ internal class MapMediaDataAsMediaEntity
                     dateAdded = dateAdded.toString(),
                     dateModified = dateModified.toString(),
                     size = size.toString(),
+                    isTrash = isTrash,
+                    isFavorite = isFavorite,
                     bucketDisplayName = bucketDisplayName,
                 )
             }

@@ -12,5 +12,7 @@ data class MediaUi(
     val dateAdded: Instant,
     val dateModified: Instant,
     val size: Long,
+    val isTrash: Boolean,
+    val isFavorite: Boolean,
     val bucketDisplayName: String,
 )

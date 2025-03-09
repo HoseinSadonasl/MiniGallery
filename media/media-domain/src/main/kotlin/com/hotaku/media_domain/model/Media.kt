@@ -9,5 +9,7 @@ data class Media(
     val dateAdded: Long,
     val dateModified: Long,
     val size: Long,
+    val isTrash: Boolean,
+    val isFavorite: Boolean,
     val bucketDisplayName: String,
 )

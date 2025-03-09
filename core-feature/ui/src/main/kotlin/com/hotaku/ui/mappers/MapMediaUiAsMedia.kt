@@ -19,6 +19,8 @@ class MapMediaUiAsMedia
                     dateAdded = dateAdded.toEpochMilli(),
                     dateModified = dateModified.toEpochMilli(),
                     size = size,
+                    isTrash = isTrash,
+                    isFavorite = isFavorite,
                     bucketDisplayName = bucketDisplayName,
                 )
             }

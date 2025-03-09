@@ -33,6 +33,8 @@ internal class MediaMapperTest {
             dateAdded = timeInMillis,
             dateModified = timeInMillis,
             size = 1024,
+            isTrash = false,
+            isFavorite = false,
             bucketDisplayName = "sampleBucketDisplayName",
         )
 
@@ -46,6 +48,8 @@ internal class MediaMapperTest {
             dateAdded = timeInMillis,
             dateModified = timeInMillis,
             size = 1024,
+            isTrash = false,
+            isFavorite = false,
             bucketDisplayName = "sampleBucketDisplayName",
         )
 }

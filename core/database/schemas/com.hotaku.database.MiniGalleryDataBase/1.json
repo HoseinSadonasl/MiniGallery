@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "913af3e371682b732e89385042efb0e9",
+    "identityHash": "ffb938babd441c8102314b326bfdad8b",
     "entities": [
       {
         "tableName": "media",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mediaId` TEXT NOT NULL, `uriString` TEXT NOT NULL, `displayName` TEXT NOT NULL, `mimeType` TEXT NOT NULL, `duration` TEXT NOT NULL, `dateAdded` TEXT NOT NULL, `dateModified` TEXT NOT NULL, `size` TEXT NOT NULL, `bucketDisplayName` TEXT NOT NULL, PRIMARY KEY(`mediaId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mediaId` TEXT NOT NULL, `uriString` TEXT NOT NULL, `displayName` TEXT NOT NULL, `mimeType` TEXT NOT NULL, `duration` TEXT NOT NULL, `dateAdded` TEXT NOT NULL, `dateModified` TEXT NOT NULL, `size` TEXT NOT NULL, `isTrash` INTEGER NOT NULL, `isFavorite` INTEGER NOT NULL, `bucketDisplayName` TEXT NOT NULL, PRIMARY KEY(`mediaId`))",
         "fields": [
           {
             "fieldPath": "mediaId",
@@ -57,6 +57,18 @@
             "notNull": true
           },
           {
+            "fieldPath": "isTrash",
+            "columnName": "isTrash",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isFavorite",
+            "columnName": "isFavorite",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
             "fieldPath": "bucketDisplayName",
             "columnName": "bucketDisplayName",
             "affinity": "TEXT",
@@ -76,7 +88,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '913af3e371682b732e89385042efb0e9')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ffb938babd441c8102314b326bfdad8b')"
     ]
   }
 }

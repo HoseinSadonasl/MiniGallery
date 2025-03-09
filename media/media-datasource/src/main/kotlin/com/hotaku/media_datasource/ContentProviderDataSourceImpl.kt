@@ -14,9 +14,9 @@ internal class ContentProviderDataSourceImpl
         private val contentResolver: ContentResolver,
         private val mapMediaDtoAsMediaData: MapMediaDtoAsMediaData,
     ) : ContentProviderDataSource {
-        override fun getMedia(): Result<List<MediaData>> =
+        override fun getMedia(): List<MediaData> =
             contentResolver.queryMediaFromContentProvider(
                 uri = MediaQueryUtils.MediaStoreFileUri,
                 projection = MediaQueryUtils.MediaProjection,
-            ).map { it.map { mapMediaDtoAsMediaData.map(it) } }
+            ).map { mapMediaDtoAsMediaData.map(it) }
     }

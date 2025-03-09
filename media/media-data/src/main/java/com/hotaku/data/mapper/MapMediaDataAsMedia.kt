@@ -19,6 +19,8 @@ internal class MapMediaDataAsMedia
                     dateAdded = dateAdded,
                     dateModified = dateModified,
                     size = size,
+                    isTrash = isTrash,
+                    isFavorite = isFavorite,
                     bucketDisplayName = bucketDisplayName,
                 )
             }

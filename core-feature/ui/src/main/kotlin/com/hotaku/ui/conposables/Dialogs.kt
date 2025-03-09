@@ -1,84 +1,129 @@
 package com.hotaku.ui.conposables
 
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.hotaku.core_feature.ui.R
+import com.hotaku.designsystem.theme.MiniGalleryTheme
 
 @Composable
-fun AlertDialog(
+fun InputDialog(
     modifier: Modifier = Modifier,
-    icon: ImageVector? = null,
     title: String,
-    description: String,
+    description: String? = null,
+    inputPlaceHolder: String,
+    onInputChange: (String) -> Unit,
     confirmButtonLabel: String = stringResource(id = R.string.dialog_button_label_confirm),
     cancelButtonLabel: String = stringResource(id = R.string.dialog_button_label_cancel),
-    onDismiss: () -> Unit,
     onConfirm: () -> Unit,
+    onCancel: () -> Unit,
+    onDismissRequest: () -> Unit,
 ) {
-    AlertDialogImpl(
+    InputDialogImpl(
         modifier = modifier,
-        icon = icon,
         title = title,
         description = description,
         confirmButtonLabel = confirmButtonLabel,
         cancelButtonLabel = cancelButtonLabel,
-        onDismiss = onDismiss,
         onConfirm = onConfirm,
+        onCancel = onCancel,
+        onDismissRequest = onDismissRequest,
+        inputPlaceHolder = inputPlaceHolder,
+        onInputChange = onInputChange,
     )
 }
 
 @Composable
-private fun AlertDialogImpl(
+private fun InputDialogImpl(
     modifier: Modifier,
-    icon: ImageVector?,
     title: String,
-    description: String,
+    description: String?,
+    inputPlaceHolder: String,
+    onInputChange: (String) -> Unit,
     confirmButtonLabel: String,
     cancelButtonLabel: String,
-    onDismiss: () -> Unit,
     onConfirm: () -> Unit,
+    onCancel: () -> Unit,
+    onDismissRequest: () -> Unit,
 ) {
-    AlertDialog(
-        modifier = modifier,
-        icon =
-            icon?.let {
-                {
-                    Icon(imageVector = it, contentDescription = "Alert Icon")
-                }
-            },
-        title = {
-            Text(text = title)
-        },
-        text = {
-            Text(text = description)
-        },
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(
-                onClick = onConfirm,
-            ) {
-                Text(text = confirmButtonLabel)
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = onConfirm,
-            ) {
-                Text(text = cancelButtonLabel)
-            }
-        },
+    Dialog(
+        onDismissRequest = onDismissRequest,
         properties =
             DialogProperties(
                 dismissOnBackPress = true,
                 dismissOnClickOutside = true,
                 usePlatformDefaultWidth = true,
             ),
-    )
+    ) {
+        Card(
+            colors =
+                CardDefaults.cardColors().copy(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                ),
+            shape = MaterialTheme.shapes.extraLarge,
+        ) {
+            Column(
+                modifier = modifier.padding(24.dp),
+            ) {
+                Text(text = title, style = MaterialTheme.typography.titleLarge)
+                description?.let {
+                    Spacer(Modifier.height(16.dp))
+                    Text(text = description)
+                }
+                Spacer(Modifier.height(16.dp))
+                TextField(
+                    placeHolderText = inputPlaceHolder,
+                    value = "",
+                    onValueChange = onInputChange,
+                )
+                Spacer(Modifier.height(16.dp))
+                Row {
+                    Spacer(
+                        modifier = Modifier.weight(1f),
+                    )
+                    TextButton(
+                        onClick = onConfirm,
+                    ) {
+                        Text(text = confirmButtonLabel)
+                    }
+                    TextButton(
+                        onClick = onCancel,
+                    ) {
+                        Text(text = cancelButtonLabel)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun InputDialogPreview() {
+    MiniGalleryTheme {
+        InputDialog(
+            title = "Title",
+            description = LoremIpsum(4).values.first(),
+            inputPlaceHolder = "Input Placeholder",
+            onInputChange = {},
+            onConfirm = {},
+            onCancel = {},
+            onDismissRequest = {},
+        )
+    }
 }

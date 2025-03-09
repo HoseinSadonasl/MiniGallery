@@ -72,7 +72,7 @@ import com.hotaku.ui.models.MediaUi
 import com.hotaku.ui.rememberLauncherForStartIntentSenderForResult
 import com.hotaku.ui.sendPlayIntent
 import com.hotaku.ui.sendShareIntent
-import com.hotaku.ui.trashMediaItemByUri
+import com.hotaku.ui.trashMediaRequest
 import com.hotaku.ui.writeMediaRequest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -446,7 +446,7 @@ private fun SupportingPaneContent(
                                         )
                                     },
                                     onDeleteMedia = {
-                                        media.uriString.trashMediaItemByUri(
+                                        media.uriString.trashMediaRequest(
                                             context = context,
                                             trashLauncher = trashLauncher,
                                         )

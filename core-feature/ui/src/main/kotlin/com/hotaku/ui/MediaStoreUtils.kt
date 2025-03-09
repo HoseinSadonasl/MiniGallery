@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.provider.MediaStore.createDeleteRequest
 import android.provider.MediaStore.createTrashRequest
 import android.provider.MediaStore.createWriteRequest
 import android.util.Size
@@ -34,17 +35,36 @@ fun rememberLauncherForStartIntentSenderForResult(block: () -> Unit) =
         onResult = { if (it.resultCode == RESULT_OK) block() },
     )
 
-fun String.trashMediaItemByUri(
+fun MediaUi.sendShareIntent(context: Context) {
+    val sendIntent =
+        Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_STREAM, uriString.toUri())
+            type = "$mimeType/*"
+        }
+    val intentToShare = Intent.createChooser(sendIntent, displayName)
+    context.startActivity(intentToShare)
+}
+
+fun String.trashMediaRequest(
     context: Context,
     trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
 ) {
-    listOf(this).trashMediaByUri(
+    listOf(this).trashMediaRequest(
         context = context,
         trashLauncher = trashLauncher,
     )
 }
 
-fun List<String>.trashMediaByUri(
+fun List<String>.trashGroupOfMediaRequest(
+    context: Context,
+    trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
+) = trashMediaRequest(
+    context = context,
+    trashLauncher = trashLauncher,
+)
+
+private fun List<String>.trashMediaRequest(
     context: Context,
     trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
 ) {
@@ -61,33 +81,25 @@ fun List<String>.trashMediaByUri(
     trashLauncher.launch(intentSenderRequest)
 }
 
-fun MediaUi.sendShareIntent(context: Context) {
-    val sendIntent =
-        Intent().apply {
-            action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_STREAM, uriString.toUri())
-            type = "$mimeType/*"
-        }
-    val intentToShare = Intent.createChooser(sendIntent, displayName)
-    context.startActivity(intentToShare)
-}
-
-fun MediaUi.sendPlayIntent(context: Context) {
-    val sendIntent = Intent(Intent.ACTION_VIEW, uriString.toUri())
-    context.startActivity(sendIntent)
-}
-
 fun String.writeMediaRequest(
     context: Context,
     trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
 ) {
-    listOf(this).writeGroupOfMediaRequest(
+    listOf(this).writeMediaRequest(
         context = context,
         trashLauncher = trashLauncher,
     )
 }
 
-fun List<String>.writeGroupOfMediaRequest(
+fun String.writeGroupOfMediaRequest(
+    context: Context,
+    trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
+) = writeMediaRequest(
+    context = context,
+    trashLauncher = trashLauncher,
+)
+
+private fun List<String>.writeMediaRequest(
     context: Context,
     trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
 ) {
@@ -101,6 +113,46 @@ fun List<String>.writeGroupOfMediaRequest(
 
     val intentSenderRequest = writeRequest.createRequest()
     trashLauncher.launch(intentSenderRequest)
+}
+
+fun String.deleteMediaRequest(
+    context: Context,
+    trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
+) {
+    listOf(this).deleteMediaRequest(
+        context = context,
+        trashLauncher = trashLauncher,
+    )
+}
+
+fun List<String>.deleteGroupOfMediaRequest(
+    context: Context,
+    trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
+) {
+    deleteMediaRequest(
+        context = context,
+        trashLauncher = trashLauncher,
+    )
+}
+
+private fun List<String>.deleteMediaRequest(
+    context: Context,
+    trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
+) {
+    val resolver = context.contentResolver
+    val deleteRequest =
+        createDeleteRequest(
+            resolver,
+            this.map { it.toUri() },
+        )
+
+    val intentSenderRequest = deleteRequest.createRequest()
+    trashLauncher.launch(intentSenderRequest)
+}
+
+fun MediaUi.sendPlayIntent(context: Context) {
+    val sendIntent = Intent(Intent.ACTION_VIEW, uriString.toUri())
+    context.startActivity(sendIntent)
 }
 
 private fun PendingIntent.createRequest() =

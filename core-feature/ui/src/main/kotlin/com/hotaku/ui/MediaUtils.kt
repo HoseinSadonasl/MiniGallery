@@ -67,7 +67,7 @@ fun MediaUi.sendShareIntent(context: Context) {
     val sendIntent =
         Intent().apply {
             action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_STREAM, Uri.parse(uriString))
+            putExtra(Intent.EXTRA_STREAM, uriString.toUri())
             type = "$mimeType/*"
         }
     val intentToShare = Intent.createChooser(sendIntent, displayName)

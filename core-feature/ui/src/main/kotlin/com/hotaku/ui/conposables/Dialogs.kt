@@ -33,7 +33,6 @@ fun InputDialog(
     confirmButtonLabel: String = stringResource(id = R.string.dialog_button_label_confirm),
     cancelButtonLabel: String = stringResource(id = R.string.dialog_button_label_cancel),
     onConfirm: () -> Unit,
-    onCancel: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     InputDialogImpl(
@@ -45,8 +44,7 @@ fun InputDialog(
         confirmButtonLabel = confirmButtonLabel,
         cancelButtonLabel = cancelButtonLabel,
         onConfirm = onConfirm,
-        onCancel = onCancel,
-        onDismissRequest = onDismissRequest,
+        onDismiss = onDismissRequest,
         inputPlaceHolder = inputPlaceHolder,
     )
 }
@@ -62,11 +60,10 @@ private fun InputDialogImpl(
     confirmButtonLabel: String,
     cancelButtonLabel: String,
     onConfirm: () -> Unit,
-    onCancel: () -> Unit,
-    onDismissRequest: () -> Unit,
+    onDismiss: () -> Unit,
 ) {
     Dialog(
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = onDismiss,
         properties =
             DialogProperties(
                 dismissOnBackPress = true,
@@ -102,7 +99,7 @@ private fun InputDialogImpl(
                         modifier = Modifier.weight(1f),
                     )
                     TextButton(
-                        onClick = onCancel,
+                        onClick = onDismiss,
                     ) {
                         Text(text = cancelButtonLabel)
                     }
@@ -128,7 +125,6 @@ private fun InputDialogPreview() {
             inputValue = "",
             onInputChange = {},
             onConfirm = {},
-            onCancel = {},
             onDismissRequest = {},
         )
     }

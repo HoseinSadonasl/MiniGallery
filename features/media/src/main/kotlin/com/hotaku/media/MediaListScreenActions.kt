@@ -5,11 +5,11 @@ import com.hotaku.ui.models.MediaUi
 internal sealed interface MediaListScreenActions {
     data object OnUpdateUpdateMedia : MediaListScreenActions
 
-    data class OnQueryChange(val query: String) : MediaListScreenActions
+    data object OnExpandSearch : MediaListScreenActions
 
-    data class OnMediaNameQueryChange(val query: String) : MediaListScreenActions
+    data object OnCollapseSearch : MediaListScreenActions
 
-    data object OnMediaNameClearQuery : MediaListScreenActions
+    data class OnSearchQueryChange(val query: String) : MediaListScreenActions
 
     data class OnMimeTypeChange(val mimeType: String) : MediaListScreenActions
 
@@ -18,10 +18,6 @@ internal sealed interface MediaListScreenActions {
     data object OnHideSyncSection : MediaListScreenActions
 
     data class OnSetTopBarVisibility(val visible: Boolean) : MediaListScreenActions
-
-    data object OnExpandSearch : MediaListScreenActions
-
-    data object OnCollepseSearch : MediaListScreenActions
 
     data class OnMediaListItemClick(val mediaItemIndex: Int) : MediaListScreenActions
 
@@ -37,19 +33,23 @@ internal sealed interface MediaListScreenActions {
 
     data class OnDeleteMediaItem(val mediaItem: MediaUi) : MediaListScreenActions
 
-    data object OnOpenMenu : MediaListScreenActions
+    data object OnShowOptions : MediaListScreenActions
 
-    data object OnHideMenu : MediaListScreenActions
+    data object OnHideOptions : MediaListScreenActions
+
+    data object OnShowOptionsMenu : MediaListScreenActions
+
+    data object OnHideOptionsMenu : MediaListScreenActions
 
     data object OnHideDiaDialog : MediaListScreenActions
 
     data object OnOpenRenameMediaDialog : MediaListScreenActions
 
-    data object ShowDetails : MediaListScreenActions
+    data class OnMediaNameQueryChange(val query: String) : MediaListScreenActions
 
-    data object OnHideOptions : MediaListScreenActions
-
-    data object OnShowOptions : MediaListScreenActions
+    data object OnMediaNameClearQuery : MediaListScreenActions
 
     data class OnRenameMediaItem(val media: MediaUi) : MediaListScreenActions
+
+    data object ShowDetails : MediaListScreenActions
 }

@@ -147,8 +147,8 @@ private fun MediaListScreen(
 
     BackHandler(state.isSearchExpanded) {
         focusManager.clearFocus()
-        onAction(MediaListScreenActions.OnQueryChange(query = ""))
-        onAction(MediaListScreenActions.OnCollepseSearch)
+        onAction(MediaListScreenActions.OnSearchQueryChange(query = ""))
+        onAction(MediaListScreenActions.OnCollapseSearch)
     }
 
     LaunchedEffect(Unit) {
@@ -217,16 +217,17 @@ private fun MediaListScreen(
         }
     }
 
-    when (state.mediaDialog) {
+    when (state.dialog) {
         RenameMediaDialog -> {
-            onAction(MediaListScreenActions.OnHideMenu)
-            RenameDialog(
-                state = state,
-                onAction = onAction,
-                pagingMediaItems = pagingMediaItems,
-                context = context,
-                renameLauncher = renameLauncher,
-            )
+            state.selectedMediaIndex?.let { index ->
+                RenameDialog(
+                    query = state.mediaNameQuery,
+                    onAction = onAction,
+                    mediaUriString = pagingMediaItems.peek(index)?.uriString,
+                    context = context,
+                    renameLauncher = renameLauncher,
+                )
+            }
         }
         Idle -> Unit
     }
@@ -242,14 +243,14 @@ private fun MediaListScreen(
                         expanded = state.isSearchExpanded,
                         onIconClick = {
                             if (state.isSearchExpanded && state.query.isEmpty()) {
-                                onAction(MediaListScreenActions.OnCollepseSearch)
+                                onAction(MediaListScreenActions.OnCollapseSearch)
                             } else {
                                 onAction(MediaListScreenActions.OnExpandSearch)
                             }
                         },
                         value = state.query,
                         onValueChange = { query ->
-                            onAction(MediaListScreenActions.OnQueryChange(query = query))
+                            onAction(MediaListScreenActions.OnSearchQueryChange(query = query))
                         },
                         placeHolderText = stringResource(R.string.media_list_screen_search_media),
                     )
@@ -328,30 +329,25 @@ private fun MediaListScreen(
 
 @Composable
 private fun RenameDialog(
-    state: MediaListUiState,
+    query: String,
     onAction: (MediaListScreenActions) -> Unit,
-    pagingMediaItems: LazyPagingItems<MediaUi>,
+    mediaUriString: String?,
     context: Context,
     renameLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
 ) {
     InputDialog(
         title = stringResource(com.hotaku.core_feature.ui.R.string.input_dialog_title_rename),
         inputPlaceHolder = stringResource(com.hotaku.core_feature.ui.R.string.input_dialog_placeholder_rename),
-        inputValue = state.mediaNameQuery,
+        inputValue = query,
         onInputChange = { value ->
             onAction(MediaListScreenActions.OnMediaNameQueryChange(query = value))
         },
         onConfirm = {
-            state.selectedMediaIndex?.let {
-                pagingMediaItems[it]?.uriString?.writeMediaRequest(
-                    context = context,
-                    trashLauncher = renameLauncher,
-                )
-            }
             onAction(MediaListScreenActions.OnHideDiaDialog)
-        },
-        onCancel = {
-            onAction(MediaListScreenActions.OnHideDiaDialog)
+            mediaUriString?.writeMediaRequest(
+                context = context,
+                trashLauncher = renameLauncher,
+            )
         },
         onDismissRequest = {
             onAction(MediaListScreenActions.OnHideDiaDialog)
@@ -370,9 +366,9 @@ private fun SupportingPaneContent(
     context: Context,
     trashLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
 ) {
-    LaunchedEffect(state.isOptionsVisible, state.isMenuVisible) {
+    LaunchedEffect(state.isOptionsVisible, state.isOptionsMenuVisible) {
         delay(1500)
-        if (state.isOptionsVisible && !state.isMenuVisible) {
+        if (state.isOptionsVisible && !state.isOptionsMenuVisible) {
             onAction(MediaListScreenActions.OnHideOptions)
         }
     }
@@ -437,7 +433,7 @@ private fun SupportingPaneContent(
                     media = media,
                     floatOptions = {
                         OptionsMenu(
-                            expend = state.isMenuVisible,
+                            expend = state.isOptionsMenuVisible,
                             node = {
                                 MediaOptions(
                                     onShareMedia = {
@@ -491,7 +487,7 @@ private fun SupportingPaneContent(
                                     },
                                     moreAction = {
                                         onAction(
-                                            MediaListScreenActions.OnOpenMenu,
+                                            MediaListScreenActions.OnShowOptionsMenu,
                                         )
                                     },
                                 )
@@ -518,7 +514,7 @@ private fun SupportingPaneContent(
                                 }
                             },
                             onDismissRequest = {
-                                onAction(MediaListScreenActions.OnHideMenu)
+                                onAction(MediaListScreenActions.OnHideOptionsMenu)
                             },
                         )
                     },

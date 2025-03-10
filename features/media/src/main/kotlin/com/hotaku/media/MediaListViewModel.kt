@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
+import com.hotaku.media.MediaListScreenActions.*
 import com.hotaku.media_domain.usecase.DeleteMediaUseCase
 import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_domain.usecase.RenameMediaUseCase
@@ -71,31 +72,31 @@ internal class MediaListViewModel
         @Suppress("complexity.LongMethod")
         fun onAction(action: MediaListScreenActions) {
             when (action) {
-                MediaListScreenActions.OnUpdateUpdateMedia -> updateMediaState()
-                MediaListScreenActions.OnRetrySynchronizeMedia -> retrySync()
-                MediaListScreenActions.OnHideSyncSection -> setyncSectionStateFalse()
-                is MediaListScreenActions.OnMimeTypeChange -> setMimeType(action.mimeType)
-                is MediaListScreenActions.OnQueryChange -> setQuery(action.query)
-                is MediaListScreenActions.OnSetTopBarVisibility -> setTopBarVisibility(action.visible)
-                MediaListScreenActions.OnCollepseSearch -> setSearchExpanded(false)
-                MediaListScreenActions.OnExpandSearch -> setSearchExpanded(true)
-                is MediaListScreenActions.OnMediaListItemClick -> previewMedia(action.mediaItemIndex)
-                MediaListScreenActions.OnMediaListItemLongClick -> {}
-                MediaListScreenActions.OnClearSelectedMedia -> clearSelectedMedia()
-                is MediaListScreenActions.OnDeleteMediaItem -> deleteMediaItem(mediaUi = action.mediaItem)
-                MediaListScreenActions.OnOpenMediaDetails -> showOpenDetails()
-                MediaListScreenActions.OnShareMedia -> shareMedia()
-                MediaListScreenActions.OnPlayVideo -> playVideo()
-                MediaListScreenActions.OnOpenMenu -> showMenu()
-                MediaListScreenActions.OnHideMenu -> showMenu(show = false)
-                MediaListScreenActions.OnHideDiaDialog -> showRenameDialog(mediaDialog = MediaDialogs.Idle)
-                MediaListScreenActions.OnOpenRenameMediaDialog -> showRenameDialog(mediaDialog = MediaDialogs.RenameMediaDialog)
-                MediaListScreenActions.ShowDetails -> showDetails()
-                MediaListScreenActions.OnHideOptions -> showOptions(show = false)
-                MediaListScreenActions.OnShowOptions -> showOptions()
-                is MediaListScreenActions.OnRenameMediaItem -> renameMediaItem(media = action.media)
-                is MediaListScreenActions.OnMediaNameQueryChange -> setMediaNameQuery(query = action.query)
-                MediaListScreenActions.OnMediaNameClearQuery -> setMediaNameQuery(query = "")
+                OnUpdateUpdateMedia -> updateMediaState()
+                OnExpandSearch -> setSearchExpanded(true)
+                OnCollapseSearch -> setSearchExpanded(false)
+                is OnSearchQueryChange -> setQuery(action.query)
+                is OnMimeTypeChange -> setMimeType(action.mimeType)
+                OnRetrySynchronizeMedia -> retrySync()
+                OnHideSyncSection -> setyncSectionStateFalse()
+                is OnSetTopBarVisibility -> setTopBarVisibility(action.visible)
+                is OnMediaListItemClick -> previewMedia(action.mediaItemIndex)
+                OnMediaListItemLongClick -> {}
+                OnClearSelectedMedia -> clearSelectedMedia()
+                OnOpenMediaDetails -> showOpenDetails()
+                OnPlayVideo -> playVideo()
+                OnShareMedia -> shareMedia()
+                is OnDeleteMediaItem -> deleteMediaItem(mediaUi = action.mediaItem)
+                OnShowOptions -> showOptions()
+                OnHideOptions -> showOptions(show = false)
+                OnShowOptionsMenu -> showOptionsMenu()
+                OnHideOptionsMenu -> showOptionsMenu(show = false)
+                OnHideDiaDialog -> showRenameDialog(mediaDialog = MediaDialogs.Idle)
+                OnOpenRenameMediaDialog -> showRenameDialog(mediaDialog = MediaDialogs.RenameMediaDialog)
+                is OnMediaNameQueryChange -> setMediaNameQuery(query = action.query)
+                OnMediaNameClearQuery -> setMediaNameQuery(query = "")
+                is OnRenameMediaItem -> renameLocalMediaItem(media = action.media)
+                ShowDetails -> showDetails()
             }
         }
 
@@ -107,7 +108,7 @@ internal class MediaListViewModel
             }
         }
 
-        private fun renameMediaItem(media: MediaUi) {
+        private fun renameLocalMediaItem(media: MediaUi) {
             mediaListScreenViewModelState.value.mediaNameQuery.isNotBlank().let { newName ->
                 val media = media.copy(displayName = mediaListScreenViewModelState.value.mediaNameQuery)
                 viewModelScope.launch {
@@ -136,15 +137,15 @@ internal class MediaListViewModel
         private fun showRenameDialog(mediaDialog: MediaDialogs) {
             mediaListScreenViewModelState.update {
                 it.copy(
-                    mediaDialog = mediaDialog,
-                    isMenuVisible = false,
+                    dialog = mediaDialog,
+                    isOptionsMenuVisible = false,
                 )
             }
         }
 
-        private fun showMenu(show: Boolean = true) {
+        private fun showOptionsMenu(show: Boolean = true) {
             mediaListScreenViewModelState.update {
-                it.copy(isMenuVisible = show)
+                it.copy(isOptionsMenuVisible = show)
             }
         }
 

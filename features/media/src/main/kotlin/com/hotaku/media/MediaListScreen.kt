@@ -43,6 +43,7 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.common.Logger
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.features.media.R
+import com.hotaku.media.MediaListScreenActions.*
 import com.hotaku.media.components.MediaSyncLabel
 import com.hotaku.ui.MediaDialogs.Idle
 import com.hotaku.ui.MediaDialogs.RenameMediaDialog
@@ -127,7 +128,7 @@ private fun MediaListScreen(
         rememberLauncherForStartIntentSenderForResult {
             state.selectedMediaIndex?.let {
                 pagingMediaItems.peek(it)?.let { mediaItem ->
-                    onAction(MediaListScreenActions.OnDeleteMediaItem(mediaItem = mediaItem))
+                    onAction(OnDeleteMediaItem(mediaItem = mediaItem))
                 }
             }
         }
@@ -136,19 +137,19 @@ private fun MediaListScreen(
         rememberLauncherForStartIntentSenderForResult {
             state.selectedMediaIndex?.let {
                 pagingMediaItems.peek(it)?.let { mediaItem ->
-                    onAction(MediaListScreenActions.OnRenameMediaItem(media = mediaItem))
+                    onAction(OnRenameMediaItem(media = mediaItem))
                 }
             }
         }
 
     BackHandler(navigator.canNavigateBack()) {
-        onAction(MediaListScreenActions.OnClearSelectedMedia)
+        onAction(OnClearSelectedMedia)
     }
 
     BackHandler(state.isSearchExpanded) {
         focusManager.clearFocus()
-        onAction(MediaListScreenActions.OnSearchQueryChange(query = ""))
-        onAction(MediaListScreenActions.OnCollapseSearch)
+        onAction(OnSearchQueryChange(query = ""))
+        onAction(OnCollapseSearch)
     }
 
     LaunchedEffect(Unit) {
@@ -164,16 +165,16 @@ private fun MediaListScreen(
         if (synchronize is UiState.Success) {
             pagingMediaItems.refresh()
             delay(3000)
-            onAction(MediaListScreenActions.OnHideSyncSection)
+            onAction(OnHideSyncSection)
         }
     }
 
     LaunchedEffect(state.selectedMediaIndex) {
         state.selectedMediaIndex?.let {
-            onAction(MediaListScreenActions.OnSetTopBarVisibility(visible = false))
+            onAction(OnSetTopBarVisibility(visible = false))
             if (windowWidth == WindowWidthSizeClass.COMPACT) {
                 navigateToMediaDetailScreen(state.selectedMediaIndex)
-                onAction(MediaListScreenActions.OnClearSelectedMedia)
+                onAction(OnClearSelectedMedia)
             } else {
                 navigator.navigateTo(ThreePaneScaffoldRole.Secondary, it)
             }
@@ -187,7 +188,7 @@ private fun MediaListScreen(
         state.selectedMediaIndex?.let { index ->
             if (pagingMediaItems.itemCount > 0 && index > +0 && index < pagingMediaItems.itemCount) {
                 pagingMediaItems.peek(index)?.displayName.orEmpty().let {
-                    onAction(MediaListScreenActions.OnSelectedMediaNameChange(mediaName = it))
+                    onAction(OnSelectedMediaNameChange(mediaName = it))
                 }
             } else {
                 Logger.debugWarningLog(
@@ -254,14 +255,14 @@ private fun MediaListScreen(
                         expanded = state.isSearchExpanded,
                         onIconClick = {
                             if (state.isSearchExpanded && state.query.isEmpty()) {
-                                onAction(MediaListScreenActions.OnCollapseSearch)
+                                onAction(OnCollapseSearch)
                             } else {
-                                onAction(MediaListScreenActions.OnExpandSearch)
+                                onAction(OnExpandSearch)
                             }
                         },
                         value = state.query,
                         onValueChange = { query ->
-                            onAction(MediaListScreenActions.OnSearchQueryChange(query = query))
+                            onAction(OnSearchQueryChange(query = query))
                         },
                         placeHolderText = stringResource(R.string.media_list_screen_search_media),
                     )
@@ -290,20 +291,20 @@ private fun MediaListScreen(
                                     pagingMediaItems = pagingMediaItems,
                                     onScrolled = { scrolled ->
                                         onAction(
-                                            MediaListScreenActions.OnSetTopBarVisibility(
+                                            OnSetTopBarVisibility(
                                                 visible = !scrolled,
                                             ),
                                         )
                                     },
                                     onItemClick = { itemIndex ->
                                         onAction(
-                                            MediaListScreenActions.OnMediaListItemClick(
+                                            OnMediaListItemClick(
                                                 itemIndex,
                                             ),
                                         )
                                     },
                                     onItemLongClick = {
-                                        onAction(MediaListScreenActions.OnMediaListItemLongClick)
+                                        onAction(OnMediaListItemLongClick)
                                     },
                                 )
                             }
@@ -351,18 +352,18 @@ private fun RenameDialog(
         inputPlaceHolder = stringResource(com.hotaku.core_feature.ui.R.string.input_dialog_placeholder_rename),
         inputValue = query,
         onInputChange = { value ->
-            onAction(MediaListScreenActions.OnMediaNameQueryChange(query = value))
+            onAction(OnMediaNameQueryChange(query = value))
         },
         onConfirm = {
-            onAction(MediaListScreenActions.OnHideDiaDialog)
+            onAction(OnHideDiaDialog)
             mediaUriString?.writeMediaRequest(
                 context = context,
                 trashLauncher = renameLauncher,
             )
         },
         onDismissRequest = {
-            onAction(MediaListScreenActions.OnHideDiaDialog)
-            onAction(MediaListScreenActions.OnMediaNameClearQuery)
+            onAction(OnHideDiaDialog)
+            onAction(OnMediaNameClearQuery)
         },
     )
 }
@@ -380,7 +381,7 @@ private fun SupportingPaneContent(
     LaunchedEffect(state.isOptionsVisible, state.isOptionsMenuVisible) {
         delay(1500)
         if (state.isOptionsVisible && !state.isOptionsMenuVisible) {
-            onAction(MediaListScreenActions.OnHideOptions)
+            onAction(OnHideOptions)
         }
     }
 
@@ -389,7 +390,7 @@ private fun SupportingPaneContent(
             Modifier
                 .fillMaxSize()
                 .noRippleClickable {
-                    onAction(MediaListScreenActions.OnShowOptions)
+                    onAction(OnShowOptions)
                 },
         topContent = {
             Box(
@@ -400,7 +401,7 @@ private fun SupportingPaneContent(
                         title = state.selectedItemName,
                         show = state.isOptionsVisible,
                         onClose = {
-                            onAction(MediaListScreenActions.OnClearSelectedMedia)
+                            onAction(OnClearSelectedMedia)
                         },
                     )
                 } else {
@@ -408,7 +409,7 @@ private fun SupportingPaneContent(
                         title = state.selectedItemName,
                         show = state.isOptionsVisible,
                         onClose = {
-                            onAction(MediaListScreenActions.OnClearSelectedMedia)
+                            onAction(OnClearSelectedMedia)
                         },
                     )
                 }
@@ -421,7 +422,7 @@ private fun SupportingPaneContent(
                 pagerMediaItems = pagingMediaItems,
                 onCurrentPageChanged = { currentIndex ->
                     onAction(
-                        MediaListScreenActions.OnMediaListItemClick(
+                        OnMediaListItemClick(
                             mediaItemIndex = currentIndex,
                         ),
                     )
@@ -437,7 +438,7 @@ private fun SupportingPaneContent(
                                 MediaOptions(
                                     onShareMedia = {
                                         onAction(
-                                            MediaListScreenActions.OnShareMedia,
+                                            OnShareMedia,
                                         )
                                     },
                                     onDeleteMedia = {
@@ -452,7 +453,7 @@ private fun SupportingPaneContent(
                                                 IconButton(
                                                     onClick = {
                                                         onAction(
-                                                            MediaListScreenActions.OnPlayVideo,
+                                                            OnPlayVideo,
                                                         )
                                                     },
                                                 ) {
@@ -467,7 +468,7 @@ private fun SupportingPaneContent(
                                                 IconButton(
                                                     onClick = {
                                                         onAction(
-                                                            MediaListScreenActions.OnOpenMediaDetails,
+                                                            OnOpenMediaDetails,
                                                         )
                                                     },
                                                 ) {
@@ -486,7 +487,7 @@ private fun SupportingPaneContent(
                                     },
                                     moreAction = {
                                         onAction(
-                                            MediaListScreenActions.OnShowOptionsMenu,
+                                            OnShowOptionsMenu,
                                         )
                                     },
                                 )
@@ -499,13 +500,13 @@ private fun SupportingPaneContent(
                                         when (item) {
                                             MediaOptionsMenuItems.RENAME -> {
                                                 onAction(
-                                                    MediaListScreenActions.OnOpenRenameMediaDialog,
+                                                    OnOpenRenameMediaDialog,
                                                 )
                                             }
 
                                             MediaOptionsMenuItems.DETAILS -> {
                                                 onAction(
-                                                    MediaListScreenActions.ShowDetails,
+                                                    ShowDetails,
                                                 )
                                             }
                                         }
@@ -513,7 +514,7 @@ private fun SupportingPaneContent(
                                 }
                             },
                             onDismissRequest = {
-                                onAction(MediaListScreenActions.OnHideOptionsMenu)
+                                onAction(OnHideOptionsMenu)
                             },
                         )
                     },
@@ -556,7 +557,7 @@ private fun SyncSection(
             MediaSyncLabel(
                 icon = Icons.Default.Warning,
                 label = synchronizeState.error.asString(),
-                onRetry = { onAction(MediaListScreenActions.OnRetrySynchronizeMedia) },
+                onRetry = { onAction(OnRetrySynchronizeMedia) },
             )
         }
 

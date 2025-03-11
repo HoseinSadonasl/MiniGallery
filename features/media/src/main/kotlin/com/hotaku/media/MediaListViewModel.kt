@@ -10,7 +10,7 @@ import com.hotaku.media_domain.usecase.DeleteMediaUseCase
 import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_domain.usecase.RenameMediaUseCase
 import com.hotaku.media_domain.usecase.SyncMediaUseCase
-import com.hotaku.media_domain.util.SyncDataState
+import com.hotaku.media_domain.util.SyncDataState.*
 import com.hotaku.ui.MediaDialogs
 import com.hotaku.ui.UiState
 import com.hotaku.ui.asUiError
@@ -73,14 +73,14 @@ internal class MediaListViewModel
         fun onAction(action: MediaListScreenActions) {
             when (action) {
                 OnUpdateUpdateMedia -> updateMediaState()
-                OnExpandSearch -> setSearchExpanded(true)
-                OnCollapseSearch -> setSearchExpanded(false)
-                is OnSearchQueryChange -> setQuery(action.query)
-                is OnMimeTypeChange -> setMimeType(action.mimeType)
+                OnExpandSearch -> setSearchExpanded(expand = true)
+                OnCollapseSearch -> setSearchExpanded(expand = false)
+                is OnSearchQueryChange -> setQuery(query = action.query)
+                is OnMimeTypeChange -> setMimeType(mimeType = action.mimeType)
                 OnRetrySynchronizeMedia -> retrySync()
                 OnHideSyncSection -> setyncSectionStateFalse()
-                is OnSetTopBarVisibility -> setTopBarVisibility(action.visible)
-                is OnMediaListItemClick -> previewMedia(action.mediaItemIndex)
+                is OnSetTopBarVisibility -> setTopBarVisibility(visibility = action.visible)
+                is OnMediaListItemClick -> previewMedia(mediaItemIndex = action.mediaItemIndex)
                 is OnSelectedMediaNameChange -> setSelectedMediaName(mediaName = action.mediaName)
                 OnMediaListItemLongClick -> {}
                 OnClearSelectedMedia -> clearSelectedMedia()
@@ -125,7 +125,7 @@ internal class MediaListViewModel
                         media = mapMediaUiAsMedia.map(media),
                     ).let { success ->
                         if (success) {
-                            sendEvent(MediaListScreenEvents.OnRefreshList)
+                            sendEvent(event = MediaListScreenEvents.OnRefreshList)
                         }
                     }
                 }
@@ -159,7 +159,7 @@ internal class MediaListViewModel
         }
 
         private fun playVideo() {
-            sendEvent(MediaListScreenEvents.OnPlayVideo)
+            sendEvent(event = MediaListScreenEvents.OnPlayVideo)
         }
 
         private fun updateMediaState() {
@@ -193,16 +193,16 @@ internal class MediaListViewModel
                 media.map { mapMediaUiAsMedia.map(it) }.let { media ->
                     deleteMediaUseCase.invoke(media = media)
                 }
-                sendEvent(MediaListScreenEvents.OnRefreshList)
+                sendEvent(event = MediaListScreenEvents.OnRefreshList)
             }
         }
 
         private fun showOpenDetails() {
-            sendEvent(MediaListScreenEvents.OnNavigateToMediaDetail)
+            sendEvent(event = MediaListScreenEvents.OnNavigateToMediaDetail)
         }
 
         private fun shareMedia() {
-            sendEvent(MediaListScreenEvents.OnShareMediaList)
+            sendEvent(event = MediaListScreenEvents.OnShareMediaList)
         }
 
         private fun clearSelectedMedia() {
@@ -211,7 +211,7 @@ internal class MediaListViewModel
                     selectedMediaIndex = null,
                 )
             }
-            sendEvent(MediaListScreenEvents.OnCloseMediaListPreview)
+            sendEvent(event = MediaListScreenEvents.OnCloseMediaListPreview)
         }
 
         private fun previewMedia(mediaItemIndex: Int) {
@@ -251,10 +251,10 @@ internal class MediaListViewModel
                 syncMediaUseCase.invoke().collect { result ->
                     synchronizeViewModelState.value =
                         when (result) {
-                            SyncDataState.Idle -> null
-                            SyncDataState.Syncing -> UiState.Loading()
-                            is SyncDataState.SyncFailure -> UiState.Failure(error = result.reason.asUiError())
-                            is SyncDataState.SyncSuccess -> UiState.Success(data = result.itemsCount)
+                            Idle -> null
+                            Syncing -> UiState.Loading()
+                            is SyncFailure -> UiState.Failure(error = result.reason.asUiError())
+                            is SyncSuccess -> UiState.Success(data = result.itemsCount)
                         }
                 }
             }

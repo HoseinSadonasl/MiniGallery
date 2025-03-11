@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.features.onboarding.R
+import com.hotaku.onboarding.OnboardingActions.*
 import com.hotaku.ui.PermissionUtils.requiredMediaPermissions
 import com.hotaku.ui.conposables.OnScreenMessage
 
@@ -55,7 +56,7 @@ private fun OnboardingScreen(
                 result.entries.forEach { entry ->
                     entry.value.let {
                         viewModel.onAction(
-                            OnboardingActions.OnRemovePermissionItemState(permission = entry.key),
+                            OnRemovePermissionItemState(permission = entry.key),
                         )
                     }
                 }
@@ -63,7 +64,7 @@ private fun OnboardingScreen(
         )
 
     LaunchedEffect(Unit) {
-        viewModel.onAction(OnboardingActions.OnAddPermissionsToRequest(requiredMediaPermissions.asList()))
+        viewModel.onAction(OnAddPermissionsToRequest(requiredMediaPermissions.asList()))
     }
 
     LaunchedEffect(state.mediaPermissions) {
@@ -104,7 +105,7 @@ private fun OnboardingScreen(
 
             FilledTonalButton(
                 onClick = {
-                    onAction(OnboardingActions.OnRequestPermissions)
+                    onAction(OnRequestPermissions)
                 },
             ) {
                 Text(

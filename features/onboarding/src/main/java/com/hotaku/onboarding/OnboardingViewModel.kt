@@ -2,6 +2,7 @@ package com.hotaku.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hotaku.onboarding.OnboardingActions.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,17 +22,9 @@ internal class OnboardingViewModel
 
         fun onAction(action: OnboardingActions) =
             when (action) {
-                is OnboardingActions.OnAddPermissionsToRequest ->
-                    addPermissions(
-                        requiredMediaPermissions = action.permissions,
-                    )
-
-                is OnboardingActions.OnRemovePermissionItemState ->
-                    clearPermissionState(
-                        grantedPermission = action.permission,
-                    )
-
-                OnboardingActions.OnRequestPermissions -> requestPermissions()
+                is OnAddPermissionsToRequest -> addPermissions(requiredMediaPermissions = action.permissions)
+                is OnRemovePermissionItemState -> clearPermissionState(grantedPermission = action.permission)
+                OnRequestPermissions -> requestPermissions()
             }
 
         private fun addPermissions(requiredMediaPermissions: List<String>) {

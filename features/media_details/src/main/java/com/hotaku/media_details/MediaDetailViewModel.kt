@@ -7,6 +7,7 @@ import androidx.navigation.toRoute
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
+import com.hotaku.media_details.MediaDetailScreenActions.*
 import com.hotaku.media_details.navigation.MediaDetailRoute
 import com.hotaku.media_domain.usecase.DeleteMediaUseCase
 import com.hotaku.media_domain.usecase.GetMediaUseCase
@@ -64,21 +65,21 @@ internal class MediaDetailViewModel
 
         fun onAction(action: MediaDetailScreenActions) {
             when (action) {
-                is MediaDetailScreenActions.OnSelectedIndexChanged -> setSelectedIndex(action.index)
-                MediaDetailScreenActions.OnPlayVideo -> playVideo()
-                MediaDetailScreenActions.OnShareMedia -> shareMedia()
-                is MediaDetailScreenActions.OnDeleteMedia -> deleteMedia(media = action.mediaItem)
-                is MediaDetailScreenActions.OnMediaNameChange -> setMediaName(mediaName = action.mediaName)
-                MediaDetailScreenActions.OnShowOptions -> showOptions()
-                MediaDetailScreenActions.OnHideOptions -> showOptions(show = false)
-                MediaDetailScreenActions.OnShowOptionsMenu -> showOptionsMenu()
-                MediaDetailScreenActions.OnHideOptionsMenu -> showOptionsMenu(show = false)
-                MediaDetailScreenActions.OnShowRenameMediaDialog -> openRenameDialog(mediaDialogs = MediaDialogs.RenameMediaDialog)
-                MediaDetailScreenActions.OnHideDialog -> openRenameDialog(mediaDialogs = MediaDialogs.Idle)
-                MediaDetailScreenActions.OnShowDetails -> {}
-                is MediaDetailScreenActions.OnMediaNameQueryChange -> setNameQuery(query = action.query)
-                MediaDetailScreenActions.OnClearMediaNameQuery -> setNameQuery(query = "")
-                is MediaDetailScreenActions.OnRenameMediaItem -> renameLocalMediaItem(media = action.media)
+                is OnSelectedIndexChanged -> setSelectedIndex(action.index)
+                OnPlayVideo -> playVideo()
+                OnShareMedia -> shareMedia()
+                is OnDeleteMedia -> deleteMedia(media = action.mediaItem)
+                is OnMediaNameChange -> setMediaName(mediaName = action.mediaName)
+                OnShowOptions -> showOptions()
+                OnHideOptions -> showOptions(show = false)
+                OnShowOptionsMenu -> showOptionsMenu()
+                OnHideOptionsMenu -> showOptionsMenu(show = false)
+                OnShowRenameMediaDialog -> openRenameDialog(mediaDialogs = MediaDialogs.RenameMediaDialog)
+                OnHideDialog -> openRenameDialog(mediaDialogs = MediaDialogs.Idle)
+                OnShowDetails -> {}
+                is OnMediaNameQueryChange -> setNameQuery(query = action.query)
+                OnClearMediaNameQuery -> setNameQuery(query = "")
+                is OnRenameMediaItem -> renameLocalMediaItem(media = action.media)
             }
         }
 
@@ -98,7 +99,7 @@ internal class MediaDetailViewModel
                         media = mapMediaUiAsMedia.map(media),
                     )
                 }
-                sendEvent(MediaDetailScreenEvents.OnRefreshMedia)
+                sendEvent(event = MediaDetailScreenEvents.OnRefreshMedia)
             }
         }
 
@@ -161,7 +162,7 @@ internal class MediaDetailViewModel
         }
 
         private fun shareMedia() {
-            sendEvent(MediaDetailScreenEvents.OnShareMedia)
+            sendEvent(event = MediaDetailScreenEvents.OnShareMedia)
         }
 
         private fun openRenameDialog(mediaDialogs: MediaDialogs) {

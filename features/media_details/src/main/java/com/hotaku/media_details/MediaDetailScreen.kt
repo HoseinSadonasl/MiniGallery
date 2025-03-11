@@ -23,6 +23,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.common.Logger
 import com.hotaku.core_feature.ui.R
+import com.hotaku.media_details.MediaDetailScreenActions.*
 import com.hotaku.ui.MediaDialogs
 import com.hotaku.ui.MediaOptionsMenuItems
 import com.hotaku.ui.MediaType
@@ -73,7 +74,7 @@ private fun MediaDetailScreen(
 
     val pagingMediaItems = mediaDetailViewModel.mediaUiState.collectAsLazyPagingItems()
 
-    val refreshLoadState = pagingMediaItems?.loadState?.refresh
+    val refreshLoadState = pagingMediaItems.loadState.refresh
 
     val windowWidth = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
 
@@ -82,7 +83,7 @@ private fun MediaDetailScreen(
             state.selectedMediaIndex.let { index ->
                 pagingMediaItems.peek(index)?.let { media ->
                     onAction(
-                        MediaDetailScreenActions.OnDeleteMedia(
+                        OnDeleteMedia(
                             mediaItem = media,
                         ),
                     )
@@ -92,9 +93,9 @@ private fun MediaDetailScreen(
 
     val renameLauncher =
         rememberLauncherForStartIntentSenderForResult {
-            state.selectedMediaIndex?.let {
+            state.selectedMediaIndex.let {
                 pagingMediaItems.peek(it)?.let { mediaItem ->
-                    onAction(MediaDetailScreenActions.OnRenameMediaItem(media = mediaItem))
+                    onAction(OnRenameMediaItem(media = mediaItem))
                 }
             }
         }
@@ -102,7 +103,7 @@ private fun MediaDetailScreen(
     LaunchedEffect(state.isOptionsVisible) {
         if (state.isOptionsVisible) {
             delay(1500)
-            onAction(MediaDetailScreenActions.OnHideOptions)
+            onAction(OnHideOptions)
         }
     }
 
@@ -141,7 +142,7 @@ private fun MediaDetailScreen(
     ) {
         if (pagingMediaItems.itemCount > 0 && state.selectedMediaIndex < pagingMediaItems.itemCount) {
             pagingMediaItems.peek(state.selectedMediaIndex)?.displayName.orEmpty().let {
-                onAction(MediaDetailScreenActions.OnMediaNameChange(mediaName = it))
+                onAction(OnMediaNameChange(mediaName = it))
             }
         } else {
             Logger.debugWarningLog(kClass = this@LaunchedEffect::class, message = "Media item count is 0")
@@ -152,7 +153,7 @@ private fun MediaDetailScreen(
         modifier =
             modifier
                 .noRippleClickable {
-                    onAction(MediaDetailScreenActions.OnShowOptions)
+                    onAction(OnShowOptions)
                 },
         topContent = {
             Box(modifier = Modifier.statusBarsPadding()) {
@@ -205,7 +206,7 @@ private fun MediaDetailPager(
         currentPage = state.selectedMediaIndex,
         pagerMediaItems = pagingMediaItems,
         onCurrentPageChanged = { pageIndex ->
-            onAction(MediaDetailScreenActions.OnSelectedIndexChanged(index = pageIndex))
+            onAction(OnSelectedIndexChanged(index = pageIndex))
         },
     ) { media ->
         MediaDetail(
@@ -217,7 +218,7 @@ private fun MediaDetailPager(
                     node = {
                         MediaOptions(
                             onShareMedia = {
-                                onAction(MediaDetailScreenActions.OnShareMedia)
+                                onAction(OnShareMedia)
                             },
                             onDeleteMedia = {
                                 media.uriString.trashMediaRequest(
@@ -229,7 +230,7 @@ private fun MediaDetailPager(
                                 if (media.mimeType == MediaType.VIDEO) {
                                     IconButton(
                                         onClick = {
-                                            onAction(MediaDetailScreenActions.OnPlayVideo)
+                                            onAction(OnPlayVideo)
                                         },
                                     ) {
                                         Icon(
@@ -240,7 +241,7 @@ private fun MediaDetailPager(
                                 }
                             },
                             moreAction = {
-                                onAction(MediaDetailScreenActions.OnShowOptionsMenu)
+                                onAction(OnShowOptionsMenu)
                             },
                         )
                     },
@@ -252,13 +253,13 @@ private fun MediaDetailPager(
                                 when (item) {
                                     MediaOptionsMenuItems.RENAME -> {
                                         onAction(
-                                            MediaDetailScreenActions.OnShowRenameMediaDialog,
+                                            OnShowRenameMediaDialog,
                                         )
                                     }
 
                                     MediaOptionsMenuItems.DETAILS -> {
                                         onAction(
-                                            MediaDetailScreenActions.OnShowDetails,
+                                            OnShowDetails,
                                         )
                                     }
                                 }
@@ -267,7 +268,7 @@ private fun MediaDetailPager(
                     },
                     onDismissRequest = {
                         onAction(
-                            MediaDetailScreenActions.OnHideOptionsMenu,
+                            OnHideOptionsMenu,
                         )
                     },
                 )
@@ -289,18 +290,18 @@ private fun RenameDialog(
         inputPlaceHolder = stringResource(R.string.input_dialog_placeholder_rename),
         inputValue = query,
         onInputChange = { value ->
-            onAction(MediaDetailScreenActions.OnMediaNameQueryChange(query = value))
+            onAction(OnMediaNameQueryChange(query = value))
         },
         onConfirm = {
-            onAction(MediaDetailScreenActions.OnHideDialog)
+            onAction(OnHideDialog)
             mediaUriString?.writeMediaRequest(
                 context = context,
                 trashLauncher = renameLauncher,
             )
         },
         onDismissRequest = {
-            onAction(MediaDetailScreenActions.OnHideDialog)
-            onAction(MediaDetailScreenActions.OnClearMediaNameQuery)
+            onAction(OnHideDialog)
+            onAction(OnClearMediaNameQuery)
         },
     )
 }

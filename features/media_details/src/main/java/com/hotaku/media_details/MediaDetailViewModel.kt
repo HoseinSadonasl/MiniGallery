@@ -10,6 +10,8 @@ import androidx.paging.map
 import com.hotaku.media_details.navigation.MediaDetailRoute
 import com.hotaku.media_domain.usecase.DeleteMediaUseCase
 import com.hotaku.media_domain.usecase.GetMediaUseCase
+import com.hotaku.media_domain.usecase.RenameMediaUseCase
+import com.hotaku.ui.MediaDialogs
 import com.hotaku.ui.mappers.MapMediaAsMediaUi
 import com.hotaku.ui.mappers.MapMediaUiAsMedia
 import com.hotaku.ui.models.MediaUi
@@ -34,6 +36,7 @@ internal class MediaDetailViewModel
     @Inject
     constructor(
         private val mediaUseCase: GetMediaUseCase,
+        private val renameMediaUseCase: RenameMediaUseCase,
         private val mapMediaAsMediaUi: MapMediaAsMediaUi,
         private val deleteMediaUseCase: DeleteMediaUseCase,
         private val mapMediaUiAsMedia: MapMediaUiAsMedia,
@@ -61,18 +64,41 @@ internal class MediaDetailViewModel
 
         fun onAction(action: MediaDetailScreenActions) {
             when (action) {
-                is MediaDetailScreenActions.OnNameChange -> setName(newName = action.newName)
                 is MediaDetailScreenActions.OnSelectedIndexChanged -> setSelectedIndex(action.index)
+                MediaDetailScreenActions.OnPlayVideo -> playVideo()
                 MediaDetailScreenActions.OnShareMedia -> shareMedia()
                 is MediaDetailScreenActions.OnDeleteMedia -> deleteMedia(media = action.mediaItem)
-                MediaDetailScreenActions.OnOOpenMenu -> openMenuPopup()
-                MediaDetailScreenActions.OnCloseMenu -> openMenuPopup(open = false)
-                MediaDetailScreenActions.OnRenameClick -> openRenameDialog()
-                MediaDetailScreenActions.OnSubmitRenameClick -> openRenameDialog(open = false)
-                MediaDetailScreenActions.OnUpdateMedia -> updateMedia()
-                MediaDetailScreenActions.OnPlayVideo -> playVideo()
-                MediaDetailScreenActions.OnHideOptions -> showOptions(show = false)
+                is MediaDetailScreenActions.OnMediaNameChange -> setMediaName(mediaName = action.mediaName)
                 MediaDetailScreenActions.OnShowOptions -> showOptions()
+                MediaDetailScreenActions.OnHideOptions -> showOptions(show = false)
+                MediaDetailScreenActions.OnShowOptionsMenu -> showOptionsMenu()
+                MediaDetailScreenActions.OnHideOptionsMenu -> showOptionsMenu(show = false)
+                MediaDetailScreenActions.OnShowRenameMediaDialog -> openRenameDialog(mediaDialogs = MediaDialogs.RenameMediaDialog)
+                MediaDetailScreenActions.OnHideDialog -> openRenameDialog(mediaDialogs = MediaDialogs.Idle)
+                MediaDetailScreenActions.OnShowDetails -> {}
+                is MediaDetailScreenActions.OnMediaNameQueryChange -> setNameQuery(query = action.query)
+                MediaDetailScreenActions.OnClearMediaNameQuery -> setNameQuery(query = "")
+                is MediaDetailScreenActions.OnRenameMediaItem -> renameLocalMediaItem(media = action.media)
+            }
+        }
+
+        private fun setMediaName(mediaName: String) {
+            mediaDetailViewModlState.update {
+                it.copy(
+                    mediaName = mediaName,
+                )
+            }
+        }
+
+        private fun renameLocalMediaItem(media: MediaUi) {
+            mediaDetailUiState.value.mediaNameQuery.isNotBlank().let { newName ->
+                val media = media.copy(displayName = mediaDetailUiState.value.mediaNameQuery)
+                viewModelScope.launch {
+                    renameMediaUseCase.invoke(
+                        media = mapMediaUiAsMedia.map(media),
+                    )
+                }
+                sendEvent(MediaDetailScreenEvents.OnRefreshMedia)
             }
         }
 
@@ -80,6 +106,14 @@ internal class MediaDetailViewModel
             mediaDetailViewModlState.update {
                 it.copy(
                     isOptionsVisible = show,
+                )
+            }
+        }
+
+        private fun showOptionsMenu(show: Boolean = true) {
+            mediaDetailViewModlState.update {
+                it.copy(
+                    isOptionsMenuVisible = show,
                 )
             }
         }
@@ -92,7 +126,7 @@ internal class MediaDetailViewModel
             savedState.toRoute<MediaDetailRoute>().let { initialState ->
                 mediaDetailViewModlState.update {
                     it.copy(
-                        selectedMediaItemIndex = initialState.initialItemIndex ?: 0,
+                        selectedMediaIndex = initialState.initialItemIndex ?: 0,
                         selectedAlbumName = initialState.selectedAlbum.orEmpty(),
                     )
                 }
@@ -121,7 +155,7 @@ internal class MediaDetailViewModel
         private fun setSelectedIndex(page: Int) {
             mediaDetailViewModlState.update {
                 it.copy(
-                    selectedMediaItemIndex = page,
+                    selectedMediaIndex = page,
                 )
             }
         }
@@ -130,25 +164,12 @@ internal class MediaDetailViewModel
             sendEvent(MediaDetailScreenEvents.OnShareMedia)
         }
 
-        private fun openMenuPopup(open: Boolean = true) {
+        private fun openRenameDialog(mediaDialogs: MediaDialogs) {
             mediaDetailViewModlState.update {
                 it.copy(
-                    openMenuPopup = open,
+                    isOptionsMenuVisible = false,
+                    dialog = mediaDialogs,
                 )
-            }
-        }
-
-        private fun openRenameDialog(open: Boolean = true) {
-            mediaDetailViewModlState.update {
-                it.copy(
-                    openRenameDialog = open,
-                )
-            }
-        }
-
-        private fun updateMedia() {
-            viewModelScope.launch {
-                // Update media
             }
         }
 
@@ -160,10 +181,10 @@ internal class MediaDetailViewModel
             sendEvent(MediaDetailScreenEvents.OnRefreshMedia)
         }
 
-        private fun setName(newName: String) {
+        private fun setNameQuery(query: String) {
             mediaDetailViewModlState.update {
                 it.copy(
-                    mediaName = newName,
+                    mediaNameQuery = query,
                 )
             }
         }

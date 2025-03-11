@@ -9,21 +9,27 @@ internal sealed interface MediaDetailScreenActions {
 
     data object OnShareMedia : MediaDetailScreenActions
 
-    data object OnOOpenMenu : MediaDetailScreenActions
-
-    data object OnCloseMenu : MediaDetailScreenActions
-
-    data object OnRenameClick : MediaDetailScreenActions
-
-    data object OnSubmitRenameClick : MediaDetailScreenActions
-
-    data class OnNameChange(val newName: String) : MediaDetailScreenActions
-
     data class OnDeleteMedia(val mediaItem: MediaUi) : MediaDetailScreenActions
+
+    data class OnMediaNameChange(val mediaName: String) : MediaDetailScreenActions
 
     data object OnShowOptions : MediaDetailScreenActions
 
     data object OnHideOptions : MediaDetailScreenActions
 
-    data object OnUpdateMedia : MediaDetailScreenActions
+    data object OnShowOptionsMenu : MediaDetailScreenActions
+
+    data object OnHideOptionsMenu : MediaDetailScreenActions
+
+    data object OnHideDialog : MediaDetailScreenActions
+
+    data object OnShowRenameMediaDialog : MediaDetailScreenActions
+
+    data object OnShowDetails : MediaDetailScreenActions
+
+    data class OnMediaNameQueryChange(val query: String) : MediaDetailScreenActions
+
+    data object OnClearMediaNameQuery : MediaDetailScreenActions
+
+    data class OnRenameMediaItem(val media: MediaUi) : MediaDetailScreenActions
 }

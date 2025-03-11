@@ -21,6 +21,8 @@ internal sealed interface MediaListScreenActions {
 
     data class OnMediaListItemClick(val mediaItemIndex: Int) : MediaListScreenActions
 
+    data class OnSelectedMediaNameChange(val mediaName: String) : MediaListScreenActions
+
     data object OnMediaListItemLongClick : MediaListScreenActions
 
     data object OnClearSelectedMedia : MediaListScreenActions

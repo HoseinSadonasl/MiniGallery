@@ -8,6 +8,24 @@ import kotlin.reflect.KFunction
 object Logger {
     private val isDebug = BuildConfig.DEBUG
 
+    fun debugWarningLog(
+        kClass: KClass<*>,
+        message: String,
+    ) {
+        if (isDebug) {
+            Log.i(kClass.java.name, message)
+        }
+    }
+
+    fun debugWarningLog(
+        kFun: KFunction<*>,
+        message: String,
+    ) {
+        if (isDebug) {
+            Log.i(kFun.name, message)
+        }
+    }
+
     fun Throwable.debugWarningLog(kClass: KClass<*>) {
         if (isDebug) {
             Log.i(kClass.java.name, localizedMessage ?: message ?: "Unknown error")

@@ -21,6 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.window.core.layout.WindowWidthSizeClass
+import com.hotaku.common.Logger
 import com.hotaku.core_feature.ui.R
 import com.hotaku.ui.MediaDialogs
 import com.hotaku.ui.MediaOptionsMenuItems
@@ -138,8 +139,12 @@ private fun MediaDetailScreen(
         key1 = pagingMediaItems.itemCount,
         key2 = state.selectedMediaIndex,
     ) {
-        pagingMediaItems.peek(state.selectedMediaIndex)?.displayName.orEmpty().let {
-            onAction(MediaDetailScreenActions.OnMediaNameChange(mediaName = it))
+        if (pagingMediaItems.itemCount > 0 && state.selectedMediaIndex < pagingMediaItems.itemCount) {
+            pagingMediaItems.peek(state.selectedMediaIndex)?.displayName.orEmpty().let {
+                onAction(MediaDetailScreenActions.OnMediaNameChange(mediaName = it))
+            }
+        } else {
+            Logger.debugWarningLog(kClass = this@LaunchedEffect::class, message = "Media item count is 0")
         }
     }
 

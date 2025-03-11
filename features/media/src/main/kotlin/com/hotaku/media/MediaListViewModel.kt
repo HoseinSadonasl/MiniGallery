@@ -81,6 +81,7 @@ internal class MediaListViewModel
                 OnHideSyncSection -> setyncSectionStateFalse()
                 is OnSetTopBarVisibility -> setTopBarVisibility(action.visible)
                 is OnMediaListItemClick -> previewMedia(action.mediaItemIndex)
+                is OnSelectedMediaNameChange -> setSelectedMediaName(mediaName = action.mediaName)
                 OnMediaListItemLongClick -> {}
                 OnClearSelectedMedia -> clearSelectedMedia()
                 OnOpenMediaDetails -> showOpenDetails()
@@ -97,6 +98,14 @@ internal class MediaListViewModel
                 OnMediaNameClearQuery -> setMediaNameQuery(query = "")
                 is OnRenameMediaItem -> renameLocalMediaItem(media = action.media)
                 ShowDetails -> showDetails()
+            }
+        }
+
+        private fun setSelectedMediaName(mediaName: String) {
+            mediaListScreenViewModelState.update {
+                it.copy(
+                    selectedItemName = mediaName,
+                )
             }
         }
 

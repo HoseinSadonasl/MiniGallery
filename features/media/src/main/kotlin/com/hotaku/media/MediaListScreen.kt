@@ -26,7 +26,6 @@ import androidx.compose.material3.adaptive.navigation.rememberSupportingPaneScaf
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -41,6 +40,7 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.window.core.layout.WindowWidthSizeClass
+import com.hotaku.common.Logger
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.features.media.R
 import com.hotaku.media.components.MediaSyncLabel
@@ -181,10 +181,21 @@ private fun MediaListScreen(
     }
 
     LaunchedEffect(
-        key1 = state.mimeType,
-        key2 = state.query,
+        key1 = pagingMediaItems.itemCount,
+        key2 = state.selectedMediaIndex,
     ) {
-        onAction(MediaListScreenActions.OnUpdateUpdateMedia)
+        state.selectedMediaIndex?.let { index ->
+            if (pagingMediaItems.itemCount > 0 && index > +0 && index < pagingMediaItems.itemCount) {
+                pagingMediaItems.peek(index)?.displayName.orEmpty().let {
+                    onAction(MediaListScreenActions.OnSelectedMediaNameChange(mediaName = it))
+                }
+            } else {
+                Logger.debugWarningLog(
+                    kClass = this@LaunchedEffect::class,
+                    message = "Media item count is 0",
+                )
+            }
+        }
     }
 
     LaunchedEffect(screenEvents) {
@@ -373,18 +384,6 @@ private fun SupportingPaneContent(
         }
     }
 
-    val title: String =
-        remember(
-            key1 = pagingMediaItems.itemCount,
-            key2 = state.selectedMediaIndex,
-        ) {
-            if (pagingMediaItems.itemCount > 0) {
-                pagingMediaItems.peek(state.selectedMediaIndex ?: 0)?.displayName.orEmpty()
-            } else {
-                ""
-            }
-        }
-
     MediaDetailSurface(
         modifier =
             Modifier
@@ -398,7 +397,7 @@ private fun SupportingPaneContent(
             ) {
                 if (windowWidth == WindowWidthSizeClass.COMPACT) {
                     AnimatedMediaDetailCompactTopBar(
-                        title = title,
+                        title = state.selectedItemName,
                         show = state.isOptionsVisible,
                         onClose = {
                             onAction(MediaListScreenActions.OnClearSelectedMedia)
@@ -406,7 +405,7 @@ private fun SupportingPaneContent(
                     )
                 } else {
                     AnimatedMediaDetailExpendedTopBar(
-                        title = title,
+                        title = state.selectedItemName,
                         show = state.isOptionsVisible,
                         onClose = {
                             onAction(MediaListScreenActions.OnClearSelectedMedia)

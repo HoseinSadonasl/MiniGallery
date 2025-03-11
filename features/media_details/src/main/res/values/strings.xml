@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="media_detail_screen_error_loading_media_title">Ops!</string>
+    <string name="media_detail_screen_error_loading_media_message">An error occurred</string>
+</resources>

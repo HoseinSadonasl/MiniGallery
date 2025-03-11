@@ -6,6 +6,7 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,8 +16,11 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.AnimatedPane
@@ -33,15 +37,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.common.Logger
-import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.features.media.R
 import com.hotaku.media.MediaListScreenActions.*
 import com.hotaku.media.components.MediaSyncLabel
@@ -112,9 +114,12 @@ private fun MediaListScreen(
     navigateToOnboardingScreen: () -> Unit,
 ) {
     val state: MediaListUiState by screenState.collectAsStateWithLifecycle()
+
     val synchronize: UiState<Int>? by synchronizeState.collectAsStateWithLifecycle()
-    val pagingMediaItems: LazyPagingItems<MediaUi> =
-        pagingMediaItemsState.collectAsLazyPagingItems()
+
+    val pagingMediaItems: LazyPagingItems<MediaUi> = pagingMediaItemsState.collectAsLazyPagingItems()
+
+    val refreshState = pagingMediaItems.loadState.refresh
 
     val focusManager = LocalFocusManager.current
 
@@ -286,6 +291,17 @@ private fun MediaListScreen(
                                 ) {
                                     synchronize?.let { SyncSection(synchronizeState = it, onAction = onAction) }
                                 }
+                                when (refreshState) {
+                                    is LoadState.Error -> {
+                                        LoadMediaError(onAction = onAction)
+                                    }
+                                    LoadState.Loading -> {
+                                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                            CircularProgressIndicator()
+                                        }
+                                    }
+                                    else -> Unit
+                                }
                                 MediaGrid(
                                     modifier = Modifier.weight(1f),
                                     pagingMediaItems = pagingMediaItems,
@@ -337,6 +353,39 @@ private fun MediaListScreen(
             }
         },
     )
+}
+
+@Composable
+private fun NoMedia() {
+    OnScreenMessage(
+        modifier = Modifier.fillMaxSize(),
+        title = stringResource(id = R.string.media_list_screen_no_media),
+        fulMessage = stringResource(id = R.string.media_list_screen_no_media_full_message),
+    )
+}
+
+@Composable
+private fun LoadMediaError(onAction: (MediaListScreenActions) -> Unit) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceAround,
+    ) {
+        OnScreenMessage(
+            modifier = Modifier.fillMaxSize(),
+            title = stringResource(id = R.string.media_list_screen_error_loading_media_message),
+            fulMessage = stringResource(id = R.string.media_list_screen_error_loading_media_full_message),
+        )
+        FilledTonalButton(
+            onClick = {
+                onAction(OnUpdateUpdateMedia)
+            },
+        ) {
+            Text(
+                text = stringResource(R.string.media_list_screen_error_loading_media_button_try_again),
+            )
+        }
+    }
 }
 
 @Composable
@@ -522,29 +571,6 @@ private fun SupportingPaneContent(
             }
         },
     )
-}
-
-@Composable
-private fun NoMedia() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        OnScreenMessage(
-            modifier = Modifier.fillMaxSize(),
-            title = stringResource(id = R.string.media_list_screen_no_media),
-            fulMessage = stringResource(id = R.string.media_list_screen_no_media_full_message),
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@PreviewScreenSizes
-@Composable
-private fun NoMediaPreview() {
-    MiniGalleryTheme {
-        NoMedia()
-    }
 }
 
 @Composable

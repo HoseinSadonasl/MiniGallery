@@ -5,24 +5,29 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.common.Logger
-import com.hotaku.core_feature.ui.R
+import com.hotaku.features.media_details.R.*
 import com.hotaku.media_details.MediaDetailScreenActions.*
 import com.hotaku.ui.MediaDialogs
 import com.hotaku.ui.MediaOptionsMenuItems
@@ -35,6 +40,7 @@ import com.hotaku.ui.conposables.MediaDetail
 import com.hotaku.ui.conposables.MediaDetailPager
 import com.hotaku.ui.conposables.MediaDetailSurface
 import com.hotaku.ui.conposables.MediaOptions
+import com.hotaku.ui.conposables.OnScreenMessage
 import com.hotaku.ui.conposables.OptionMenuItem
 import com.hotaku.ui.conposables.OptionsMenu
 import com.hotaku.ui.conposables.noRippleClickable
@@ -174,23 +180,37 @@ private fun MediaDetailScreen(
         },
         content = {
             when (refreshLoadState) {
-                is androidx.paging.LoadState.Loading -> {
-                    // Loading
+                is LoadState.Loading -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
                 }
-                is androidx.paging.LoadState.Error -> {
-                    // Error
+
+                is LoadState.Error -> {
+                    LoadMediaItemError()
                 }
-                else -> {
-                    MediaDetailPager(
-                        state = state,
-                        pagingMediaItems = pagingMediaItems,
-                        onAction = onAction,
-                        context = context,
-                        trashLauncher = trashLauncher,
-                    )
-                }
+
+                else -> Unit
             }
+
+            MediaDetailPager(
+                state = state,
+                pagingMediaItems = pagingMediaItems,
+                onAction = onAction,
+                context = context,
+                trashLauncher = trashLauncher,
+            )
         },
+    )
+}
+
+@Composable
+private fun LoadMediaItemError() {
+    OnScreenMessage(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.error,
+        title = stringResource(string.media_detail_screen_error_loading_media_title),
+        fulMessage = stringResource(string.media_detail_screen_error_loading_media_message),
     )
 }
 
@@ -286,8 +306,8 @@ private fun RenameDialog(
     renameLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
 ) {
     InputDialog(
-        title = stringResource(R.string.input_dialog_title_rename),
-        inputPlaceHolder = stringResource(R.string.input_dialog_placeholder_rename),
+        title = stringResource(com.hotaku.core_feature.ui.R.string.input_dialog_title_rename),
+        inputPlaceHolder = stringResource(com.hotaku.core_feature.ui.R.string.input_dialog_placeholder_rename),
         inputValue = query,
         onInputChange = { value ->
             onAction(OnMediaNameQueryChange(query = value))

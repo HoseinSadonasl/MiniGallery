@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +18,8 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,14 +37,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.hotaku.albums.AlbumsScreenActions.*
 import com.hotaku.albums.model.AlbumUi
-import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.features.albums.R
 import com.hotaku.ui.MediaType
 import com.hotaku.ui.UiState
@@ -80,6 +81,8 @@ private fun AlbumsScreen(
     val state by albumsViewModel.albumsUiState.collectAsStateWithLifecycle()
 
     val mediaListState = albumsViewModel.mediaUiState.collectAsLazyPagingItems()
+
+    val refreshState = mediaListState.loadState.refresh
 
     val navigator = rememberSupportingPaneScaffoldNavigator<String>()
 
@@ -146,6 +149,17 @@ private fun AlbumsScreen(
                 supportingPane = {
                     AnimatedPane {
                         navigator.currentDestination?.content?.let { albumName ->
+                            when (refreshState) {
+                                is LoadState.Error -> {
+                                    LoadMediaError(onAction = onAction)
+                                }
+                                LoadState.Loading -> {
+                                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                        CircularProgressIndicator()
+                                    }
+                                }
+                                else -> Unit
+                            }
                             MediaGrid(
                                 pagingMediaItems = mediaListState,
                                 onScrolled = {},
@@ -171,6 +185,30 @@ private fun AlbumsScreen(
 }
 
 @Composable
+private fun LoadMediaError(onAction: (AlbumsScreenActions) -> Unit) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceAround,
+    ) {
+        OnScreenMessage(
+            modifier = Modifier.fillMaxSize(),
+            title = stringResource(id = R.string.albums_screen_error_loading_media_message),
+            fulMessage = stringResource(id = R.string.albums_screen_error_loading_media_full_message),
+        )
+        FilledTonalButton(
+            onClick = {
+                onAction(OnUpdateMediaList)
+            },
+        ) {
+            Text(
+                text = stringResource(R.string.albums_screen_error_loading_media_button_try_again),
+            )
+        }
+    }
+}
+
+@Composable
 private fun NoAlbums() {
     OnScreenMessage(
         modifier = Modifier.fillMaxSize(),
@@ -187,24 +225,6 @@ private fun AlbumsLoadError() {
         title = stringResource(id = R.string.albums_screen_error_while_getting_albums),
         fulMessage = stringResource(id = R.string.albums_screen_error_while_getting_albums_full_message),
     )
-}
-
-@Preview(showBackground = true)
-@PreviewScreenSizes
-@Composable
-private fun ErrorGettingAlbumsPreview() {
-    MiniGalleryTheme {
-        AlbumsLoadError()
-    }
-}
-
-@Preview(showBackground = true)
-@PreviewScreenSizes
-@Composable
-private fun NoAlbumsPreview() {
-    MiniGalleryTheme {
-        NoAlbums()
-    }
 }
 
 @Composable

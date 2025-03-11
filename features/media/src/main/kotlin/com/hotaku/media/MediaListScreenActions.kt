@@ -33,7 +33,7 @@ internal sealed interface MediaListScreenActions {
 
     data object OnShareMedia : MediaListScreenActions
 
-    data class OnDeleteMediaItem(val mediaItem: MediaUi) : MediaListScreenActions
+    data class OnTrashMediaItem(val mediaItem: MediaUi) : MediaListScreenActions
 
     data object OnShowOptions : MediaListScreenActions
 

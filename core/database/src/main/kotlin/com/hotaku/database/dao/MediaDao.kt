@@ -21,6 +21,7 @@ interface MediaDao {
     @Query(
         "SELECT * FROM media \n" +
             "WHERE (displayName LIKE '%' || :query || '%' OR :query IS NULL) " +
+            "AND isTrash = 0 " +
             "AND (mimeType = :mimeType OR :mimeType IS NULL) " +
             "AND (bucketDisplayName LIKE '%' || :albumName || '%' OR :albumName IS NULL) " +
             "ORDER BY dateModified DESC " +

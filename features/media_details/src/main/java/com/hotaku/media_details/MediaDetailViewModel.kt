@@ -9,9 +9,9 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import com.hotaku.media_details.MediaDetailScreenActions.*
 import com.hotaku.media_details.navigation.MediaDetailRoute
-import com.hotaku.media_domain.usecase.DeleteMediaUseCase
 import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_domain.usecase.RenameMediaUseCase
+import com.hotaku.media_domain.usecase.TrashMediaUseCase
 import com.hotaku.ui.MediaDialogs
 import com.hotaku.ui.mappers.MapMediaAsMediaUi
 import com.hotaku.ui.mappers.MapMediaUiAsMedia
@@ -39,7 +39,7 @@ internal class MediaDetailViewModel
         private val mediaUseCase: GetMediaUseCase,
         private val renameMediaUseCase: RenameMediaUseCase,
         private val mapMediaAsMediaUi: MapMediaAsMediaUi,
-        private val deleteMediaUseCase: DeleteMediaUseCase,
+        private val trashMediaUseCase: TrashMediaUseCase,
         private val mapMediaUiAsMedia: MapMediaUiAsMedia,
         private val savedState: SavedStateHandle,
     ) : ViewModel() {
@@ -68,7 +68,7 @@ internal class MediaDetailViewModel
                 is OnSelectedIndexChanged -> setSelectedIndex(action.index)
                 OnPlayVideo -> playVideo()
                 OnShareMedia -> shareMedia()
-                is OnDeleteMedia -> deleteMedia(media = action.mediaItem)
+                is OnTrashMedia -> trashMedia(media = action.mediaItem)
                 is OnMediaNameChange -> setMediaName(mediaName = action.mediaName)
                 OnShowOptions -> showOptions()
                 OnHideOptions -> showOptions(show = false)
@@ -174,12 +174,15 @@ internal class MediaDetailViewModel
             }
         }
 
-        private fun deleteMedia(media: MediaUi) {
-            val mediaUriToDelete = mapMediaUiAsMedia.map(media)
+        private fun trashMedia(media: MediaUi) {
+            val mediaUriToDelete = mapMediaUiAsMedia.map(media).copy(isTrash = true)
             viewModelScope.launch {
-                deleteMediaUseCase.invoke(media = listOf(mediaUriToDelete))
+                trashMediaUseCase.invoke(media = listOf(mediaUriToDelete)).let { isSuccess ->
+                    if (isSuccess) {
+                        sendEvent(MediaDetailScreenEvents.OnRefreshMedia)
+                    }
+                }
             }
-            sendEvent(MediaDetailScreenEvents.OnRefreshMedia)
         }
 
         private fun setNameQuery(query: String) {

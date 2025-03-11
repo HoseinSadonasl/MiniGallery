@@ -13,7 +13,7 @@ internal class UpdateMediaContentProviderDataSourceImpl
         override fun renameMedia(
             mediaUriString: String,
             name: String,
-        ): Result<Boolean> =
+        ): Boolean =
             contentResolver.renameMedia(
                 mediaUriString = mediaUriString,
                 name = name,

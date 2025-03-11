@@ -4,5 +4,5 @@ interface UpdateMediaContentProviderDataSource {
     fun renameMedia(
         mediaUriString: String,
         name: String,
-    ): Result<Boolean>
+    ): Boolean
 }

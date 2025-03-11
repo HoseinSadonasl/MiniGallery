@@ -7,6 +7,8 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import androidx.core.net.toUri
+import androidx.core.os.bundleOf
+import com.hotaku.common.Logger
 import com.hotaku.common.Logger.debugErrorLog
 import com.hotaku.media_datasource.models.MediaDto
 import com.hotaku.media_datasource.utils.MediaQueryUtils.getMediaUri
@@ -14,17 +16,16 @@ import com.hotaku.media_datasource.utils.MediaQueryUtils.getMediaUri
 internal fun ContentResolver.queryMediaFromContentProvider(
     uri: Uri,
     projection: Array<String>? = null,
-    selection: String? = null,
-    selectionArgs: Array<String>? = null,
-    sortOrder: String? = MediaQueryUtils.SORT_MEDIA_BY_DATE_ADDED,
 ): List<MediaDto> =
     runCatching {
         query(
             uri,
             projection,
-            selection,
-            selectionArgs,
-            sortOrder,
+            bundleOf(
+                MediaStore.QUERY_ARG_MATCH_TRASHED to MediaStore.MATCH_INCLUDE,
+                MediaStore.QUERY_ARG_MATCH_FAVORITE to MediaStore.MATCH_INCLUDE,
+            ),
+            null,
         ).use { it?.processCursor() ?: emptyList() }
     }.getOrElse {
         it.debugErrorLog(kFun = this::queryMediaFromContentProvider)
@@ -52,6 +53,10 @@ private fun Cursor.processCursor(): List<MediaDto> =
                     getString(mimeType).getMediaUri(),
                     getLong(mediaId),
                 )
+
+            if (getInt(isTrash) == 1) {
+                Logger.debugWarningLog(kClass = this::class, message = "Media is in trash")
+            }
             MediaDto(
                 mediaId = getLong(mediaId),
                 uriString = uriString.toString(),
@@ -81,4 +86,7 @@ internal fun ContentResolver.renameMedia(
             put(MediaStore.Files.FileColumns.DISPLAY_NAME, name)
         }
     update(mediaUriString.toUri(), contentValues, null) > 0
+}.getOrElse {
+    it.debugErrorLog(kClass = this::class)
+    false
 }

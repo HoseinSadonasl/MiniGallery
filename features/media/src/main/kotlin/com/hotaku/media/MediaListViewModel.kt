@@ -6,10 +6,10 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.hotaku.media.MediaListScreenActions.*
-import com.hotaku.media_domain.usecase.DeleteMediaUseCase
 import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_domain.usecase.RenameMediaUseCase
 import com.hotaku.media_domain.usecase.SyncMediaUseCase
+import com.hotaku.media_domain.usecase.TrashMediaUseCase
 import com.hotaku.media_domain.util.SyncDataState.*
 import com.hotaku.ui.MediaDialogs
 import com.hotaku.ui.UiState
@@ -40,7 +40,7 @@ internal class MediaListViewModel
         private val mediaUseCase: GetMediaUseCase,
         private val renameMediaUseCase: RenameMediaUseCase,
         private val mapMediaAsMediaUi: MapMediaAsMediaUi,
-        private val deleteMediaUseCase: DeleteMediaUseCase,
+        private val trashMediaUseCase: TrashMediaUseCase,
         private val mapMediaUiAsMedia: MapMediaUiAsMedia,
     ) : ViewModel() {
         private var mediaListScreenViewModelState = MutableStateFlow(MediaListUiState())
@@ -87,7 +87,7 @@ internal class MediaListViewModel
                 OnOpenMediaDetails -> showOpenDetails()
                 OnPlayVideo -> playVideo()
                 OnShareMedia -> shareMedia()
-                is OnDeleteMediaItem -> deleteMediaItem(mediaUi = action.mediaItem)
+                is OnTrashMediaItem -> trashMediaItem(mediaUi = action.mediaItem)
                 OnShowOptions -> showOptions()
                 OnHideOptions -> showOptions(show = false)
                 OnShowOptionsMenu -> showOptionsMenu()
@@ -183,17 +183,20 @@ internal class MediaListViewModel
 
         private fun retrySync() = synchronizeMedia()
 
-        private fun deleteMediaItem(mediaUi: MediaUi) {
+        private fun trashMediaItem(mediaUi: MediaUi) {
             val media = listOf(mediaUi)
-            deleteMedia(media = media)
+            trashMedia(media = media)
         }
 
-        private fun deleteMedia(media: List<MediaUi>) {
+        private fun trashMedia(media: List<MediaUi>) {
             viewModelScope.launch {
-                media.map { mapMediaUiAsMedia.map(it) }.let { media ->
-                    deleteMediaUseCase.invoke(media = media)
+                media.map {
+                    mapMediaUiAsMedia.map(it).copy(isTrash = true)
+                }.let { media ->
+                    trashMediaUseCase.invoke(media = media)
+                }.let { success ->
+                    if (success) sendEvent(event = MediaListScreenEvents.OnRefreshList)
                 }
-                sendEvent(event = MediaListScreenEvents.OnRefreshList)
             }
         }
 

@@ -128,7 +128,7 @@ private fun MediaListScreen(
         rememberLauncherForStartIntentSenderForResult {
             state.selectedMediaIndex?.let {
                 pagingMediaItems.peek(it)?.let { mediaItem ->
-                    onAction(OnDeleteMediaItem(mediaItem = mediaItem))
+                    onAction(OnTrashMediaItem(mediaItem = mediaItem))
                 }
             }
         }
@@ -441,7 +441,7 @@ private fun SupportingPaneContent(
                                             OnShareMedia,
                                         )
                                     },
-                                    onDeleteMedia = {
+                                    onTrashMedia = {
                                         media.uriString.trashMediaRequest(
                                             context = context,
                                             trashLauncher = trashLauncher,

@@ -9,7 +9,7 @@ internal sealed interface MediaDetailScreenActions {
 
     data object OnShareMedia : MediaDetailScreenActions
 
-    data class OnDeleteMedia(val mediaItem: MediaUi) : MediaDetailScreenActions
+    data class OnTrashMedia(val mediaItem: MediaUi) : MediaDetailScreenActions
 
     data class OnMediaNameChange(val mediaName: String) : MediaDetailScreenActions
 

@@ -5,9 +5,9 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.provider.MediaStore.createDeleteRequest
 import android.provider.MediaStore.createTrashRequest
 import android.provider.MediaStore.createWriteRequest
+import android.provider.Settings.ACTION_REQUEST_MANAGE_MEDIA
 import android.util.Size
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -67,17 +67,18 @@ fun List<String>.trashGroupOfMediaRequest(
 private fun List<String>.trashMediaRequest(
     context: Context,
     trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
+    trash: Boolean = true,
 ) {
     val resolver = context.contentResolver
 
-    val deleteRequest =
+    val trashRequest =
         createTrashRequest(
             resolver,
             this.map { it.toUri() },
-            true,
+            trash,
         )
 
-    val intentSenderRequest = deleteRequest.createRequest()
+    val intentSenderRequest = trashRequest.createRequest()
     trashLauncher.launch(intentSenderRequest)
 }
 
@@ -118,35 +119,46 @@ private fun List<String>.writeMediaRequest(
 fun String.deleteMediaRequest(
     context: Context,
     trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
+    trash: Boolean,
 ) {
     listOf(this).deleteMediaRequest(
         context = context,
         trashLauncher = trashLauncher,
+        trash = trash,
     )
 }
 
 fun List<String>.deleteGroupOfMediaRequest(
     context: Context,
     trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
+    trash: Boolean,
 ) {
     deleteMediaRequest(
         context = context,
         trashLauncher = trashLauncher,
+        trash = trash,
     )
 }
 
 private fun List<String>.deleteMediaRequest(
     context: Context,
     trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
+    trash: Boolean,
 ) {
     val resolver = context.contentResolver
     val deleteRequest =
-        createDeleteRequest(
+        createTrashRequest(
             resolver,
             this.map { it.toUri() },
+            trash,
         )
 
-    val intentSenderRequest = deleteRequest.createRequest()
+    val intentSenderRequest =
+        deleteRequest.createRequest().apply {
+            fillInIntent?.apply {
+                setAction(ACTION_REQUEST_MANAGE_MEDIA)
+            }
+        }
     trashLauncher.launch(intentSenderRequest)
 }
 

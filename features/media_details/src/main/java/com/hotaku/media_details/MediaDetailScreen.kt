@@ -83,7 +83,7 @@ private fun MediaDetailScreen(
             state.selectedMediaIndex.let { index ->
                 pagingMediaItems.peek(index)?.let { media ->
                     onAction(
-                        OnDeleteMedia(
+                        OnTrashMedia(
                             mediaItem = media,
                         ),
                     )
@@ -220,7 +220,7 @@ private fun MediaDetailPager(
                             onShareMedia = {
                                 onAction(OnShareMedia)
                             },
-                            onDeleteMedia = {
+                            onTrashMedia = {
                                 media.uriString.trashMediaRequest(
                                     context = context,
                                     trashLauncher = trashLauncher,

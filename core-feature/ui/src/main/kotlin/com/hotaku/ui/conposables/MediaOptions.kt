@@ -22,14 +22,14 @@ import androidx.compose.ui.unit.dp
 fun MediaOptions(
     modifier: Modifier = Modifier,
     onShareMedia: () -> Unit,
-    onDeleteMedia: () -> Unit,
+    onTrashMedia: () -> Unit,
     extraActions: @Composable RowScope.() -> Unit = {},
     moreAction: (() -> Unit)? = null,
 ) {
     MediaOptionsImpl(
         modifier = modifier,
         onShareMedia = onShareMedia,
-        onDeleteMedia = onDeleteMedia,
+        onTrashMedia = onTrashMedia,
         extraActions = extraActions,
         moreAction = moreAction,
     )
@@ -39,7 +39,7 @@ fun MediaOptions(
 private fun MediaOptionsImpl(
     modifier: Modifier = Modifier,
     onShareMedia: () -> Unit,
-    onDeleteMedia: () -> Unit,
+    onTrashMedia: () -> Unit,
     extraActions: @Composable RowScope.() -> Unit = {},
     moreAction: (() -> Unit)? = null,
 ) {
@@ -62,11 +62,11 @@ private fun MediaOptionsImpl(
             )
         }
         IconButton(
-            onClick = onDeleteMedia,
+            onClick = onTrashMedia,
         ) {
             Icon(
                 imageVector = Icons.Outlined.Delete,
-                contentDescription = "Delete Media",
+                contentDescription = "Trash Media",
             )
         }
         moreAction?.let {

@@ -13,5 +13,5 @@ interface MediaRepository {
 
     suspend fun renameMedia(media: Media): Boolean
 
-    suspend fun deleteMedia(media: List<Media>)
+    suspend fun trashMedia(media: List<Media>): Boolean
 }

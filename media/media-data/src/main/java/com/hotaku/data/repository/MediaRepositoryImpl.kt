@@ -47,28 +47,30 @@ internal class MediaRepositoryImpl
                         albumName = albumName,
                     )
                 },
-            ).flow.map { data -> data.map { mediaData -> mapMediaDataAsMedia.map(mediaData) } }
+            ).flow.map { data -> data.map { mediaData -> mapMediaDataAsMedia.map(from = mediaData) } }
 
         override suspend fun renameMedia(media: Media): Boolean =
             withContext(NonCancellable) {
                 updateMediaContentProviderDataSource.renameMedia(
                     mediaUriString = media.uriString,
                     name = media.displayName,
-                ).onSuccess {
-                    withContext(ioDispatcher) {
-                        mediaDataSource.updateMedia(mapMediaAsMediaData.map(media))
+                ).let { isSccess ->
+                    if (isSccess) {
+                        withContext(ioDispatcher) {
+                            mediaDataSource.updateMedia(mapMediaAsMediaData.map(from = media))
+                        }
                     }
-                }.getOrElse {
-                    it.printStackTrace()
-                    false
+                    isSccess
                 }
             }
 
-        override suspend fun deleteMedia(media: List<Media>) =
+        override suspend fun trashMedia(media: List<Media>): Boolean =
             withContext(NonCancellable) {
-                media.map { mapMediaAsMediaData.map(it) }.let { mediaData ->
-                    mediaDataSource.deleteMedia(mediaData = mediaData)
-                }
+                media.onEach { mediaData ->
+                    withContext(ioDispatcher) {
+                        mediaDataSource.updateMedia(mapMediaAsMediaData.map(from = mediaData))
+                    }
+                }.filterNot { it.isTrash }.isEmpty()
             }
 
         companion object {

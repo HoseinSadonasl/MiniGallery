@@ -4,13 +4,13 @@ import com.hotaku.media_domain.model.Media
 import com.hotaku.media_domain.repository.MediaRepository
 import javax.inject.Inject
 
-internal class DeleteMediaUseCaseImpl
+internal class TrashMediaUseCaseImpl
     @Inject
     constructor(
         private val mediaRepository: MediaRepository,
-    ) : DeleteMediaUseCase {
-        override suspend fun invoke(media: List<Media>) =
-            mediaRepository.deleteMedia(
+    ) : TrashMediaUseCase {
+        override suspend fun invoke(media: List<Media>): Boolean =
+            mediaRepository.trashMedia(
                 media = media,
             )
     }

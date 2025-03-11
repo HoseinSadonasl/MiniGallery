@@ -7,7 +7,7 @@ internal sealed interface AlbumsScreenActions {
 
     data class OnAlbumClick(val album: AlbumUi) : AlbumsScreenActions
 
-    data object OnCloseAlbum : AlbumsScreenActions
+    data object OnClearSelectedAlbum : AlbumsScreenActions
 
     data class OnMediaItemClick(val mediaItemIndex: Int) : AlbumsScreenActions
 }

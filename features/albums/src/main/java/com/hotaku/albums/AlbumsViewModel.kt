@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
+import com.hotaku.albums.AlbumsScreenActions.*
 import com.hotaku.albums.mapper.MapAlbumAsAlbumUi
 import com.hotaku.albums.model.AlbumUi
 import com.hotaku.domain.utils.DataResult
@@ -60,10 +61,10 @@ internal class AlbumsViewModel
 
         fun onAction(action: AlbumsScreenActions) {
             when (action) {
-                AlbumsScreenActions.OnUpdateMediaList -> updateMediaState()
-                is AlbumsScreenActions.OnAlbumClick -> getAlbumMedia(action.album)
-                AlbumsScreenActions.OnCloseAlbum -> closeAlbum()
-                is AlbumsScreenActions.OnMediaItemClick -> openMediaInDetail(action.mediaItemIndex)
+                OnUpdateMediaList -> updateMediaState()
+                is OnAlbumClick -> getAlbumMedia(album = action.album)
+                OnClearSelectedAlbum -> closeAlbum()
+                is OnMediaItemClick -> openMediaInDetail(mediaItemIndex = action.mediaItemIndex)
             }
         }
 

@@ -39,6 +39,7 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.hotaku.albums.AlbumsScreenActions.*
 import com.hotaku.albums.model.AlbumUi
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.features.albums.R
@@ -83,7 +84,7 @@ private fun AlbumsScreen(
     val navigator = rememberSupportingPaneScaffoldNavigator<String>()
 
     BackHandler(navigator.canNavigateBack()) {
-        onAction(AlbumsScreenActions.OnCloseAlbum)
+        onAction(OnClearSelectedAlbum)
         navigator.navigateBack()
     }
 
@@ -101,7 +102,7 @@ private fun AlbumsScreen(
 
     LaunchedEffect(state.selectedAlbum) {
         state.selectedAlbum?.let {
-            onAction(AlbumsScreenActions.OnUpdateMediaList)
+            onAction(OnUpdateMediaList)
             navigator.navigateTo(ThreePaneScaffoldRole.Secondary, state.selectedAlbum?.displayName)
         }
     }
@@ -117,7 +118,7 @@ private fun AlbumsScreen(
                     state.selectedAlbum?.let {
                         IconButton(
                             onClick = {
-                                onAction(AlbumsScreenActions.OnCloseAlbum)
+                                onAction(OnClearSelectedAlbum)
                                 navigator.navigateBack()
                             },
                         ) {
@@ -149,7 +150,7 @@ private fun AlbumsScreen(
                                 pagingMediaItems = mediaListState,
                                 onScrolled = {},
                                 onItemClick = { itemIndex ->
-                                    onAction(AlbumsScreenActions.OnMediaItemClick(itemIndex))
+                                    onAction(OnMediaItemClick(itemIndex))
                                 },
                                 onItemLongClick = {},
                             )
@@ -261,7 +262,7 @@ private fun LazyGridScope.albumsListItems(
                 Modifier
                     .fillMaxWidth()
                     .clip(MaterialTheme.shapes.medium)
-                    .clickable { onAlbumClick(AlbumsScreenActions.OnAlbumClick(album)) },
+                    .clickable { onAlbumClick(OnAlbumClick(album)) },
         ) {
             when (album.thumbnailType) {
                 MediaType.IMAGE -> {

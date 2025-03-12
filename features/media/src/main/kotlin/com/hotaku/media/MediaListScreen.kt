@@ -428,8 +428,8 @@ private fun SupportingPaneContent(
     trashLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
 ) {
     LaunchedEffect(state.isOptionsVisible, state.isOptionsMenuVisible) {
-        delay(1500)
         if (state.isOptionsVisible && !state.isOptionsMenuVisible) {
+            delay(1500)
             onAction(OnHideOptions)
         }
     }

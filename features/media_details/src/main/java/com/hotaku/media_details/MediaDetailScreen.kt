@@ -106,8 +106,8 @@ private fun MediaDetailScreen(
             }
         }
 
-    LaunchedEffect(state.isOptionsVisible) {
-        if (state.isOptionsVisible) {
+    LaunchedEffect(state.isOptionsVisible, state.isOptionsMenuVisible) {
+        if (state.isOptionsVisible && !state.isOptionsMenuVisible) {
             delay(1500)
             onAction(OnHideOptions)
         }

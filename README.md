@@ -25,7 +25,10 @@ This project is built using [Clean Architecture](https://blog.cleancoder.com/unc
 This project employs the Model-View-Intent (MVI) pattern in its presentation modules. MVI's benefits include a single, immutable state for data consistency, a clear unidirectional data flow for easier debugging, and enhanced testability.
 
 ## 📋 To Do List
-- [ ] Write tests
+- [ ] Writing tests and modifying existing tests for the implemented part of the project
+- [ ] Library feature (Includes Trash, Favorite, Secured folder)
+- [ ] Trashed media
+- [ ] Favorite media
 - [ ] Pinch to zoom
 - [ ] Add Media Player
 

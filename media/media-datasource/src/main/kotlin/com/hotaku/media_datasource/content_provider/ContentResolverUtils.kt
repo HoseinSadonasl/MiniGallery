@@ -1,4 +1,4 @@
-package com.hotaku.media_datasource.utils
+package com.hotaku.media_datasource.content_provider
 
 import android.content.ContentResolver
 import android.content.ContentUris
@@ -10,8 +10,8 @@ import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import com.hotaku.common.Logger
 import com.hotaku.common.Logger.debugErrorLog
+import com.hotaku.media_datasource.content_provider.MediaQueryUtils.getMediaUri
 import com.hotaku.media_datasource.models.MediaDto
-import com.hotaku.media_datasource.utils.MediaQueryUtils.getMediaUri
 
 internal fun ContentResolver.queryMediaFromContentProvider(
     uri: Uri,

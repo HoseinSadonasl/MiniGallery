@@ -2,7 +2,7 @@ package com.hotaku.media_datasource.mapper
 
 import com.hotaku.common.mapper.Mapper
 import com.hotaku.data.model.AlbumData
-import com.hotaku.database.entity.AlbumEntity
+import com.hotaku.media_datasource.entities.AlbumEntity
 import javax.inject.Inject
 
 internal class MapAlbumsEntityAsAlbumsData

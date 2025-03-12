@@ -2,7 +2,7 @@ package com.hotaku.media_datasource.mapper
 
 import com.hotaku.common.mapper.Mapper
 import com.hotaku.data.model.MediaData
-import com.hotaku.database.entity.MediaEntity
+import com.hotaku.media_datasource.entities.MediaEntity
 import javax.inject.Inject
 
 internal class MapMediaDataAsMediaEntity

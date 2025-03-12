@@ -1,4 +1,4 @@
-package com.hotaku.media_datasource.utils
+package com.hotaku.media_datasource.content_provider
 
 import android.net.Uri
 import android.provider.MediaStore

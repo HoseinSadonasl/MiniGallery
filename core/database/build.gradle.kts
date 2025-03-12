@@ -10,6 +10,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.media.mediaDatasource)
     implementation(libs.androidx.core.ktx)
     implementation(libs.coroutines.android)
 }

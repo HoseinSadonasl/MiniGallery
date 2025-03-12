@@ -1,4 +1,4 @@
-package com.hotaku.database.entity
+package com.hotaku.media_datasource.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

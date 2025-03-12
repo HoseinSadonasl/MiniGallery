@@ -9,5 +9,7 @@ interface GetMediaUseCase {
         mimeType: String,
         query: String,
         albumName: String,
+        matchTrash: Boolean = false,
+        matchFavorite: Boolean = false,
     ): Flow<PagingData<Media>>
 }

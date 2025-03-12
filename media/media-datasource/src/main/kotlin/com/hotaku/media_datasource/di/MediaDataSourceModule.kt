@@ -5,11 +5,11 @@ import com.hotaku.data.datasource.ContentProviderDataSource
 import com.hotaku.data.datasource.MediaDataSource
 import com.hotaku.data.datasource.UpdateMediaContentProviderDataSource
 import com.hotaku.data.datasource.UpdateMediaDbDataSource
-import com.hotaku.database.dao.MediaDao
 import com.hotaku.media_datasource.ContentProviderDataSourceImpl
 import com.hotaku.media_datasource.MediaDataSourceImpl
 import com.hotaku.media_datasource.UpdateMediaContentProviderDataSourceImpl
 import com.hotaku.media_datasource.UpdateMediaDataSourceImpl
+import com.hotaku.media_datasource.dao.MediaDao
 import com.hotaku.media_datasource.mapper.MapMediaDataAsMediaEntity
 import com.hotaku.media_datasource.mapper.MapMediaDtoAsMediaData
 import com.hotaku.media_datasource.mapper.MapMediaEntityAsMediaData

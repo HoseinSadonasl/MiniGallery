@@ -1,14 +1,17 @@
 package com.hotaku.data.datasource
 
-import androidx.paging.PagingSource
+import androidx.paging.PagingData
 import com.hotaku.data.model.MediaData
+import kotlinx.coroutines.flow.Flow
 
 interface MediaDataSource {
     fun getMedia(
         mimeType: String,
         query: String,
         albumName: String,
-    ): PagingSource<Int, MediaData>
+        matchTrash: Boolean,
+        matchFavorite: Boolean,
+    ): Flow<PagingData<MediaData>>
 
     suspend fun updateMedia(mediaData: MediaData)
 

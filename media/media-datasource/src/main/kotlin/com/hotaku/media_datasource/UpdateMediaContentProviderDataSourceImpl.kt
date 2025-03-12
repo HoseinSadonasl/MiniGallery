@@ -2,7 +2,7 @@ package com.hotaku.media_datasource
 
 import android.content.ContentResolver
 import com.hotaku.data.datasource.UpdateMediaContentProviderDataSource
-import com.hotaku.media_datasource.utils.renameMedia
+import com.hotaku.media_datasource.content_provider.renameMedia
 import javax.inject.Inject
 
 internal class UpdateMediaContentProviderDataSourceImpl

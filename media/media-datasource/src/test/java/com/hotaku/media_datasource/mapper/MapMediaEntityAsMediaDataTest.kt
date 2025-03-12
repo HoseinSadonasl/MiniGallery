@@ -2,7 +2,7 @@ package com.hotaku.media_datasource.mapper
 
 import com.google.common.truth.Truth
 import com.hotaku.data.model.MediaData
-import com.hotaku.database.entity.MediaEntity
+import com.hotaku.media_datasource.entities.MediaEntity
 import org.junit.Before
 import org.junit.Test
 import java.time.Instant

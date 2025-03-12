@@ -1,7 +1,5 @@
 package com.hotaku.data.repository
 
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.hotaku.common.di.Dispatcher
@@ -32,22 +30,16 @@ internal class MediaRepositoryImpl
             mimeType: String,
             query: String,
             albumName: String,
+            matchTrash: Boolean,
+            matchFavorite: Boolean,
         ): Flow<PagingData<Media>> =
-            Pager(
-                config =
-                    PagingConfig(
-                        initialLoadSize = INITIAL_LOAD_SIZE,
-                        pageSize = PAGE_SIZE,
-                        enablePlaceholders = false,
-                    ),
-                pagingSourceFactory = {
-                    mediaDataSource.getMedia(
-                        mimeType = mimeType,
-                        query = query,
-                        albumName = albumName,
-                    )
-                },
-            ).flow.map { data -> data.map { mediaData -> mapMediaDataAsMedia.map(from = mediaData) } }
+            mediaDataSource.getMedia(
+                mimeType = mimeType,
+                query = query,
+                albumName = albumName,
+                matchTrash = matchTrash,
+                matchFavorite = matchFavorite,
+            ).map { it.map { mediaData -> mapMediaDataAsMedia.map(from = mediaData) } }
 
         override suspend fun renameMedia(media: Media): Boolean =
             withContext(NonCancellable) {
@@ -72,9 +64,4 @@ internal class MediaRepositoryImpl
                     }
                 }.filterNot { it.isTrash }.isEmpty()
             }
-
-        companion object {
-            private const val INITIAL_LOAD_SIZE = 40
-            private const val PAGE_SIZE = 40
-        }
     }

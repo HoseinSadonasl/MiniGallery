@@ -3,9 +3,9 @@ package com.hotaku.media_datasource
 import android.content.ContentResolver
 import com.hotaku.data.datasource.ContentProviderDataSource
 import com.hotaku.data.model.MediaData
+import com.hotaku.media_datasource.content_provider.MediaQueryUtils
+import com.hotaku.media_datasource.content_provider.queryMediaFromContentProvider
 import com.hotaku.media_datasource.mapper.MapMediaDtoAsMediaData
-import com.hotaku.media_datasource.utils.MediaQueryUtils
-import com.hotaku.media_datasource.utils.queryMediaFromContentProvider
 import javax.inject.Inject
 
 internal class ContentProviderDataSourceImpl

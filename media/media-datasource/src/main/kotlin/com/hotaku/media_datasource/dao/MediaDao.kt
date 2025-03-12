@@ -1,11 +1,12 @@
-package com.hotaku.database.dao
+package com.hotaku.media_datasource.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
-import com.hotaku.database.entity.AlbumEntity
-import com.hotaku.database.entity.MediaEntity
+import com.hotaku.media_datasource.entities.AlbumEntity
+import com.hotaku.media_datasource.entities.MediaEntity
 
 @Dao
 interface MediaDao {
@@ -19,21 +20,21 @@ interface MediaDao {
     suspend fun deleteMedia(media: List<MediaEntity>)
 
     @Query(
-        "SELECT * FROM media \n" +
+        "SELECT * FROM media " +
             "WHERE (displayName LIKE '%' || :query || '%' OR :query IS NULL) " +
-            "AND isTrash = 0 " +
-            "AND (mimeType = :mimeType OR :mimeType IS NULL) " +
-            "AND (bucketDisplayName LIKE '%' || :albumName || '%' OR :albumName IS NULL) " +
-            "ORDER BY dateModified DESC " +
-            "LIMIT :limit OFFSET :offset",
+            "AND (mimeType LIKE '%' || :mimeType || '%' OR :mimeType IS NULL) " +
+            "AND (bucketDisplayName LIKE '%' || :albumName || '%' OR :albumName IS NULL)" +
+            "AND isTrash = :isTrash " +
+            "AND isFavorite = :isFavorite " +
+            "ORDER BY dateModified DESC",
     )
-    suspend fun getAll(
-        query: String? = null,
-        mimeType: String? = null,
-        albumName: String? = null,
-        limit: Int,
-        offset: Int,
-    ): List<MediaEntity>
+    fun getAll(
+        query: String?,
+        mimeType: String?,
+        albumName: String?,
+        isTrash: Int,
+        isFavorite: Int,
+    ): PagingSource<Int, MediaEntity>
 
     @Query("SELECT uriString FROM media")
     suspend fun getAllUris(): List<String>

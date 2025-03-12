@@ -15,10 +15,14 @@ internal class GetMediaUseCaseImpl
             mimeType: String,
             query: String,
             albumName: String,
+            matchTrash: Boolean,
+            matchFavorite: Boolean,
         ): Flow<PagingData<Media>> =
             mediaRepository.getMedia(
                 mimeType = mimeType,
                 query = query,
                 albumName = albumName,
+                matchTrash = matchTrash,
+                matchFavorite = matchFavorite,
             )
     }

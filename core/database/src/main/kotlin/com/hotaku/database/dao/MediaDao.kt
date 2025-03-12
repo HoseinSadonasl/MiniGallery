@@ -47,8 +47,8 @@ interface MediaDao {
             " bucketDisplayName AS displayName," +
             " MAX(uriString) AS thumbnailUriString," +
             " MAX(mimeType) AS thumbnailType" +
-            " FROM media GROUP BY" +
-            " bucketDisplayName ORDER BY bucketDisplayName ASC",
+            " FROM media WHERE isTrash = 0 " +
+            "GROUP BY bucketDisplayName ORDER BY bucketDisplayName ASC",
     )
     suspend fun getAlbums(): List<AlbumEntity>
 }

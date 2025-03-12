@@ -1,7 +1,7 @@
 
 # Contributing to MiniGallery
 
-Thank you for your interest in contributing to MiniGallery! We appreciate your help in making this project better.
+Thank you for your interest in contributing to MiniGallery! I appreciate your help in making this project better.
 
 ## How to Contribute
 
@@ -39,14 +39,15 @@ Thank you for your interest in contributing to MiniGallery! We appreciate your h
         ```bash
         git add .
         ```
-    * Commit your changes with a descriptive message:
+    * Commit your changes with a #issue-number plus descriptive message:
         ```bash
-        git commit -m "Add feature: your-feature-description"
+        git commit -m "#32243 Add feature your-feature-description"
         ```
       or
         ```bash
-        git commit -m "Fix bug: your-bug-fix-description"
+        git commit -m "#45454 Fix bug your-bug-fix-description"
         ```
+    **Avoid Conventional Commits**  MiniGallery currently does not use the Conventional Commits format.
 
 6.  **Push Your Changes:**
     * Push your branch to your forked repository:
@@ -61,6 +62,7 @@ Thank you for your interest in contributing to MiniGallery! We appreciate your h
 7.  **Create a Pull Request:**
     * Go to your forked repository on GitHub.
     * Click the "Compare & pull request" button.
+    * Please create your PR against the **develop** branch.
     * Write a clear and concise description of your changes.
     * Submit the pull request.
 

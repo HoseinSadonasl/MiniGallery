@@ -1,16 +1,16 @@
-package com.hotaku.media_datasource.mapper
+package com.hotaku.data.mappers
 
 import com.hotaku.common.mapper.Mapper
-import com.hotaku.data.model.AlbumData
-import com.hotaku.media_datasource.entities.AlbumEntity
+import com.hotaku.data.modes.AlbumData
+import com.hotaku.media_domain.models.Album
 import javax.inject.Inject
 
-internal class MapAlbumsEntityAsAlbumsData
+internal class MapAlbumDataAsAlbum
     @Inject
-    constructor() : Mapper<AlbumEntity, AlbumData> {
-        override fun map(from: AlbumEntity): AlbumData {
+    constructor() : Mapper<AlbumData, Album> {
+        override fun map(from: AlbumData): Album {
             with(from) {
-                return AlbumData(
+                return Album(
                     displayName = displayName,
                     thumbnailUriString = thumbnailUriString,
                     thumbnailType = thumbnailType,

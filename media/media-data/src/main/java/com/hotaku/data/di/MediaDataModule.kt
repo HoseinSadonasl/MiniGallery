@@ -4,8 +4,8 @@ import com.hotaku.common.di.Dispatcher
 import com.hotaku.common.di.MiniGalleryDispatchers
 import com.hotaku.data.datasource.MediaDataSource
 import com.hotaku.data.datasource.UpdateMediaContentProviderDataSource
-import com.hotaku.data.mapper.MapMediaAsMediaData
-import com.hotaku.data.mapper.MapMediaDataAsMedia
+import com.hotaku.data.mappers.MapMediaAsMediaData
+import com.hotaku.data.mappers.MapMediaDataAsMedia
 import com.hotaku.data.repository.MediaRepositoryImpl
 import com.hotaku.media_domain.repository.MediaRepository
 import dagger.Module

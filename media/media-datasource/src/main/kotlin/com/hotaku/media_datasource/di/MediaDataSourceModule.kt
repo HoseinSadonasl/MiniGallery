@@ -10,9 +10,9 @@ import com.hotaku.media_datasource.MediaDataSourceImpl
 import com.hotaku.media_datasource.UpdateMediaContentProviderDataSourceImpl
 import com.hotaku.media_datasource.UpdateMediaDataSourceImpl
 import com.hotaku.media_datasource.dao.MediaDao
-import com.hotaku.media_datasource.mapper.MapMediaDataAsMediaEntity
-import com.hotaku.media_datasource.mapper.MapMediaDtoAsMediaData
-import com.hotaku.media_datasource.mapper.MapMediaEntityAsMediaData
+import com.hotaku.media_datasource.mappers.MapMediaDataAsMediaEntity
+import com.hotaku.media_datasource.mappers.MapMediaDtoAsMediaData
+import com.hotaku.media_datasource.mappers.MapMediaEntityAsMediaData
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

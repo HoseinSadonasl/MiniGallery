@@ -1,6 +1,6 @@
 package com.hotaku.data.datasource
 
-import com.hotaku.data.model.MediaData
+import com.hotaku.data.modes.MediaData
 
 interface UpdateMediaDbDataSource {
     suspend fun getMediaStringUris(): List<String>

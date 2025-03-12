@@ -1,7 +1,7 @@
 package com.hotaku.media_domain.repository
 
 import androidx.paging.PagingData
-import com.hotaku.media_domain.model.Media
+import com.hotaku.media_domain.models.Media
 import kotlinx.coroutines.flow.Flow
 import kotlin.Boolean
 

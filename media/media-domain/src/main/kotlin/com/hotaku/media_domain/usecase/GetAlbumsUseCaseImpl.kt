@@ -3,7 +3,7 @@ package com.hotaku.media_domain.usecase
 import com.hotaku.domain.utils.DataResult
 import com.hotaku.domain.utils.Error
 import com.hotaku.domain.utils.executeFlowResult
-import com.hotaku.media_domain.model.Album
+import com.hotaku.media_domain.models.Album
 import com.hotaku.media_domain.repository.AlbumsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

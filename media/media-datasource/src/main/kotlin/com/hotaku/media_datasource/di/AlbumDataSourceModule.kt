@@ -3,7 +3,7 @@ package com.hotaku.media_datasource.di
 import com.hotaku.data.datasource.AlbumsDataSource
 import com.hotaku.media_datasource.AlbumsDataSourceImpl
 import com.hotaku.media_datasource.dao.MediaDao
-import com.hotaku.media_datasource.mapper.MapAlbumsEntityAsAlbumsData
+import com.hotaku.media_datasource.mappers.MapAlbumsEntityAsAlbumsData
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

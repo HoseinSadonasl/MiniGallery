@@ -1,9 +1,9 @@
 package com.hotaku.media_datasource
 
 import com.hotaku.data.datasource.UpdateMediaDbDataSource
-import com.hotaku.data.model.MediaData
+import com.hotaku.data.modes.MediaData
 import com.hotaku.media_datasource.dao.MediaDao
-import com.hotaku.media_datasource.mapper.MapMediaDataAsMediaEntity
+import com.hotaku.media_datasource.mappers.MapMediaDataAsMediaEntity
 import javax.inject.Inject
 
 internal class UpdateMediaDataSourceImpl

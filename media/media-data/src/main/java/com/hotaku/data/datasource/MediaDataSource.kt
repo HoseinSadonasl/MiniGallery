@@ -1,7 +1,7 @@
 package com.hotaku.data.datasource
 
 import androidx.paging.PagingData
-import com.hotaku.data.model.MediaData
+import com.hotaku.data.modes.MediaData
 import kotlinx.coroutines.flow.Flow
 
 interface MediaDataSource {

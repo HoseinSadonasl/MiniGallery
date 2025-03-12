@@ -1,6 +1,6 @@
-package com.hotaku.media_domain.model
+package com.hotaku.data.modes
 
-data class Album(
+data class AlbumData(
     val displayName: String,
     val thumbnailUriString: String,
     val thumbnailType: String,

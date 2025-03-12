@@ -1,7 +1,7 @@
 package com.hotaku.ui.mappers
 
 import com.hotaku.common.mapper.Mapper
-import com.hotaku.media_domain.model.Media
+import com.hotaku.media_domain.models.Media
 import com.hotaku.ui.models.MediaUi
 import javax.inject.Inject
 

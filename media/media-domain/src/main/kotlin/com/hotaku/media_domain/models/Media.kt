@@ -1,6 +1,6 @@
-package com.hotaku.data.model
+package com.hotaku.media_domain.models
 
-data class MediaData(
+data class Media(
     val mediaId: Long,
     val uriString: String,
     val displayName: String,

@@ -3,7 +3,7 @@ package com.hotaku.data.di
 import com.hotaku.common.di.Dispatcher
 import com.hotaku.common.di.MiniGalleryDispatchers
 import com.hotaku.data.datasource.AlbumsDataSource
-import com.hotaku.data.mapper.MapAlbumDataAsAlbum
+import com.hotaku.data.mappers.MapAlbumDataAsAlbum
 import com.hotaku.data.repository.AlbumsRepositoryImpl
 import com.hotaku.media_domain.repository.AlbumsRepository
 import dagger.Module

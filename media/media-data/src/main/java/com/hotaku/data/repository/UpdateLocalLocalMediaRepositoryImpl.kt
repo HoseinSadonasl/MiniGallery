@@ -2,7 +2,7 @@ package com.hotaku.data.repository
 
 import com.hotaku.data.datasource.ContentProviderDataSource
 import com.hotaku.data.datasource.UpdateMediaDbDataSource
-import com.hotaku.data.model.MediaData
+import com.hotaku.data.modes.MediaData
 import com.hotaku.media_domain.repository.UpdateLocalMediaRepository
 import javax.inject.Inject
 

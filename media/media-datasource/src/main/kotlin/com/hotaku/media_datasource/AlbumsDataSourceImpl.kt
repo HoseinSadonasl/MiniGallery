@@ -1,9 +1,9 @@
 package com.hotaku.media_datasource
 
 import com.hotaku.data.datasource.AlbumsDataSource
-import com.hotaku.data.model.AlbumData
+import com.hotaku.data.modes.AlbumData
 import com.hotaku.media_datasource.dao.MediaDao
-import com.hotaku.media_datasource.mapper.MapAlbumsEntityAsAlbumsData
+import com.hotaku.media_datasource.mappers.MapAlbumsEntityAsAlbumsData
 import javax.inject.Inject
 
 internal class AlbumsDataSourceImpl

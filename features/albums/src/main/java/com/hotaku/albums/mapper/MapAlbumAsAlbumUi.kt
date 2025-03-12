@@ -2,7 +2,7 @@ package com.hotaku.albums.mapper
 
 import com.hotaku.albums.model.AlbumUi
 import com.hotaku.common.mapper.Mapper
-import com.hotaku.media_domain.model.Album
+import com.hotaku.media_domain.models.Album
 import com.hotaku.ui.asMediaType
 import javax.inject.Inject
 

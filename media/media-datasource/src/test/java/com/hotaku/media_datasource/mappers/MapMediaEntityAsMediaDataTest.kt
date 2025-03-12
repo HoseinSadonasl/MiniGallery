@@ -1,7 +1,7 @@
-package com.hotaku.media_datasource.mapper
+package com.hotaku.media_datasource.mappers
 
 import com.google.common.truth.Truth
-import com.hotaku.data.model.MediaData
+import com.hotaku.data.modes.MediaData
 import com.hotaku.media_datasource.entities.MediaEntity
 import org.junit.Before
 import org.junit.Test

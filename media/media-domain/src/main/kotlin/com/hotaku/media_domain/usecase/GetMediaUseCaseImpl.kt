@@ -1,7 +1,7 @@
 package com.hotaku.media_domain.usecase
 
 import androidx.paging.PagingData
-import com.hotaku.media_domain.model.Media
+import com.hotaku.media_domain.models.Media
 import com.hotaku.media_domain.repository.MediaRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

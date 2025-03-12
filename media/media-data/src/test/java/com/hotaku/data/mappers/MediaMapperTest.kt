@@ -1,8 +1,8 @@
-package com.hotaku.data.mapper
+package com.hotaku.data.mappers
 
 import com.google.common.truth.Truth.assertThat
-import com.hotaku.data.model.MediaData
-import com.hotaku.media_domain.model.Media
+import com.hotaku.data.modes.MediaData
+import com.hotaku.media_domain.models.Media
 import org.junit.Test
 import java.time.Instant
 

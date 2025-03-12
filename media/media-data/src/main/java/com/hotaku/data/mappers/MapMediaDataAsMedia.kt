@@ -1,16 +1,16 @@
-package com.hotaku.data.mapper
+package com.hotaku.data.mappers
 
 import com.hotaku.common.mapper.Mapper
-import com.hotaku.data.model.MediaData
-import com.hotaku.media_domain.model.Media
+import com.hotaku.data.modes.MediaData
+import com.hotaku.media_domain.models.Media
 import javax.inject.Inject
 
-internal class MapMediaAsMediaData
+internal class MapMediaDataAsMedia
     @Inject
-    constructor() : Mapper<Media, MediaData> {
-        override fun map(from: Media): MediaData {
+    constructor() : Mapper<MediaData, Media> {
+        override fun map(from: MediaData): Media {
             with(from) {
-                return MediaData(
+                return Media(
                     mediaId = mediaId,
                     uriString = uriString,
                     displayName = displayName,

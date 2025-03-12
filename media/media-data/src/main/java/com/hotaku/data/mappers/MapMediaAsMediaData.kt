@@ -1,24 +1,24 @@
-package com.hotaku.media_datasource.mapper
+package com.hotaku.data.mappers
 
 import com.hotaku.common.mapper.Mapper
-import com.hotaku.data.model.MediaData
-import com.hotaku.media_datasource.entities.MediaEntity
+import com.hotaku.data.modes.MediaData
+import com.hotaku.media_domain.models.Media
 import javax.inject.Inject
 
-internal class MapMediaEntityAsMediaData
+internal class MapMediaAsMediaData
     @Inject
-    constructor() : Mapper<MediaEntity, MediaData> {
-        override fun map(from: MediaEntity): MediaData {
+    constructor() : Mapper<Media, MediaData> {
+        override fun map(from: Media): MediaData {
             with(from) {
                 return MediaData(
-                    mediaId = mediaId.toLong(),
+                    mediaId = mediaId,
                     uriString = uriString,
                     displayName = displayName,
                     mimeType = mimeType,
                     duration = duration,
-                    dateAdded = dateAdded.toLong(),
-                    dateModified = dateModified.toLong(),
-                    size = size.toLong(),
+                    dateAdded = dateAdded,
+                    dateModified = dateModified,
+                    size = size,
                     isTrash = isTrash,
                     isFavorite = isFavorite,
                     bucketDisplayName = bucketDisplayName,

@@ -5,10 +5,10 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.hotaku.data.datasource.MediaDataSource
-import com.hotaku.data.model.MediaData
+import com.hotaku.data.modes.MediaData
 import com.hotaku.media_datasource.dao.MediaDao
-import com.hotaku.media_datasource.mapper.MapMediaDataAsMediaEntity
-import com.hotaku.media_datasource.mapper.MapMediaEntityAsMediaData
+import com.hotaku.media_datasource.mappers.MapMediaDataAsMediaEntity
+import com.hotaku.media_datasource.mappers.MapMediaEntityAsMediaData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

@@ -27,6 +27,8 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.common.Logger
+import com.hotaku.common.trashMediaRequest
+import com.hotaku.common.writeMediaRequest
 import com.hotaku.features.media_details.R.*
 import com.hotaku.media_details.MediaDetailScreenActions.*
 import com.hotaku.ui.MediaDialogs
@@ -48,8 +50,6 @@ import com.hotaku.ui.models.MediaUi
 import com.hotaku.ui.rememberLauncherForStartIntentSenderForResult
 import com.hotaku.ui.sendPlayIntent
 import com.hotaku.ui.sendShareIntent
-import com.hotaku.ui.trashMediaRequest
-import com.hotaku.ui.writeMediaRequest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 

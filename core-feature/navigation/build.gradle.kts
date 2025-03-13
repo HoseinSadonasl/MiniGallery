@@ -8,6 +8,7 @@ android {
 
 dependencies {
     implementation(projects.features.media)
+    implementation(projects.features.mediaLibrary)
     implementation(projects.features.mediaDetails)
     implementation(projects.features.albums)
     implementation(projects.features.onboarding)

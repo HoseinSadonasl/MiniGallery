@@ -30,6 +30,7 @@ import com.hotaku.media.navigation.mediaListNav
 import com.hotaku.media.navigation.navigateToMediaListScreen
 import com.hotaku.media_details.navigation.mediaDetailsNav
 import com.hotaku.media_details.navigation.navigateToMediaDetailScreen
+import com.hotaku.media_library.navigation.mediaLibraryNav
 import com.hotaku.onboarding.navigation.OnboardingRoute
 import com.hotaku.onboarding.navigation.navigateToOnboardingScreen
 import com.hotaku.onboarding.navigation.onboardingNav
@@ -142,6 +143,8 @@ private fun MiniGalleryNavHost(
                 }
             },
         )
+
+        mediaLibraryNav()
 
         mediaDetailsNav(
             navigateUp = {

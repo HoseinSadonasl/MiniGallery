@@ -5,6 +5,7 @@ import androidx.annotation.StringRes
 import com.hotaku.albums.navigation.AlbumsScreenRoute
 import com.hotaku.core_feature.navigation.R
 import com.hotaku.media.navigation.MediaListScreenRRoute
+import com.hotaku.media_library.navigation.MediaLibraryRoute
 
 internal data class TopLevelRoute(
     @StringRes val label: Int,
@@ -24,5 +25,10 @@ internal val topLevelAppTopLevelRoutes
                 label = R.string.navigation_route_title_albums,
                 icon = R.drawable.navigation_icon_albums,
                 route = AlbumsScreenRoute,
+            ),
+            TopLevelRoute(
+                label = R.string.navigation_route_title_library,
+                icon = R.drawable.navigation_icon_library,
+                route = MediaLibraryRoute,
             ),
         )

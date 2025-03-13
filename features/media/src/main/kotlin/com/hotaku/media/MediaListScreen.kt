@@ -41,6 +41,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.PagingData
@@ -87,12 +88,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-internal fun MediaListScreen(
+fun MediaListScreen(
     modifier: Modifier = Modifier,
-    mediaListViewModel: MediaListViewModel,
     navigateToMediaDetailScreen: (Int?) -> Unit,
     navigateToOnboardingScreen: () -> Unit,
 ) {
+    val mediaListViewModel = hiltViewModel<MediaListViewModel>()
     MediaListScreen(
         modifier = modifier,
         screenEvents = mediaListViewModel.mediaScreenEvent,

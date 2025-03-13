@@ -24,16 +24,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navOptions
 import androidx.window.core.layout.WindowWidthSizeClass
-import com.hotaku.albums.navigation.albumsNav
-import com.hotaku.media.navigation.MediaListScreenRRoute
-import com.hotaku.media.navigation.mediaListNav
-import com.hotaku.media.navigation.navigateToMediaListScreen
-import com.hotaku.media_details.navigation.mediaDetailsNav
-import com.hotaku.media_details.navigation.navigateToMediaDetailScreen
-import com.hotaku.media_library.navigation.mediaLibraryNav
-import com.hotaku.onboarding.navigation.OnboardingRoute
-import com.hotaku.onboarding.navigation.navigateToOnboardingScreen
-import com.hotaku.onboarding.navigation.onboardingNav
+import com.hotaku.media.MediaListScreenRRoute
+import com.hotaku.navigation.nav_routes.albumsNav
+import com.hotaku.navigation.nav_routes.mediaDetailsNav
+import com.hotaku.navigation.nav_routes.mediaLibraryNav
+import com.hotaku.navigation.nav_routes.mediaListNav
+import com.hotaku.navigation.nav_routes.onboardingNav
 
 @Composable
 fun AppSuiteNav(navHostController: NavHostController) {
@@ -108,48 +104,14 @@ private fun MiniGalleryNavHost(
         navController = navHostController,
         startDestination = MediaListScreenRRoute,
     ) {
-        onboardingNav(
-            navigateToMediaListScreen = {
-                navHostController.navigateToMediaListScreen {
-                    popUpTo<MediaListScreenRRoute> {
-                        inclusive = true
-                    }
-                }
-            },
-        )
+        onboardingNav(navHostController = navHostController)
 
-        mediaListNav(
-            navigateToMediaDetailScreen = { selectedMediaIndex ->
-                navHostController.navigateToMediaDetailScreen(initialIndex = selectedMediaIndex) {
-                    launchSingleTop = true
-                }
-            },
-            navigateToOnboardingScreen = {
-                navHostController.navigateToOnboardingScreen {
-                    popUpTo<OnboardingRoute> {
-                        inclusive = true
-                    }
-                }
-            },
-        )
+        mediaListNav(navHostController = navHostController)
 
-        albumsNav(
-            navigateToMediaDetailScreen = { selectedMediaIndex, selectedAlbum ->
-                navHostController.navigateToMediaDetailScreen(
-                    initialIndex = selectedMediaIndex,
-                    selectedAlbum = selectedAlbum,
-                ) {
-                    launchSingleTop = true
-                }
-            },
-        )
+        albumsNav(navHostController = navHostController)
 
-        mediaLibraryNav()
+        mediaLibraryNav(navHostController = navHostController)
 
-        mediaDetailsNav(
-            navigateUp = {
-                navHostController.popBackStack()
-            },
-        )
+        mediaDetailsNav(navHostController = navHostController)
     }
 }

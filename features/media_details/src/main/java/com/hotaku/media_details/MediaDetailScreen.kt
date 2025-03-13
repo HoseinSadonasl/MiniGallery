@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -54,11 +55,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-internal fun MediaDetailScreen(
+fun MediaDetailScreen(
     modifier: Modifier = Modifier,
-    mediaDetailViewModel: MediaDetailViewModel,
     navigateUp: () -> Unit,
 ) {
+    val mediaDetailViewModel = hiltViewModel<MediaDetailViewModel>()
+
     MediaDetailScreen(
         modifier = modifier,
         mediaDetailViewModel = mediaDetailViewModel,

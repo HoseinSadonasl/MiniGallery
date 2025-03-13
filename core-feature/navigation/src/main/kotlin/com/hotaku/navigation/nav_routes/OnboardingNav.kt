@@ -1,27 +1,26 @@
-package com.hotaku.onboarding.navigation
+package com.hotaku.navigation.nav_routes
 
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
+import com.hotaku.media.MediaListScreenRRoute
+import com.hotaku.onboarding.OnboardingRoute
 import com.hotaku.onboarding.OnboardingScreen
-import com.hotaku.onboarding.OnboardingViewModel
-import kotlinx.serialization.Serializable
 
-@Serializable
-object OnboardingRoute
-
-fun NavGraphBuilder.onboardingNav(navigateToMediaListScreen: () -> Unit) =
+fun NavGraphBuilder.onboardingNav(navHostController: NavHostController) =
     composable<OnboardingRoute>(
         popExitTransition = { slideOutOfContainer(SlideDirection.Right) },
     ) {
-        val onboardingViewModel = hiltViewModel<OnboardingViewModel>()
-
         OnboardingScreen(
-            onboardingViewModel = onboardingViewModel,
-            navigateToMediaListScreen = navigateToMediaListScreen,
+            navigateToMediaListScreen = {
+                navHostController.navigateToMediaListScreen {
+                    popUpTo<MediaListScreenRRoute> {
+                        inclusive = true
+                    }
+                }
+            },
         )
     }
 

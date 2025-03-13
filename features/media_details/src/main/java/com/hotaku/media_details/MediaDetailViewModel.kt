@@ -8,7 +8,6 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.hotaku.media_details.MediaDetailScreenActions.*
-import com.hotaku.media_details.navigation.MediaDetailRoute
 import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_domain.usecase.RenameMediaUseCase
 import com.hotaku.media_domain.usecase.TrashMediaUseCase

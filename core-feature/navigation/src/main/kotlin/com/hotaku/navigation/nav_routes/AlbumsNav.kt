@@ -1,20 +1,14 @@
-package com.hotaku.albums.navigation
+package com.hotaku.navigation.nav_routes
 
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
 import androidx.compose.animation.core.tween
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import com.hotaku.albums.AlbumsScreen
-import com.hotaku.albums.AlbumsViewModel
-import kotlinx.serialization.Serializable
+import com.hotaku.albums.AlbumsScreenRoute
 
-@Serializable
-object AlbumsScreenRoute
-
-fun NavGraphBuilder.albumsNav(navigateToMediaDetailScreen: (Int?, String) -> Unit) =
+fun NavGraphBuilder.albumsNav(navHostController: NavHostController) =
     composable<AlbumsScreenRoute>(
         enterTransition = {
             slideIntoContainer(
@@ -29,16 +23,14 @@ fun NavGraphBuilder.albumsNav(navigateToMediaDetailScreen: (Int?, String) -> Uni
             )
         },
     ) { navBackStackEntry ->
-        val albumsViewModel = hiltViewModel<AlbumsViewModel>()
-
         AlbumsScreen(
-            albumsViewModel = albumsViewModel,
-            navigateToMediaDetailScreen = navigateToMediaDetailScreen,
+            navigateToMediaDetailScreen = { selectedMediaIndex, selectedAlbum ->
+                navHostController.navigateToMediaDetailScreen(
+                    initialIndex = selectedMediaIndex,
+                    selectedAlbum = selectedAlbum,
+                ) {
+                    launchSingleTop = true
+                }
+            },
         )
     }
-
-fun NavHostController.navigateToAlbumsScreen(navOptions: NavOptionsBuilder.() -> Unit = {}) {
-    navigate(AlbumsScreenRoute) {
-        navOptions()
-    }
-}

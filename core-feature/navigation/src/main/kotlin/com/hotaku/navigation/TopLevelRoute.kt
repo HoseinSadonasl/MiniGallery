@@ -2,10 +2,10 @@ package com.hotaku.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.hotaku.albums.navigation.AlbumsScreenRoute
+import com.hotaku.albums.AlbumsScreenRoute
 import com.hotaku.core_feature.navigation.R
-import com.hotaku.media.navigation.MediaListScreenRRoute
-import com.hotaku.media_library.navigation.MediaLibraryRoute
+import com.hotaku.media.MediaListScreenRRoute
+import com.hotaku.media_library.MediaLibraryRoute
 
 internal data class TopLevelRoute(
     @StringRes val label: Int,

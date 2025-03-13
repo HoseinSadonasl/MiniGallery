@@ -1,12 +1,10 @@
-package com.hotaku.media_details.navigation
+package com.hotaku.navigation.nav_routes
 
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import com.hotaku.media_details.MediaDetailScreen
-import com.hotaku.media_details.MediaDetailViewModel
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -15,13 +13,12 @@ data class MediaDetailRoute(
     val selectedAlbum: String? = null,
 )
 
-fun NavGraphBuilder.mediaDetailsNav(navigateUp: () -> Unit) =
+fun NavGraphBuilder.mediaDetailsNav(navHostController: NavHostController) =
     composable<MediaDetailRoute> {
-        val mediaDetailViewModel = hiltViewModel<MediaDetailViewModel>()
-
         MediaDetailScreen(
-            mediaDetailViewModel = mediaDetailViewModel,
-            navigateUp = navigateUp,
+            navigateUp = {
+                navHostController.popBackStack()
+            },
         )
     }
 

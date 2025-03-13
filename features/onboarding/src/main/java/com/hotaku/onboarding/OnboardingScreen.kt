@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.features.onboarding.R
@@ -25,11 +26,11 @@ import com.hotaku.ui.PermissionUtils.requiredMediaPermissions
 import com.hotaku.ui.conposables.OnScreenMessage
 
 @Composable
-internal fun OnboardingScreen(
+fun OnboardingScreen(
     modifier: Modifier = Modifier,
-    onboardingViewModel: OnboardingViewModel,
     navigateToMediaListScreen: () -> Unit,
 ) {
+    val onboardingViewModel = hiltViewModel<OnboardingViewModel>()
     OnboardingScreen(
         modifier = modifier,
         viewModel = onboardingViewModel,

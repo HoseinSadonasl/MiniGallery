@@ -43,6 +43,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -64,12 +65,12 @@ import com.hotaku.ui.conposables.VideoThumbnail
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-internal fun AlbumsScreen(
+fun AlbumsScreen(
     modifier: Modifier = Modifier,
-    albumsViewModel: AlbumsViewModel,
     navigateToMediaDetailScreen: (Int?, String) -> Unit,
 ) {
-    AlbumsScreen(
+    val albumsViewModel = hiltViewModel<AlbumsViewModel>()
+    AlbumsScreenContent(
         modifier = modifier,
         albumsViewModel = albumsViewModel,
         navigateToMediaDetailScreen = navigateToMediaDetailScreen,
@@ -79,7 +80,7 @@ internal fun AlbumsScreen(
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-private fun AlbumsScreen(
+private fun AlbumsScreenContent(
     modifier: Modifier = Modifier,
     albumsViewModel: AlbumsViewModel,
     navigateToMediaDetailScreen: (Int?, String) -> Unit,

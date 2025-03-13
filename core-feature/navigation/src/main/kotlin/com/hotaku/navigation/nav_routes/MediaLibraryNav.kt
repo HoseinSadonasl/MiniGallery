@@ -1,16 +1,13 @@
-package com.hotaku.media_library.navigation
+package com.hotaku.navigation.nav_routes
 
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
 import androidx.compose.animation.core.tween
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
-import kotlinx.serialization.Serializable
+import com.hotaku.media_library.MediaLibraryRoute
 
-@Serializable object MediaLibraryRoute
-
-fun NavGraphBuilder.mediaLibraryNav() =
+fun NavGraphBuilder.mediaLibraryNav(navHostController: NavHostController) =
     composable<MediaLibraryRoute>(
         enterTransition = {
             slideIntoContainer(
@@ -26,9 +23,3 @@ fun NavGraphBuilder.mediaLibraryNav() =
         },
     ) {
     }
-
-fun NavHostController.navigateToMediaListScreen(navOptions: NavOptionsBuilder.() -> Unit) {
-    navigate(MediaLibraryRoute) {
-        navOptions()
-    }
-}

@@ -4,6 +4,7 @@ import com.hotaku.minigallery.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.dependencies
 
 class AndroidLibraryConventionPlugin: Plugin<Project> {
 
@@ -12,11 +13,15 @@ class AndroidLibraryConventionPlugin: Plugin<Project> {
             apply {
                 plugin("com.android.library")
                 plugin("org.jetbrains.kotlin.android")
+                plugin("org.jetbrains.kotlin.plugin.serialization")
                 plugin("kotlin-parcelize")
             }
             extensions.configure<LibraryExtension> {
                 defaultConfig.targetSdk = libs.findVersion("targetSdk").get().toString().toInt()
                 configureKotlinAndroid(this)
+            }
+            dependencies {
+                add("implementation", libs.findLibrary("kotlinx.serialization.json").get())
             }
         }
     }

@@ -12,4 +12,6 @@ internal sealed interface AlbumsScreenActions {
     data class OnMediaItemClick(val mediaItemIndex: Int) : AlbumsScreenActions
 
     data class OnSearchQueryChange(val query: String) : AlbumsScreenActions
+
+    data class OnSearchFocusChanged(val hasFocus: Boolean) : AlbumsScreenActions
 }

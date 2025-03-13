@@ -37,6 +37,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -87,11 +89,18 @@ private fun AlbumsScreen(
 
     val refreshState = mediaListState.loadState.refresh
 
+    val focusManager = LocalFocusManager.current
+
     val navigator = rememberSupportingPaneScaffoldNavigator<String>()
 
     BackHandler(navigator.canNavigateBack()) {
         onAction(OnClearSelectedAlbum)
         navigator.navigateBack()
+    }
+
+    BackHandler(state.isSearchFocused) {
+        onAction(OnSearchQueryChange(query = ""))
+        focusManager.clearFocus()
     }
 
     LaunchedEffect(albumsViewModel.albumsUiEvent) {
@@ -128,7 +137,10 @@ private fun AlbumsScreen(
                     content = {
                         selectedAlbum?.let {
                             TextField(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier =
+                                    Modifier.fillMaxWidth().onFocusChanged {
+                                        onAction(OnSearchFocusChanged(hasFocus = it.hasFocus))
+                                    },
                                 value = state.query,
                                 onValueChange = { query ->
                                     onAction(OnSearchQueryChange(query = query))

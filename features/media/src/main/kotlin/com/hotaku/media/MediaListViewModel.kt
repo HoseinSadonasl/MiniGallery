@@ -75,6 +75,7 @@ internal class MediaListViewModel
                 OnUpdateUpdateMedia -> updateMediaState()
                 is OnSearchQueryChange -> setQuery(query = action.query)
                 is OnMimeTypeChange -> setMimeType(mimeType = action.mimeType)
+                is OnSearchFocusChanged -> setSearchFocus(hasFocus = action.hasFocus)
                 OnRetrySynchronizeMedia -> retrySync()
                 OnHideSyncSection -> setyncSectionStateFalse()
                 is OnSetTopBarVisibility -> setTopBarVisibility(visibility = action.visible)
@@ -96,6 +97,14 @@ internal class MediaListViewModel
                 OnMediaNameClearQuery -> setMediaNameQuery(query = "")
                 is OnRenameMediaItem -> renameLocalMediaItem(media = action.media)
                 ShowDetails -> showDetails()
+            }
+        }
+
+        private fun setSearchFocus(hasFocus: Boolean) {
+            mediaListScreenViewModelState.update {
+                it.copy(
+                    isSearchFocused = hasFocus,
+                )
             }
         }
 

@@ -10,6 +10,7 @@ internal data class MediaListUiState(
     val isOptionsMenuVisible: Boolean = false,
     val dialog: MediaDialogs = MediaDialogs.Idle,
     val selectedMediaIndex: Int? = null,
+    val isSearchFocused: Boolean = false,
     val selectedItemName: String = "",
     val mimeType: String = "",
     val query: String = "",

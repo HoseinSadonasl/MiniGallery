@@ -66,6 +66,15 @@ internal class AlbumsViewModel
                 OnClearSelectedAlbum -> closeAlbum()
                 is OnMediaItemClick -> openMediaInDetail(mediaItemIndex = action.mediaItemIndex)
                 is OnSearchQueryChange -> setQuery(query = action.query)
+                is OnSearchFocusChanged -> setSearchFocus(hasFocus = action.hasFocus)
+            }
+        }
+
+        private fun setSearchFocus(hasFocus: Boolean) {
+            albumsViewModelState.update {
+                it.copy(
+                    isSearchFocused = hasFocus,
+                )
             }
         }
 

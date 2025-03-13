@@ -9,6 +9,8 @@ internal sealed interface MediaListScreenActions {
 
     data class OnMimeTypeChange(val mimeType: String) : MediaListScreenActions
 
+    data class OnSearchFocusChanged(val hasFocus: Boolean) : MediaListScreenActions
+
     data object OnRetrySynchronizeMedia : MediaListScreenActions
 
     data object OnHideSyncSection : MediaListScreenActions

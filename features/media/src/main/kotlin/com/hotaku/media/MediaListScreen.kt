@@ -34,8 +34,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -122,6 +124,8 @@ private fun MediaListScreen(
 
     val refreshState = pagingMediaItems.loadState.refresh
 
+    val focusManager = LocalFocusManager.current
+
     val context = LocalContext.current
 
     val windowWidth = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
@@ -148,6 +152,11 @@ private fun MediaListScreen(
 
     BackHandler(navigator.canNavigateBack()) {
         onAction(OnClearSelectedMedia)
+    }
+
+    BackHandler(state.isSearchFocused) {
+        onAction(OnSearchQueryChange(query = ""))
+        focusManager.clearFocus()
     }
 
     LaunchedEffect(Unit) {
@@ -254,7 +263,10 @@ private fun MediaListScreen(
                 title = stringResource(R.string.media_list_screen_top_bar_title_all_media),
                 content = {
                     TextField(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier =
+                            Modifier.fillMaxWidth().onFocusChanged {
+                                onAction(OnSearchFocusChanged(hasFocus = it.hasFocus))
+                            },
                         value = state.query,
                         onValueChange = { query ->
                             onAction(OnSearchQueryChange(query = query))

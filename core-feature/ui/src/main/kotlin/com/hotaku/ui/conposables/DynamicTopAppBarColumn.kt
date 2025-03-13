@@ -13,7 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 
@@ -52,7 +52,7 @@ private fun DynamicTopAppBarColumnImpl(
     )
 }
 
-@Preview(showBackground = true)
+@PreviewScreenSizes
 @Composable
 private fun DynamicTopAppBarColumnPreview() {
     MiniGalleryTheme {
@@ -71,9 +71,8 @@ private fun DynamicTopAppBarColumnPreview() {
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Spacer(Modifier.weight(1f))
-                    AnimatedSearchTextField(
-                        expanded = true,
-                        onIconClick = {},
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
                         value = "",
                         onValueChange = {},
                         placeHolderText = "Search album",

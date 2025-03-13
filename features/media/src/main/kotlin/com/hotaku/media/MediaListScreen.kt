@@ -10,12 +10,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -59,7 +61,6 @@ import com.hotaku.ui.UiState
 import com.hotaku.ui.asString
 import com.hotaku.ui.conposables.AnimatedMediaDetailCompactTopBar
 import com.hotaku.ui.conposables.AnimatedMediaDetailExpendedTopBar
-import com.hotaku.ui.conposables.AnimatedSearchTextField
 import com.hotaku.ui.conposables.DynamicTopAppBarColumn
 import com.hotaku.ui.conposables.EmptyPaneMessage
 import com.hotaku.ui.conposables.InputDialog
@@ -71,6 +72,7 @@ import com.hotaku.ui.conposables.MediaOptions
 import com.hotaku.ui.conposables.OnScreenMessage
 import com.hotaku.ui.conposables.OptionMenuItem
 import com.hotaku.ui.conposables.OptionsMenu
+import com.hotaku.ui.conposables.TextField
 import com.hotaku.ui.conposables.TopAppBar
 import com.hotaku.ui.conposables.noRippleClickable
 import com.hotaku.ui.models.MediaUi
@@ -256,20 +258,14 @@ private fun MediaListScreen(
             TopAppBar(
                 title = stringResource(R.string.media_list_screen_top_bar_title_all_media),
                 content = {
-                    AnimatedSearchTextField(
-                        expanded = state.isSearchExpanded,
-                        onIconClick = {
-                            if (state.isSearchExpanded && state.query.isEmpty()) {
-                                onAction(OnCollapseSearch)
-                            } else {
-                                onAction(OnExpandSearch)
-                            }
-                        },
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
                         value = state.query,
                         onValueChange = { query ->
                             onAction(OnSearchQueryChange(query = query))
                         },
                         placeHolderText = stringResource(R.string.media_list_screen_search_media),
+                        endIcon = Icons.Outlined.Search,
                     )
                 },
             )

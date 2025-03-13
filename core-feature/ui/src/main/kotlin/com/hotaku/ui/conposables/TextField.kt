@@ -1,5 +1,10 @@
 package com.hotaku.ui.conposables
 
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Clear
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -7,6 +12,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 
@@ -16,12 +22,14 @@ fun TextField(
     placeHolderText: String,
     value: String,
     onValueChange: (String) -> Unit,
+    endIcon: ImageVector? = null,
 ) {
     TextFieldImpl(
         modifier = modifier,
         value = value,
         onValueChange = onValueChange,
         placeHolderText = placeHolderText,
+        endIcon = endIcon,
     )
 }
 
@@ -31,6 +39,7 @@ private fun TextFieldImpl(
     placeHolderText: String,
     value: String,
     onValueChange: (String) -> Unit,
+    endIcon: ImageVector?,
 ) {
     TextField(
         modifier = modifier,
@@ -45,6 +54,18 @@ private fun TextFieldImpl(
                 text = placeHolderText,
                 style = MaterialTheme.typography.bodyMedium,
             )
+        },
+        trailingIcon = {
+            endIcon?.let {
+                Icon(
+                    modifier =
+                        Modifier.clickable {
+                            onValueChange("")
+                        },
+                    imageVector = if (value.isNotEmpty()) Icons.Outlined.Clear else endIcon,
+                    contentDescription = null,
+                )
+            }
         },
         colors =
             TextFieldDefaults.colors().copy(
@@ -65,6 +86,7 @@ private fun TextFieldPreview() {
             placeHolderText = "placeholder",
             value = "",
             onValueChange = { },
+            endIcon = Icons.Outlined.Search,
         )
     }
 }

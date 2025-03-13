@@ -1,6 +1,7 @@
 package com.hotaku.ui.conposables
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -8,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 
@@ -42,48 +41,53 @@ fun TopAppBar(
 private fun TopAppBarImpl(
     modifier: Modifier = Modifier,
     title: String,
-    content: @Composable () -> Unit,
-    actions: @Composable RowScope.() -> Unit,
+    content: @Composable (() -> Unit)?,
+    actions: @Composable (RowScope.() -> Unit)?,
 ) {
-    Row(
+    Column(
         modifier =
             modifier
                 .statusBarsPadding()
                 .fillMaxWidth()
-                .height(64.dp)
-                .padding(horizontal = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
+                .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(Modifier.width(8.dp))
         Text(
             text = title,
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.headlineMedium,
         )
-        Spacer(Modifier.width(16.dp))
         Box(
-            modifier =
-                Modifier
-                    .weight(1f),
-            contentAlignment = Alignment.CenterEnd,
+            modifier = Modifier.fillMaxWidth(),
         ) {
-            content()
+            content?.let {
+                Column(
+                    modifier = Modifier.fillMaxWidth(.6f).align(Alignment.Center),
+                ) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    content()
+                }
+            }
+            actions?.let {
+                Row(
+                    modifier = Modifier.align(Alignment.BottomEnd),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    actions()
+                }
+            }
         }
-        actions()
     }
 }
 
 @Preview(showBackground = true)
-@PreviewScreenSizes
 @Composable
 private fun TopAppBarPreview() {
     MiniGalleryTheme {
         TopAppBar(
-            title = "Sample title",
+            title = "All Media",
             content = {
-                AnimatedSearchTextField(
+                TextField(
                     modifier = Modifier,
-                    expanded = true,
-                    onIconClick = {},
                     value = "",
                     onValueChange = {},
                     placeHolderText = "Search album",

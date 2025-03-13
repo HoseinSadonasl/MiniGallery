@@ -27,6 +27,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.SupportingPaneScaffold
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldRole
@@ -45,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.albums.AlbumsScreenActions.*
 import com.hotaku.albums.model.AlbumUi
 import com.hotaku.features.albums.R
@@ -93,6 +95,8 @@ private fun AlbumsScreen(
 
     val navigator = rememberSupportingPaneScaffoldNavigator<String>()
 
+    val windowSize = currentWindowAdaptiveInfo().windowSizeClass
+
     BackHandler(navigator.canNavigateBack()) {
         onAction(OnClearSelectedAlbum)
         navigator.navigateBack()
@@ -138,9 +142,11 @@ private fun AlbumsScreen(
                         selectedAlbum?.let {
                             TextField(
                                 modifier =
-                                    Modifier.fillMaxWidth().onFocusChanged {
-                                        onAction(OnSearchFocusChanged(hasFocus = it.hasFocus))
-                                    },
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .onFocusChanged {
+                                            onAction(OnSearchFocusChanged(hasFocus = it.hasFocus))
+                                        },
                                 value = state.query,
                                 onValueChange = { query ->
                                     onAction(OnSearchQueryChange(query = query))
@@ -179,6 +185,7 @@ private fun AlbumsScreen(
                     AnimatedPane {
                         AlbumsGridList(
                             albumsListState = state.albums,
+                            isCompact = windowSize.windowWidthSizeClass == WindowWidthSizeClass.COMPACT,
                             onAction = onAction,
                         )
                     }
@@ -267,6 +274,7 @@ private fun AlbumsLoadError() {
 @Composable
 private fun AlbumsGridList(
     modifier: Modifier = Modifier,
+    isCompact: Boolean,
     albumsListState: UiState<List<AlbumUi>>,
     onAction: (AlbumsScreenActions) -> Unit,
 ) {
@@ -283,7 +291,7 @@ private fun AlbumsGridList(
                 columns = GridCells.Adaptive(120.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp),
+                contentPadding = PaddingValues(horizontal = if (isCompact) 16.dp else 0.dp),
             ) {
                 when (albumsListState) {
                     is UiState.Loading -> {

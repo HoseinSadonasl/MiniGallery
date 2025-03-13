@@ -73,8 +73,6 @@ internal class MediaListViewModel
         fun onAction(action: MediaListScreenActions) {
             when (action) {
                 OnUpdateUpdateMedia -> updateMediaState()
-                OnExpandSearch -> setSearchExpanded(expand = true)
-                OnCollapseSearch -> setSearchExpanded(expand = false)
                 is OnSearchQueryChange -> setQuery(query = action.query)
                 is OnMimeTypeChange -> setMimeType(mimeType = action.mimeType)
                 OnRetrySynchronizeMedia -> retrySync()
@@ -222,14 +220,6 @@ internal class MediaListViewModel
                 it.copy(
                     selectedMediaIndex = mediaItemIndex,
                 )
-            }
-        }
-
-        private fun setSearchExpanded(expand: Boolean) {
-            viewModelScope.launch {
-                mediaListScreenViewModelState.update {
-                    it.copy(isSearchExpanded = expand)
-                }
             }
         }
 

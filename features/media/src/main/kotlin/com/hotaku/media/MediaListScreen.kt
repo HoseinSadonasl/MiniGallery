@@ -36,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -123,8 +122,6 @@ private fun MediaListScreen(
 
     val refreshState = pagingMediaItems.loadState.refresh
 
-    val focusManager = LocalFocusManager.current
-
     val context = LocalContext.current
 
     val windowWidth = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
@@ -153,12 +150,6 @@ private fun MediaListScreen(
         onAction(OnClearSelectedMedia)
     }
 
-    BackHandler(state.isSearchExpanded) {
-        focusManager.clearFocus()
-        onAction(OnSearchQueryChange(query = ""))
-        onAction(OnCollapseSearch)
-    }
-
     LaunchedEffect(Unit) {
         PermissionUtils.permissionsToRequest(
             context = context,
@@ -174,6 +165,10 @@ private fun MediaListScreen(
             delay(3000)
             onAction(OnHideSyncSection)
         }
+    }
+
+    LaunchedEffect(state.query) {
+        onAction(OnUpdateUpdateMedia)
     }
 
     LaunchedEffect(state.selectedMediaIndex) {

@@ -5,10 +5,6 @@ import com.hotaku.ui.models.MediaUi
 internal sealed interface MediaListScreenActions {
     data object OnUpdateUpdateMedia : MediaListScreenActions
 
-    data object OnExpandSearch : MediaListScreenActions
-
-    data object OnCollapseSearch : MediaListScreenActions
-
     data class OnSearchQueryChange(val query: String) : MediaListScreenActions
 
     data class OnMimeTypeChange(val mimeType: String) : MediaListScreenActions

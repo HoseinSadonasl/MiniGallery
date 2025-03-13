@@ -9,4 +9,5 @@
     <string name="albums_screen_error_loading_media_message">Ops!</string>
     <string name="albums_screen_error_loading_media_full_message">An error occurred while loading this album\\\'s media.</string>
     <string name="albums_screen_error_loading_media_button_try_again">Try again</string>
+    <string name="albums_screen_search_media">Search media</string>
 </resources>

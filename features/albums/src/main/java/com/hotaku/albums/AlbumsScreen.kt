@@ -1,6 +1,7 @@
 package com.hotaku.albums
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -52,6 +54,7 @@ import com.hotaku.ui.conposables.ImageThumbnail
 import com.hotaku.ui.conposables.MediaGrid
 import com.hotaku.ui.conposables.MediaPlaceHolder
 import com.hotaku.ui.conposables.OnScreenMessage
+import com.hotaku.ui.conposables.TextField
 import com.hotaku.ui.conposables.TopAppBar
 import com.hotaku.ui.conposables.VideoThumbnail
 import kotlinx.coroutines.flow.collectLatest
@@ -110,29 +113,48 @@ private fun AlbumsScreen(
         }
     }
 
+    LaunchedEffect(state.query) {
+        onAction(OnUpdateMediaList)
+    }
+
     DynamicTopAppBarColumn(
         modifier = modifier,
         animatableTopContent = {
-            TopAppBar(
-                title =
-                    state.selectedAlbum?.displayName
-                        ?: stringResource(R.string.albums_screen_top_app_bar_title),
-                actions = {
-                    state.selectedAlbum?.let {
-                        IconButton(
-                            onClick = {
-                                onAction(OnClearSelectedAlbum)
-                                navigator.navigateBack()
-                            },
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Close,
-                                contentDescription = null,
+            AnimatedContent(targetState = state.selectedAlbum) { selectedAlbum ->
+                TopAppBar(
+                    title =
+                        state.selectedAlbum?.displayName
+                            ?: stringResource(R.string.albums_screen_top_app_bar_title),
+                    content = {
+                        selectedAlbum?.let {
+                            TextField(
+                                modifier = Modifier.fillMaxWidth(),
+                                value = state.query,
+                                onValueChange = { query ->
+                                    onAction(OnSearchQueryChange(query = query))
+                                },
+                                placeHolderText = stringResource(R.string.albums_screen_search_media),
+                                endIcon = Icons.Outlined.Search,
                             )
                         }
-                    }
-                },
-            )
+                    },
+                    actions = {
+                        selectedAlbum?.let {
+                            IconButton(
+                                onClick = {
+                                    onAction(OnClearSelectedAlbum)
+                                    navigator.navigateBack()
+                                },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Close,
+                                    contentDescription = null,
+                                )
+                            }
+                        }
+                    },
+                )
+            }
         },
         content = {
             SupportingPaneScaffold(
@@ -246,7 +268,7 @@ private fun AlbumsGridList(
                 columns = GridCells.Adaptive(120.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(16.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp),
             ) {
                 when (albumsListState) {
                     is UiState.Loading -> {

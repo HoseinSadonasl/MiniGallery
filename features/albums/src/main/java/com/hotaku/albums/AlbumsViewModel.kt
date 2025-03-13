@@ -65,6 +65,15 @@ internal class AlbumsViewModel
                 is OnAlbumClick -> getAlbumMedia(album = action.album)
                 OnClearSelectedAlbum -> closeAlbum()
                 is OnMediaItemClick -> openMediaInDetail(mediaItemIndex = action.mediaItemIndex)
+                is OnSearchQueryChange -> setQuery(query = action.query)
+            }
+        }
+
+        private fun setQuery(query: String) {
+            albumsViewModelState.update {
+                it.copy(
+                    query = query,
+                )
             }
         }
 

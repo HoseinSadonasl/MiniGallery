@@ -10,4 +10,6 @@ internal sealed interface AlbumsScreenActions {
     data object OnClearSelectedAlbum : AlbumsScreenActions
 
     data class OnMediaItemClick(val mediaItemIndex: Int) : AlbumsScreenActions
+
+    data class OnSearchQueryChange(val query: String) : AlbumsScreenActions
 }

@@ -170,7 +170,10 @@ private fun AlbumsScreen(
         },
         content = {
             SupportingPaneScaffold(
-                directive = navigator.scaffoldDirective,
+                directive =
+                    navigator.scaffoldDirective.copy(
+                        horizontalPartitionSpacerSize = 8.dp,
+                    ),
                 value = navigator.scaffoldValue,
                 mainPane = {
                     AnimatedPane {

@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.PagingData
@@ -282,7 +283,10 @@ private fun MediaListScreen(
                 NoMedia()
             } else {
                 SupportingPaneScaffold(
-                    directive = navigator.scaffoldDirective,
+                    directive =
+                        navigator.scaffoldDirective.copy(
+                            horizontalPartitionSpacerSize = 8.dp,
+                        ),
                     value = navigator.scaffoldValue,
                     mainPane = {
                         AnimatedPane {

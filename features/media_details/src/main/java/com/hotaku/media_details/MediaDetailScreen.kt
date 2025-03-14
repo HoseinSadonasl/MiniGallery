@@ -61,7 +61,7 @@ fun MediaDetailScreen(
 ) {
     val mediaDetailViewModel = hiltViewModel<MediaDetailViewModel>()
 
-    MediaDetailScreen(
+    MediaDetailScreenContent(
         modifier = modifier,
         mediaDetailViewModel = mediaDetailViewModel,
         navigateUp = navigateUp,
@@ -70,7 +70,7 @@ fun MediaDetailScreen(
 }
 
 @Composable
-private fun MediaDetailScreen(
+private fun MediaDetailScreenContent(
     modifier: Modifier = Modifier,
     mediaDetailViewModel: MediaDetailViewModel,
     navigateUp: () -> Unit,

@@ -31,7 +31,7 @@ fun OnboardingScreen(
     navigateToMediaListScreen: () -> Unit,
 ) {
     val onboardingViewModel = hiltViewModel<OnboardingViewModel>()
-    OnboardingScreen(
+    OnboardingScreenContent(
         modifier = modifier,
         viewModel = onboardingViewModel,
         onAction = onboardingViewModel::onAction,
@@ -40,7 +40,7 @@ fun OnboardingScreen(
 }
 
 @Composable
-private fun OnboardingScreen(
+private fun OnboardingScreenContent(
     modifier: Modifier = Modifier,
     viewModel: OnboardingViewModel,
     onAction: (OnboardingActions) -> Unit,

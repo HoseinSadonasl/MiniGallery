@@ -94,7 +94,7 @@ fun MediaListScreen(
     navigateToOnboardingScreen: () -> Unit,
 ) {
     val mediaListViewModel = hiltViewModel<MediaListViewModel>()
-    MediaListScreen(
+    MediaListScreenContent(
         modifier = modifier,
         screenEvents = mediaListViewModel.mediaScreenEvent,
         screenState = mediaListViewModel.mediaListScreenUiState,
@@ -108,7 +108,7 @@ fun MediaListScreen(
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-private fun MediaListScreen(
+private fun MediaListScreenContent(
     modifier: Modifier = Modifier,
     screenEvents: Flow<MediaListScreenEvents>,
     screenState: StateFlow<MediaListUiState>,

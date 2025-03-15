@@ -32,8 +32,8 @@ interface MediaDao {
         query: String?,
         mimeType: String?,
         albumName: String?,
-        isTrash: Int,
-        isFavorite: Int,
+        isTrash: Boolean,
+        isFavorite: Boolean,
     ): PagingSource<Int, MediaEntity>
 
     @Query("SELECT uriString FROM media")

@@ -34,8 +34,8 @@ internal class MediaDataSourceImpl
                         mimeType = mimeType,
                         query = query,
                         albumName = albumName,
-                        isTrash = 1.takeIf { matchTrash } ?: 0,
-                        isFavorite = 1.takeIf { matchTrash } ?: 0,
+                        isTrash = matchTrash,
+                        isFavorite = matchFavorite,
                     )
                 },
             ).flow.map { pagingData ->

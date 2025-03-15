@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="media_library_top_bar_title">Library</string>
+    <string name="library_screen_favorites_label">Favorites</string>
+    <string name="library_screen_trash_label">Trash</string>
+    <string name="library_screen_secure_label">Secure</string>
+</resources>

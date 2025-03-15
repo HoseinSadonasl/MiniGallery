@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.hotaku.media_library.MediaLibraryRoute
+import com.hotaku.media_library.MediaLibraryScreen
 
 fun NavGraphBuilder.mediaLibraryNav(navHostController: NavHostController) =
     composable<MediaLibraryRoute>(
@@ -22,4 +23,5 @@ fun NavGraphBuilder.mediaLibraryNav(navHostController: NavHostController) =
             )
         },
     ) {
+        MediaLibraryScreen()
     }

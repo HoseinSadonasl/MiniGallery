@@ -30,11 +30,13 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.common.Logger
 import com.hotaku.common.trashMediaRequest
 import com.hotaku.common.writeMediaRequest
+import com.hotaku.core_feature.ui.R
 import com.hotaku.features.media_details.R.string
 import com.hotaku.media_details.MediaDetailScreenActions.OnClearMediaNameQuery
 import com.hotaku.media_details.MediaDetailScreenActions.OnHideDialog
 import com.hotaku.media_details.MediaDetailScreenActions.OnHideOptions
 import com.hotaku.media_details.MediaDetailScreenActions.OnHideOptionsMenu
+import com.hotaku.media_details.MediaDetailScreenActions.OnItemIsFavoriteChange
 import com.hotaku.media_details.MediaDetailScreenActions.OnMediaNameChange
 import com.hotaku.media_details.MediaDetailScreenActions.OnMediaNameQueryChange
 import com.hotaku.media_details.MediaDetailScreenActions.OnPlayVideo
@@ -139,6 +141,15 @@ private fun MediaDetailScreenContent(
             }
         }
 
+    val favoriteLauncher =
+        rememberLauncherForStartIntentSenderForResult {
+            state.selectedMediaIndex.let {
+                media.peek(it)?.let { mediaItem ->
+                    onAction(OnItemIsFavoriteChange(mediaItem = mediaItem))
+                }
+            }
+        }
+
     LaunchedEffect(state.isOptionsVisible, state.isOptionsMenuVisible) {
         if (state.isOptionsVisible && !state.isOptionsMenuVisible) {
             delay(1500)
@@ -216,6 +227,7 @@ private fun MediaDetailScreenContent(
                 onAction = onAction,
                 context = context,
                 trashLauncher = trashLauncher,
+                favoriteLauncher = favoriteLauncher,
             )
         },
     )
@@ -238,6 +250,7 @@ private fun MediaDetailPager(
     onAction: (MediaDetailScreenActions) -> Unit,
     context: Context,
     trashLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
+    favoriteLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
 ) {
     MediaDetailPager(
         currentPage = state.selectedMediaIndex,
@@ -254,6 +267,13 @@ private fun MediaDetailPager(
                     expend = state.isOptionsMenuVisible,
                     node = {
                         MediaOptions(
+                            isFavorite = media.isFavorite,
+                            onFavoriteMedia = {
+                                media.uriString.writeMediaRequest(
+                                    context = context,
+                                    writeLauncher = favoriteLauncher,
+                                )
+                            },
                             onShareMedia = {
                                 onAction(OnShareMedia)
                             },
@@ -323,8 +343,8 @@ private fun RenameDialog(
     renameLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
 ) {
     InputDialog(
-        title = stringResource(com.hotaku.core_feature.ui.R.string.input_dialog_title_rename),
-        inputPlaceHolder = stringResource(com.hotaku.core_feature.ui.R.string.input_dialog_placeholder_rename),
+        title = stringResource(R.string.input_dialog_title_rename),
+        inputPlaceHolder = stringResource(R.string.input_dialog_placeholder_rename),
         inputValue = query,
         onInputChange = { value ->
             onAction(OnMediaNameQueryChange(query = value))
@@ -333,7 +353,7 @@ private fun RenameDialog(
             onAction(OnHideDialog)
             mediaUriString?.writeMediaRequest(
                 context = context,
-                trashLauncher = renameLauncher,
+                writeLauncher = renameLauncher,
             )
         },
         onDismissRequest = {

@@ -9,6 +9,7 @@ import com.hotaku.media.MediaListScreenActions.OnHideDiaDialog
 import com.hotaku.media.MediaListScreenActions.OnHideOptions
 import com.hotaku.media.MediaListScreenActions.OnHideOptionsMenu
 import com.hotaku.media.MediaListScreenActions.OnHideSyncSection
+import com.hotaku.media.MediaListScreenActions.OnItemIsFavoriteChange
 import com.hotaku.media.MediaListScreenActions.OnMediaListItemClick
 import com.hotaku.media.MediaListScreenActions.OnMediaListItemLongClick
 import com.hotaku.media.MediaListScreenActions.OnMediaNameClearQuery
@@ -29,6 +30,7 @@ import com.hotaku.media.MediaListScreenActions.OnShowOptionsMenu
 import com.hotaku.media.MediaListScreenActions.OnTrashMediaItem
 import com.hotaku.media.MediaListScreenActions.OnUpdateUpdateMedia
 import com.hotaku.media.MediaListScreenActions.ShowDetails
+import com.hotaku.media_domain.usecase.FavoriteMediaUseCase
 import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_domain.usecase.RenameMediaUseCase
 import com.hotaku.media_domain.usecase.SyncMediaUseCase
@@ -64,6 +66,7 @@ internal class MediaListViewModel
         private val syncMediaUseCase: SyncMediaUseCase,
         private val mediaUseCase: GetMediaUseCase,
         private val renameMediaUseCase: RenameMediaUseCase,
+        private val favoriteMediaUseCase: FavoriteMediaUseCase,
         private val mapMediaAsMediaUi: MapMediaAsMediaUi,
         private val trashMediaUseCase: TrashMediaUseCase,
         private val mapMediaUiAsMedia: MapMediaUiAsMedia,
@@ -96,6 +99,7 @@ internal class MediaListViewModel
                 is OnSetTopBarVisibility -> setTopBarVisibility(visibility = action.visible)
                 is OnMediaListItemClick -> previewMedia(mediaItemIndex = action.mediaItemIndex)
                 is OnSelectedMediaNameChange -> setSelectedMediaName(mediaName = action.mediaName)
+                is OnItemIsFavoriteChange -> markMediaAsFavorite(mediaUi = action.mediaItem)
                 OnMediaListItemLongClick -> {}
                 OnClearSelectedMedia -> clearSelectedMedia()
                 OnOpenMediaDetails -> showOpenDetails()
@@ -204,6 +208,19 @@ internal class MediaListViewModel
                             )
                         }
                     }
+            }
+        }
+
+        private fun markMediaAsFavorite(mediaUi: MediaUi) {
+            viewModelScope.launch {
+                val media =
+                    mapMediaUiAsMedia.map(from = mediaUi).copy(
+                        isFavorite = !mediaUi.isFavorite,
+                    )
+                favoriteMediaUseCase.invoke(media = media).let { success ->
+                    if (success) {
+                    }
+                }
             }
         }
 

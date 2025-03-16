@@ -25,7 +25,7 @@ interface MediaDao {
             "AND (mimeType LIKE '%' || :mimeType || '%' OR :mimeType IS NULL) " +
             "AND (bucketDisplayName LIKE '%' || :albumName || '%' OR :albumName IS NULL)" +
             "AND isTrash = :isTrash " +
-            "AND isFavorite = :isFavorite " +
+            "AND (:isFavorite = 0 OR isFavorite = 1) " +
             "ORDER BY dateModified DESC",
     )
     fun getAll(

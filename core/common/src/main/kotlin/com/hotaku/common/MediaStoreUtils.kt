@@ -47,25 +47,25 @@ private fun List<String>.trashMediaRequest(
 
 fun String.writeMediaRequest(
     context: Context,
-    trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
+    writeLauncher: ActivityResultLauncher<IntentSenderRequest>,
 ) {
     listOf(this).writeMediaRequest(
         context = context,
-        trashLauncher = trashLauncher,
+        writeLauncher = writeLauncher,
     )
 }
 
 fun String.writeGroupOfMediaRequest(
     context: Context,
-    trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
+    writeLauncher: ActivityResultLauncher<IntentSenderRequest>,
 ) = writeMediaRequest(
     context = context,
-    trashLauncher = trashLauncher,
+    writeLauncher = writeLauncher,
 )
 
 private fun List<String>.writeMediaRequest(
     context: Context,
-    trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
+    writeLauncher: ActivityResultLauncher<IntentSenderRequest>,
 ) {
     val resolver = context.contentResolver
 
@@ -76,7 +76,7 @@ private fun List<String>.writeMediaRequest(
         )
 
     val intentSenderRequest = writeRequest.createRequest()
-    trashLauncher.launch(intentSenderRequest)
+    writeLauncher.launch(intentSenderRequest)
 }
 
 fun String.deleteMediaRequest(

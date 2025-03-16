@@ -5,4 +5,9 @@ interface UpdateMediaContentProviderDataSource {
         mediaUriString: String,
         name: String,
     ): Boolean
+
+    fun markMedaAsFavorite(
+        mediaUriString: String,
+        isFavorite: Boolean,
+    ): Boolean
 }

@@ -17,4 +17,6 @@ interface MediaRepository {
     suspend fun renameMedia(media: Media): Boolean
 
     suspend fun trashMedia(media: List<Media>): Boolean
+
+    suspend fun markMediaAsFavorite(media: Media): Boolean
 }

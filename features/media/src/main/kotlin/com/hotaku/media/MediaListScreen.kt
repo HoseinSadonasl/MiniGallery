@@ -170,6 +170,15 @@ private fun MediaListScreenContent(
             }
         }
 
+    val favoriteLauncher =
+        rememberLauncherForStartIntentSenderForResult {
+            state.selectedMediaIndex?.let {
+                pagingMediaItems.peek(it)?.let { mediaItem ->
+                    onAction(OnItemIsFavoriteChange(mediaItem = mediaItem))
+                }
+            }
+        }
+
     BackHandler(navigator.canNavigateBack()) {
         onAction(OnClearSelectedMedia)
     }
@@ -322,6 +331,7 @@ private fun MediaListScreenContent(
                                     index = mediaItemIndex,
                                     context = context,
                                     trashLauncher = trashLauncher,
+                                    favoriteLauncher = favoriteLauncher,
                                 )
                             } ?: Box(
                                 modifier = Modifier.fillMaxSize(),
@@ -368,7 +378,7 @@ private fun RenameDialog(
             onAction(OnHideDiaDialog)
             mediaUriString?.writeMediaRequest(
                 context = context,
-                trashLauncher = renameLauncher,
+                writeLauncher = renameLauncher,
             )
         },
         onDismissRequest = {
@@ -387,6 +397,7 @@ private fun SupportingPaneContent(
     index: Int,
     context: Context,
     trashLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
+    favoriteLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
 ) {
     LaunchedEffect(state.isOptionsVisible, state.isOptionsMenuVisible) {
         if (state.isOptionsVisible && !state.isOptionsMenuVisible) {
@@ -446,6 +457,13 @@ private fun SupportingPaneContent(
                             expend = state.isOptionsMenuVisible,
                             node = {
                                 MediaOptions(
+                                    isFavorite = media.isFavorite,
+                                    onFavoriteMedia = {
+                                        media.uriString.writeMediaRequest(
+                                            context = context,
+                                            writeLauncher = favoriteLauncher,
+                                        )
+                                    },
                                     onShareMedia = {
                                         onAction(
                                             OnShareMedia,

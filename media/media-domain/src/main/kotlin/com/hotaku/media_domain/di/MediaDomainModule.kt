@@ -1,6 +1,8 @@
 package com.hotaku.media_domain.di
 
 import com.hotaku.media_domain.repository.MediaRepository
+import com.hotaku.media_domain.usecase.FavoriteMediaUseCase
+import com.hotaku.media_domain.usecase.FavoriteMediaUseCaseImpl
 import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_domain.usecase.GetMediaUseCaseImpl
 import com.hotaku.media_domain.usecase.RenameMediaUseCase
@@ -34,6 +36,13 @@ internal object MediaDomainModule {
     @Singleton
     fun provideDeleteMediaUseCase(mediaRepository: MediaRepository): TrashMediaUseCase =
         TrashMediaUseCaseImpl(
+            mediaRepository = mediaRepository,
+        )
+
+    @Provides
+    @Singleton
+    fun provideFavoriteMediaUseCase(mediaRepository: MediaRepository): FavoriteMediaUseCase =
+        FavoriteMediaUseCaseImpl(
             mediaRepository = mediaRepository,
         )
 }

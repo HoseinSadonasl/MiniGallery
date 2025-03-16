@@ -90,3 +90,17 @@ internal fun ContentResolver.renameMedia(
     it.debugErrorLog(kClass = this::class)
     false
 }
+
+internal fun ContentResolver.markMediaAsFavorite(
+    mediaUriString: String,
+    isFavorite: Boolean,
+) = runCatching {
+    val contentValues =
+        ContentValues().apply {
+            put(MediaStore.Files.FileColumns.IS_FAVORITE, isFavorite)
+        }
+    update(mediaUriString.toUri(), contentValues, null) > 0
+}.getOrElse {
+    it.debugErrorLog(kClass = this::class)
+    false
+}

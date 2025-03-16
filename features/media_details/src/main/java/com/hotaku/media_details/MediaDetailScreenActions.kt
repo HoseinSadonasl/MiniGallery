@@ -11,6 +11,8 @@ internal sealed interface MediaDetailScreenActions {
 
     data class OnTrashMedia(val mediaItem: MediaUi) : MediaDetailScreenActions
 
+    data class OnItemIsFavoriteChange(val mediaItem: MediaUi) : MediaDetailScreenActions
+
     data class OnMediaNameChange(val mediaName: String) : MediaDetailScreenActions
 
     data object OnShowOptions : MediaDetailScreenActions

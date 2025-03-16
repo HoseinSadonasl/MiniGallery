@@ -7,6 +7,7 @@ import androidx.navigation.toRoute
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.hotaku.media_details.MediaDetailScreenActions.*
+import com.hotaku.media_domain.usecase.FavoriteMediaUseCase
 import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_domain.usecase.RenameMediaUseCase
 import com.hotaku.media_domain.usecase.TrashMediaUseCase
@@ -34,6 +35,7 @@ internal class MediaDetailViewModel
     constructor(
         private val mediaUseCase: GetMediaUseCase,
         private val renameMediaUseCase: RenameMediaUseCase,
+        private val favoriteMediaUseCase: FavoriteMediaUseCase,
         private val mapMediaAsMediaUi: MapMediaAsMediaUi,
         private val trashMediaUseCase: TrashMediaUseCase,
         private val mapMediaUiAsMedia: MapMediaUiAsMedia,
@@ -62,6 +64,7 @@ internal class MediaDetailViewModel
                 OnPlayVideo -> playVideo()
                 OnShareMedia -> shareMedia()
                 is OnTrashMedia -> trashMedia(media = action.mediaItem)
+                is OnItemIsFavoriteChange -> markMediaAsFavorite(mediaUi = action.mediaItem)
                 is OnMediaNameChange -> setMediaName(mediaName = action.mediaName)
                 OnShowOptions -> showOptions()
                 OnHideOptions -> showOptions(show = false)
@@ -81,6 +84,19 @@ internal class MediaDetailViewModel
                 it.copy(
                     mediaName = mediaName,
                 )
+            }
+        }
+
+        private fun markMediaAsFavorite(mediaUi: MediaUi) {
+            viewModelScope.launch {
+                val media =
+                    mapMediaUiAsMedia.map(from = mediaUi).copy(
+                        isFavorite = !mediaUi.isFavorite,
+                    )
+                favoriteMediaUseCase.invoke(media = media).let { success ->
+                    if (success) {
+                    }
+                }
             }
         }
 

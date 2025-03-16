@@ -64,4 +64,19 @@ internal class MediaRepositoryImpl
                     }
                 }.filterNot { it.isTrash }.isEmpty()
             }
+
+        override suspend fun markMediaAsFavorite(media: Media): Boolean =
+            withContext(ioDispatcher) {
+                updateMediaContentProviderDataSource.markMedaAsFavorite(
+                    mediaUriString = media.uriString,
+                    isFavorite = media.isFavorite,
+                ).let { isSccess ->
+                    if (isSccess) {
+                        withContext(ioDispatcher) {
+                            mediaDataSource.updateMedia(mapMediaAsMediaData.map(from = media))
+                        }
+                    }
+                    isSccess
+                }
+            }
     }

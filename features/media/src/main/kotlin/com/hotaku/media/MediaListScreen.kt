@@ -149,7 +149,6 @@ private fun MediaListScreenContent(
     onAction: (MediaListScreenActions) -> Unit,
     navigateToOnboardingScreen: () -> Unit,
 ) {
-    val refreshState = pagingMediaItems.loadState.refresh
     val focusManager = LocalFocusManager.current
     val windowWidth = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
 

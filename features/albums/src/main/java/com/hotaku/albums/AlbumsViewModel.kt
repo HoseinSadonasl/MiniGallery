@@ -2,10 +2,14 @@ package com.hotaku.albums
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
-import com.hotaku.albums.AlbumsScreenActions.*
+import com.hotaku.albums.AlbumsScreenActions.OnAlbumClick
+import com.hotaku.albums.AlbumsScreenActions.OnClearSelectedAlbum
+import com.hotaku.albums.AlbumsScreenActions.OnMediaItemClick
+import com.hotaku.albums.AlbumsScreenActions.OnSearchFocusChanged
+import com.hotaku.albums.AlbumsScreenActions.OnSearchQueryChange
+import com.hotaku.albums.AlbumsScreenActions.OnUpdateMediaList
 import com.hotaku.albums.mapper.MapAlbumAsAlbumUi
 import com.hotaku.albums.model.AlbumUi
 import com.hotaku.domain.utils.DataResult
@@ -14,12 +18,11 @@ import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.ui.UiState
 import com.hotaku.ui.asUiError
 import com.hotaku.ui.mappers.MapMediaAsMediaUi
-import com.hotaku.ui.models.MediaUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -37,23 +40,14 @@ internal class AlbumsViewModel
         private val mapMediaAsMediaUi: MapMediaAsMediaUi,
         private val mapAlbumAsAlbumUi: MapAlbumAsAlbumUi,
     ) : ViewModel() {
-        private var albumsViewModelState = MutableStateFlow(AlbumsUiState())
-        val albumsUiState =
-            albumsViewModelState
+        private var viewModelState = MutableStateFlow(AlbumsUiState())
+        val state =
+            viewModelState
                 .onStart { updateAlbums() }
                 .stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5_000),
                     initialValue = AlbumsUiState(),
-                )
-
-        private var mediaViewModelState = MutableStateFlow<PagingData<MediaUi>>(PagingData.empty())
-        val mediaUiState =
-            mediaViewModelState
-                .stateIn(
-                    scope = viewModelScope,
-                    started = SharingStarted.WhileSubscribed(5_000),
-                    initialValue = PagingData.empty(),
                 )
 
         private val albumsDetailsViewModelEvent = Channel<AlbumsScreenEvents>()
@@ -71,7 +65,7 @@ internal class AlbumsViewModel
         }
 
         private fun setSearchFocus(hasFocus: Boolean) {
-            albumsViewModelState.update {
+            viewModelState.update {
                 it.copy(
                     isSearchFocused = hasFocus,
                 )
@@ -79,7 +73,7 @@ internal class AlbumsViewModel
         }
 
         private fun setQuery(query: String) {
-            albumsViewModelState.update {
+            viewModelState.update {
                 it.copy(
                     query = query,
                 )
@@ -89,9 +83,9 @@ internal class AlbumsViewModel
         private fun updateMediaState() {
             viewModelScope.launch {
                 mediaUseCase.invoke(
-                    mimeType = albumsViewModelState.value.mimeType,
-                    query = albumsViewModelState.value.query,
-                    albumName = albumsViewModelState.value.selectedAlbum?.displayName.orEmpty(),
+                    mimeType = viewModelState.value.mimeType,
+                    query = viewModelState.value.query,
+                    albumName = viewModelState.value.selectedAlbum?.displayName.orEmpty(),
                 )
                     .cachedIn(viewModelScope)
                     .map { pagingData ->
@@ -99,14 +93,18 @@ internal class AlbumsViewModel
                             mapMediaAsMediaUi.map(it)
                         }
                     }
-                    .collectLatest { media ->
-                        mediaViewModelState.value = media
+                    .let { media ->
+                        viewModelState.update {
+                            it.copy(
+                                media = media,
+                            )
+                        }
                     }
             }
         }
 
         private fun openMediaInDetail(mediaItemIndex: Int) {
-            albumsViewModelState.update {
+            viewModelState.update {
                 it.copy(
                     selectedMediaIndex = mediaItemIndex,
                 )
@@ -122,11 +120,15 @@ internal class AlbumsViewModel
 
         private fun closeAlbum() {
             getAlbumMedia(album = null)
-            mediaViewModelState.value = PagingData.empty()
+            viewModelState.update {
+                it.copy(
+                    media = emptyFlow(),
+                )
+            }
         }
 
         private fun getAlbumMedia(album: AlbumUi?) {
-            albumsViewModelState.update {
+            viewModelState.update {
                 it.copy(
                     selectedAlbum = album,
                 )
@@ -155,7 +157,7 @@ internal class AlbumsViewModel
                                 UiState.Failure(error = result.error.asUiError())
                             }
                         }
-                    albumsViewModelState.update {
+                    viewModelState.update {
                         it.copy(
                             albums = albums,
                         )

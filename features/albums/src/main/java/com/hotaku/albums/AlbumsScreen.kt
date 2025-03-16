@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3AdaptiveApi::class)
+
 package com.hotaku.albums
 
 import androidx.activity.compose.BackHandler
@@ -6,7 +8,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,8 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -31,6 +30,7 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.SupportingPaneScaffold
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldRole
+import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigation.rememberSupportingPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,10 +45,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.window.core.layout.WindowWidthSizeClass
-import com.hotaku.albums.AlbumsScreenActions.*
+import com.hotaku.albums.AlbumsScreenActions.OnAlbumClick
+import com.hotaku.albums.AlbumsScreenActions.OnClearSelectedAlbum
+import com.hotaku.albums.AlbumsScreenActions.OnMediaItemClick
+import com.hotaku.albums.AlbumsScreenActions.OnSearchFocusChanged
+import com.hotaku.albums.AlbumsScreenActions.OnSearchQueryChange
+import com.hotaku.albums.AlbumsScreenActions.OnUpdateMediaList
 import com.hotaku.albums.model.AlbumUi
 import com.hotaku.features.albums.R
 import com.hotaku.ui.MediaType
@@ -62,6 +67,7 @@ import com.hotaku.ui.conposables.OnScreenMessage
 import com.hotaku.ui.conposables.TextField
 import com.hotaku.ui.conposables.TopAppBar
 import com.hotaku.ui.conposables.VideoThumbnail
+import com.hotaku.ui.models.MediaUi
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -69,44 +75,10 @@ fun AlbumsScreen(
     modifier: Modifier = Modifier,
     navigateToMediaDetailScreen: (Int?, String) -> Unit,
 ) {
-    val albumsViewModel = hiltViewModel<AlbumsViewModel>()
-    AlbumsScreenContent(
-        modifier = modifier,
-        albumsViewModel = albumsViewModel,
-        navigateToMediaDetailScreen = navigateToMediaDetailScreen,
-        onAction = albumsViewModel::onAction,
-    )
-}
-
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
-@Composable
-private fun AlbumsScreenContent(
-    modifier: Modifier = Modifier,
-    albumsViewModel: AlbumsViewModel,
-    navigateToMediaDetailScreen: (Int?, String) -> Unit,
-    onAction: (AlbumsScreenActions) -> Unit,
-) {
-    val state by albumsViewModel.albumsUiState.collectAsStateWithLifecycle()
-
-    val mediaListState = albumsViewModel.mediaUiState.collectAsLazyPagingItems()
-
-    val refreshState = mediaListState.loadState.refresh
-
-    val focusManager = LocalFocusManager.current
-
     val navigator = rememberSupportingPaneScaffoldNavigator<String>()
-
-    val windowSize = currentWindowAdaptiveInfo().windowSizeClass
-
-    BackHandler(navigator.canNavigateBack()) {
-        onAction(OnClearSelectedAlbum)
-        navigator.navigateBack()
-    }
-
-    BackHandler(state.isSearchFocused) {
-        onAction(OnSearchQueryChange(query = ""))
-        focusManager.clearFocus()
-    }
+    val albumsViewModel = hiltViewModel<AlbumsViewModel>()
+    val state by albumsViewModel.state.collectAsStateWithLifecycle()
+    val media = state.media.collectAsLazyPagingItems()
 
     LaunchedEffect(albumsViewModel.albumsUiEvent) {
         albumsViewModel.albumsUiEvent.collectLatest { event ->
@@ -120,10 +92,40 @@ private fun AlbumsScreenContent(
         }
     }
 
+    AlbumsScreenContent(
+        modifier = modifier,
+        navigator = navigator,
+        state = state,
+        pagingMediaItems = media,
+        onAction = albumsViewModel::onAction,
+    )
+}
+
+@Composable
+private fun AlbumsScreenContent(
+    modifier: Modifier = Modifier,
+    navigator: ThreePaneScaffoldNavigator<String>,
+    state: AlbumsUiState,
+    pagingMediaItems: LazyPagingItems<MediaUi>,
+    onAction: (AlbumsScreenActions) -> Unit,
+) {
+    val focusManager = LocalFocusManager.current
+    val windowSize = currentWindowAdaptiveInfo().windowSizeClass
+
+    BackHandler(navigator.canNavigateBack()) {
+        onAction(OnClearSelectedAlbum)
+        navigator.navigateBack()
+    }
+
+    BackHandler(state.isSearchFocused) {
+        onAction(OnSearchQueryChange(query = ""))
+        focusManager.clearFocus()
+    }
+
     LaunchedEffect(state.selectedAlbum) {
         state.selectedAlbum?.let {
             onAction(OnUpdateMediaList)
-            navigator.navigateTo(ThreePaneScaffoldRole.Secondary, state.selectedAlbum?.displayName)
+            navigator.navigateTo(ThreePaneScaffoldRole.Secondary, it.displayName)
         }
     }
 
@@ -194,19 +196,8 @@ private fun AlbumsScreenContent(
                 supportingPane = {
                     AnimatedPane {
                         navigator.currentDestination?.content?.let { albumName ->
-                            when (refreshState) {
-                                is LoadState.Error -> {
-                                    LoadMediaError(onAction = onAction)
-                                }
-                                LoadState.Loading -> {
-                                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                        CircularProgressIndicator()
-                                    }
-                                }
-                                else -> Unit
-                            }
                             MediaGrid(
-                                pagingMediaItems = mediaListState,
+                                pagingMediaItems = pagingMediaItems,
                                 onScrolled = {},
                                 onItemClick = { itemIndex ->
                                     onAction(OnMediaItemClick(itemIndex))
@@ -227,30 +218,6 @@ private fun AlbumsScreenContent(
             )
         },
     )
-}
-
-@Composable
-private fun LoadMediaError(onAction: (AlbumsScreenActions) -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceAround,
-    ) {
-        OnScreenMessage(
-            modifier = Modifier.fillMaxSize(),
-            title = stringResource(id = R.string.albums_screen_error_loading_media_message),
-            fulMessage = stringResource(id = R.string.albums_screen_error_loading_media_full_message),
-        )
-        FilledTonalButton(
-            onClick = {
-                onAction(OnUpdateMediaList)
-            },
-        ) {
-            Text(
-                text = stringResource(R.string.albums_screen_error_loading_media_button_try_again),
-            )
-        }
-    }
 }
 
 @Composable

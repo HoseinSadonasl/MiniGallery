@@ -13,4 +13,7 @@
     <string name="all_storage_low_error">Synchronization failed. Your device\'s storage is too low. Please free up space and try again.</string>
     <string name="media_options_item_rename">Rename</string>
     <string name="media_options_item_details">Details</string>
+    <string name="media_list_error_loading_media_message">Ops!</string>
+    <string name="media_list_error_loading_media_full_message">An error occurred while loading media, let\'s try one more time</string>
+    <string name="media_list_error_loading_media_button_try_again">Try again</string>
 </resources>

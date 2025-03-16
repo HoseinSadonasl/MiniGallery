@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,12 +15,15 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -37,6 +41,7 @@ fun MediaGrid(
     onScrolled: (Boolean) -> Unit,
     onItemClick: (Int) -> Unit,
     onItemLongClick: () -> Unit,
+    onReloadClick: () -> Unit = {},
 ) {
     MediaGridImpl(
         modifier = modifier,
@@ -44,6 +49,7 @@ fun MediaGrid(
         onScrolled = onScrolled,
         onItemClick = onItemClick,
         onItemLongClick = onItemLongClick,
+        onReloadClick = onReloadClick,
     )
 }
 
@@ -54,6 +60,7 @@ private fun MediaGridImpl(
     onScrolled: (Boolean) -> Unit,
     onItemClick: (Int) -> Unit,
     onItemLongClick: () -> Unit,
+    onReloadClick: () -> Unit = {},
 ) {
     val loadState: LoadState = pagingMediaItems.loadState.refresh
 
@@ -68,10 +75,9 @@ private fun MediaGridImpl(
 
     if (loadState is LoadState.Error) {
         val errorMessage: String? = loadState.error.localizedMessage
-        OnScreenMessage(
-            modifier = Modifier.fillMaxSize(),
-            title = stringResource(id = R.string.media_grid_list_error_while_getting_media),
-            fulMessage = errorMessage ?: stringResource(id = R.string.media_grid_list_an_error_occured),
+        LoadMediaError(
+            message = errorMessage,
+            reload = onReloadClick,
         )
     } else {
         MediaGridList(
@@ -152,6 +158,31 @@ private fun LazyGridScope.mediaItems(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun LoadMediaError(
+    message: String?,
+    reload: () -> Unit,
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceAround,
+    ) {
+        OnScreenMessage(
+            modifier = Modifier.fillMaxSize(),
+            title = message ?: stringResource(id = R.string.media_list_error_loading_media_message),
+            fulMessage = stringResource(id = R.string.media_list_error_loading_media_full_message),
+        )
+        FilledTonalButton(
+            onClick = reload,
+        ) {
+            Text(
+                text = stringResource(R.string.media_list_error_loading_media_button_try_again),
+            )
         }
     }
 }

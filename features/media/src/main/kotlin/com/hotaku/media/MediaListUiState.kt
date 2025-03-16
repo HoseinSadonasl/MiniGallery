@@ -1,8 +1,15 @@
 package com.hotaku.media
 
+import androidx.paging.PagingData
 import com.hotaku.ui.MediaDialogs
+import com.hotaku.ui.UiState
+import com.hotaku.ui.models.MediaUi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 internal data class MediaListUiState(
+    val synchronize: UiState<Int>? = null,
+    val media: Flow<PagingData<MediaUi>> = emptyFlow(),
     val isSearchExpanded: Boolean = false,
     val showSyncSection: Boolean = true,
     val isTopBarVisible: Boolean = true,

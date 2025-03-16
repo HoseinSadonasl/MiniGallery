@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3AdaptiveApi::class)
+
 package com.hotaku.media
 
 import android.content.Context
@@ -6,7 +8,6 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,16 +19,14 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.SupportingPaneScaffold
 import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldRole
+import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.material3.adaptive.navigation.rememberSupportingPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,8 +42,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.LoadState
-import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.window.core.layout.WindowWidthSizeClass
@@ -83,8 +80,6 @@ import com.hotaku.ui.rememberLauncherForStartIntentSenderForResult
 import com.hotaku.ui.sendPlayIntent
 import com.hotaku.ui.sendShareIntent
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -93,46 +88,70 @@ fun MediaListScreen(
     navigateToMediaDetailScreen: (Int?) -> Unit,
     navigateToOnboardingScreen: () -> Unit,
 ) {
+    val context = LocalContext.current
+
     val mediaListViewModel = hiltViewModel<MediaListViewModel>()
+    val state by mediaListViewModel.state.collectAsStateWithLifecycle()
+    val media = state.media.collectAsLazyPagingItems()
+
+    val navigator = rememberSupportingPaneScaffoldNavigator<Int>()
+
+    LaunchedEffect(mediaListViewModel.mediaScreenEvent) {
+        mediaListViewModel.mediaScreenEvent.collectLatest { event ->
+            when (event) {
+                MediaListScreenEvents.OnCloseMediaListPreview -> {
+                    navigator.navigateBack()
+                }
+
+                MediaListScreenEvents.OnShareMediaList -> {
+                    state.selectedMediaIndex?.let {
+                        media[it]?.sendShareIntent(context = context)
+                    }
+                }
+
+                MediaListScreenEvents.OnNavigateToMediaDetail -> {
+                    navigateToMediaDetailScreen(state.selectedMediaIndex)
+                }
+
+                MediaListScreenEvents.OnRefreshList -> {
+                    media.refresh()
+                }
+
+                MediaListScreenEvents.OnPlayVideo -> {
+                    state.selectedMediaIndex?.let {
+                        media[it]?.sendPlayIntent(context = context)
+                    }
+                }
+            }
+        }
+    }
+
     MediaListScreenContent(
         modifier = modifier,
-        screenEvents = mediaListViewModel.mediaScreenEvent,
-        screenState = mediaListViewModel.mediaListScreenUiState,
-        pagingMediaItemsState = mediaListViewModel.mediaUiState,
-        synchronizeState = mediaListViewModel.synchronizeUiState,
+        context = context,
+        state = state,
+        pagingMediaItems = media,
         onAction = mediaListViewModel::onAction,
+        navigator = navigator,
         navigateToMediaDetailScreen = navigateToMediaDetailScreen,
         navigateToOnboardingScreen = navigateToOnboardingScreen,
     )
 }
 
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 private fun MediaListScreenContent(
     modifier: Modifier = Modifier,
-    screenEvents: Flow<MediaListScreenEvents>,
-    screenState: StateFlow<MediaListUiState>,
-    pagingMediaItemsState: StateFlow<PagingData<MediaUi>>,
-    synchronizeState: StateFlow<UiState<Int>?>,
+    context: Context,
+    state: MediaListUiState,
+    pagingMediaItems: LazyPagingItems<MediaUi>,
+    navigator: ThreePaneScaffoldNavigator<Int>,
     navigateToMediaDetailScreen: (Int?) -> Unit,
     onAction: (MediaListScreenActions) -> Unit,
     navigateToOnboardingScreen: () -> Unit,
 ) {
-    val state: MediaListUiState by screenState.collectAsStateWithLifecycle()
-
-    val synchronize: UiState<Int>? by synchronizeState.collectAsStateWithLifecycle()
-
-    val pagingMediaItems: LazyPagingItems<MediaUi> = pagingMediaItemsState.collectAsLazyPagingItems()
-
     val refreshState = pagingMediaItems.loadState.refresh
-
     val focusManager = LocalFocusManager.current
-
-    val context = LocalContext.current
-
     val windowWidth = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
-
-    val navigator = rememberSupportingPaneScaffoldNavigator<Int>()
 
     val trashLauncher =
         rememberLauncherForStartIntentSenderForResult {
@@ -170,8 +189,8 @@ private fun MediaListScreenContent(
         }
     }
 
-    LaunchedEffect(synchronize) {
-        if (synchronize is UiState.Success) {
+    LaunchedEffect(state.synchronize) {
+        if (state.synchronize is UiState.Success) {
             pagingMediaItems.refresh()
             delay(3000)
             onAction(OnHideSyncSection)
@@ -208,36 +227,6 @@ private fun MediaListScreenContent(
                     kClass = this@LaunchedEffect::class,
                     message = "Media item count is 0",
                 )
-            }
-        }
-    }
-
-    LaunchedEffect(screenEvents) {
-        screenEvents.collectLatest { event ->
-            when (event) {
-                MediaListScreenEvents.OnCloseMediaListPreview -> {
-                    navigator.navigateBack()
-                }
-
-                MediaListScreenEvents.OnShareMediaList -> {
-                    state.selectedMediaIndex?.let {
-                        pagingMediaItems[it]?.sendShareIntent(context = context)
-                    }
-                }
-
-                MediaListScreenEvents.OnNavigateToMediaDetail -> {
-                    navigateToMediaDetailScreen(state.selectedMediaIndex)
-                }
-
-                MediaListScreenEvents.OnRefreshList -> {
-                    pagingMediaItems.refresh()
-                }
-
-                MediaListScreenEvents.OnPlayVideo -> {
-                    state.selectedMediaIndex?.let {
-                        pagingMediaItems[it]?.sendPlayIntent(context = context)
-                    }
-                }
             }
         }
     }
@@ -280,7 +269,7 @@ private fun MediaListScreenContent(
             )
         },
         content = {
-            if (synchronize is UiState.Success && pagingMediaItems.itemCount == 0) {
+            if (state.synchronize is UiState.Success && pagingMediaItems.itemCount == 0) {
                 NoMedia()
             } else {
                 SupportingPaneScaffold(
@@ -297,18 +286,7 @@ private fun MediaListScreenContent(
                                 AnimatedVisibility(
                                     visible = state.showSyncSection,
                                 ) {
-                                    synchronize?.let { SyncSection(synchronizeState = it, onAction = onAction) }
-                                }
-                                when (refreshState) {
-                                    is LoadState.Error -> {
-                                        LoadMediaError(onAction = onAction)
-                                    }
-                                    LoadState.Loading -> {
-                                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                            CircularProgressIndicator()
-                                        }
-                                    }
-                                    else -> Unit
+                                    state.synchronize?.let { SyncSection(synchronizeState = it, onAction = onAction) }
                                 }
                                 MediaGrid(
                                     modifier = Modifier.weight(1f),
@@ -370,30 +348,6 @@ private fun NoMedia() {
         title = stringResource(id = R.string.media_list_screen_no_media),
         fulMessage = stringResource(id = R.string.media_list_screen_no_media_full_message),
     )
-}
-
-@Composable
-private fun LoadMediaError(onAction: (MediaListScreenActions) -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceAround,
-    ) {
-        OnScreenMessage(
-            modifier = Modifier.fillMaxSize(),
-            title = stringResource(id = R.string.media_list_screen_error_loading_media_message),
-            fulMessage = stringResource(id = R.string.media_list_screen_error_loading_media_full_message),
-        )
-        FilledTonalButton(
-            onClick = {
-                onAction(OnUpdateUpdateMedia)
-            },
-        ) {
-            Text(
-                text = stringResource(R.string.media_list_screen_error_loading_media_button_try_again),
-            )
-        }
-    }
 }
 
 @Composable

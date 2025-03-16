@@ -2,15 +2,41 @@ package com.hotaku.media
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
-import com.hotaku.media.MediaListScreenActions.*
+import com.hotaku.media.MediaListScreenActions.OnClearSelectedMedia
+import com.hotaku.media.MediaListScreenActions.OnHideDiaDialog
+import com.hotaku.media.MediaListScreenActions.OnHideOptions
+import com.hotaku.media.MediaListScreenActions.OnHideOptionsMenu
+import com.hotaku.media.MediaListScreenActions.OnHideSyncSection
+import com.hotaku.media.MediaListScreenActions.OnMediaListItemClick
+import com.hotaku.media.MediaListScreenActions.OnMediaListItemLongClick
+import com.hotaku.media.MediaListScreenActions.OnMediaNameClearQuery
+import com.hotaku.media.MediaListScreenActions.OnMediaNameQueryChange
+import com.hotaku.media.MediaListScreenActions.OnMimeTypeChange
+import com.hotaku.media.MediaListScreenActions.OnOpenMediaDetails
+import com.hotaku.media.MediaListScreenActions.OnOpenRenameMediaDialog
+import com.hotaku.media.MediaListScreenActions.OnPlayVideo
+import com.hotaku.media.MediaListScreenActions.OnRenameMediaItem
+import com.hotaku.media.MediaListScreenActions.OnRetrySynchronizeMedia
+import com.hotaku.media.MediaListScreenActions.OnSearchFocusChanged
+import com.hotaku.media.MediaListScreenActions.OnSearchQueryChange
+import com.hotaku.media.MediaListScreenActions.OnSelectedMediaNameChange
+import com.hotaku.media.MediaListScreenActions.OnSetTopBarVisibility
+import com.hotaku.media.MediaListScreenActions.OnShareMedia
+import com.hotaku.media.MediaListScreenActions.OnShowOptions
+import com.hotaku.media.MediaListScreenActions.OnShowOptionsMenu
+import com.hotaku.media.MediaListScreenActions.OnTrashMediaItem
+import com.hotaku.media.MediaListScreenActions.OnUpdateUpdateMedia
+import com.hotaku.media.MediaListScreenActions.ShowDetails
 import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_domain.usecase.RenameMediaUseCase
 import com.hotaku.media_domain.usecase.SyncMediaUseCase
 import com.hotaku.media_domain.usecase.TrashMediaUseCase
-import com.hotaku.media_domain.util.SyncDataState.*
+import com.hotaku.media_domain.util.SyncDataState.Idle
+import com.hotaku.media_domain.util.SyncDataState.SyncFailure
+import com.hotaku.media_domain.util.SyncDataState.SyncSuccess
+import com.hotaku.media_domain.util.SyncDataState.Syncing
 import com.hotaku.ui.MediaDialogs
 import com.hotaku.ui.UiState
 import com.hotaku.ui.asUiError
@@ -22,8 +48,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -44,27 +68,17 @@ internal class MediaListViewModel
         private val trashMediaUseCase: TrashMediaUseCase,
         private val mapMediaUiAsMedia: MapMediaUiAsMedia,
     ) : ViewModel() {
-        private var mediaListScreenViewModelState = MutableStateFlow(MediaListUiState())
-        val mediaListScreenUiState: StateFlow<MediaListUiState> = mediaListScreenViewModelState.asStateFlow()
-
-        private var synchronizeViewModelState = MutableStateFlow<UiState<Int>?>(null)
-        val synchronizeUiState =
-            synchronizeViewModelState
-                .onStart { synchronizeMedia() }
+        private var viewModelState = MutableStateFlow(MediaListUiState())
+        val state: StateFlow<MediaListUiState> =
+            viewModelState
+                .onStart {
+                    synchronizeMedia()
+                    updateMediaState()
+                }
                 .stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5000),
-                    initialValue = null,
-                )
-
-        private var mediaViewModelState = MutableStateFlow<PagingData<MediaUi>>(PagingData.empty())
-        val mediaUiState =
-            mediaViewModelState
-                .onStart { updateMediaState() }
-                .stateIn(
-                    scope = viewModelScope,
-                    started = SharingStarted.WhileSubscribed(5_000),
-                    initialValue = PagingData.empty(),
+                    initialValue = MediaListUiState(),
                 )
 
         private var viewModelEvents = Channel<MediaListScreenEvents>()
@@ -102,7 +116,7 @@ internal class MediaListViewModel
         }
 
         private fun setSearchFocus(hasFocus: Boolean) {
-            mediaListScreenViewModelState.update {
+            viewModelState.update {
                 it.copy(
                     isSearchFocused = hasFocus,
                 )
@@ -110,7 +124,7 @@ internal class MediaListViewModel
         }
 
         private fun setSelectedMediaName(mediaName: String) {
-            mediaListScreenViewModelState.update {
+            viewModelState.update {
                 it.copy(
                     selectedItemName = mediaName,
                 )
@@ -118,7 +132,7 @@ internal class MediaListViewModel
         }
 
         private fun setMediaNameQuery(query: String) {
-            mediaListScreenViewModelState.update {
+            viewModelState.update {
                 it.copy(
                     mediaNameQuery = query,
                 )
@@ -126,8 +140,8 @@ internal class MediaListViewModel
         }
 
         private fun renameLocalMediaItem(media: MediaUi) {
-            mediaListScreenViewModelState.value.mediaNameQuery.isNotBlank().let { newName ->
-                val media = media.copy(displayName = mediaListScreenViewModelState.value.mediaNameQuery)
+            viewModelState.value.mediaNameQuery.isNotBlank().let { newName ->
+                val media = media.copy(displayName = viewModelState.value.mediaNameQuery)
                 viewModelScope.launch {
                     renameMediaUseCase.invoke(
                         media = mapMediaUiAsMedia.map(media),
@@ -141,7 +155,7 @@ internal class MediaListViewModel
         }
 
         private fun showOptions(show: Boolean = true) {
-            mediaListScreenViewModelState.update {
+            viewModelState.update {
                 it.copy(
                     isOptionsVisible = show,
                 )
@@ -152,7 +166,7 @@ internal class MediaListViewModel
         }
 
         private fun showRenameDialog(mediaDialog: MediaDialogs) {
-            mediaListScreenViewModelState.update {
+            viewModelState.update {
                 it.copy(
                     dialog = mediaDialog,
                     isOptionsMenuVisible = false,
@@ -161,7 +175,7 @@ internal class MediaListViewModel
         }
 
         private fun showOptionsMenu(show: Boolean = true) {
-            mediaListScreenViewModelState.update {
+            viewModelState.update {
                 it.copy(isOptionsMenuVisible = show)
             }
         }
@@ -173,9 +187,9 @@ internal class MediaListViewModel
         private fun updateMediaState() {
             viewModelScope.launch {
                 mediaUseCase.invoke(
-                    mimeType = mediaListScreenUiState.value.mimeType,
-                    query = mediaListScreenUiState.value.query,
-                    albumName = mediaListScreenUiState.value.albumName,
+                    mimeType = state.value.mimeType,
+                    query = state.value.query,
+                    albumName = state.value.albumName,
                 )
                     .cachedIn(viewModelScope)
                     .map { pagingData ->
@@ -183,8 +197,12 @@ internal class MediaListViewModel
                             mapMediaAsMediaUi.map(it)
                         }
                     }
-                    .collectLatest { media ->
-                        mediaViewModelState.value = media
+                    .let { media ->
+                        viewModelState.update {
+                            it.copy(
+                                media = media,
+                            )
+                        }
                     }
             }
         }
@@ -217,7 +235,7 @@ internal class MediaListViewModel
         }
 
         private fun clearSelectedMedia() {
-            mediaListScreenViewModelState.update {
+            viewModelState.update {
                 it.copy(
                     selectedMediaIndex = null,
                 )
@@ -226,7 +244,7 @@ internal class MediaListViewModel
         }
 
         private fun previewMedia(mediaItemIndex: Int) {
-            mediaListScreenViewModelState.update {
+            viewModelState.update {
                 it.copy(
                     selectedMediaIndex = mediaItemIndex,
                 )
@@ -235,7 +253,7 @@ internal class MediaListViewModel
 
         private fun setTopBarVisibility(visibility: Boolean) {
             viewModelScope.launch {
-                mediaListScreenViewModelState.update {
+                viewModelState.update {
                     it.copy(isTopBarVisible = visibility)
                 }
             }
@@ -243,7 +261,7 @@ internal class MediaListViewModel
 
         private fun setyncSectionStateFalse() {
             viewModelScope.launch {
-                mediaListScreenViewModelState.update {
+                viewModelState.update {
                     it.copy(showSyncSection = false)
                 }
             }
@@ -252,25 +270,29 @@ internal class MediaListViewModel
         private fun synchronizeMedia() {
             viewModelScope.launch {
                 syncMediaUseCase.invoke().collect { result ->
-                    synchronizeViewModelState.value =
-                        when (result) {
-                            Idle -> null
-                            Syncing -> UiState.Loading()
-                            is SyncFailure -> UiState.Failure(error = result.reason.asUiError())
-                            is SyncSuccess -> UiState.Success(data = result.itemsCount)
-                        }
+                    viewModelState.update {
+                        it.copy(
+                            synchronize =
+                                when (result) {
+                                    Idle -> null
+                                    Syncing -> UiState.Loading()
+                                    is SyncFailure -> UiState.Failure(error = result.reason.asUiError())
+                                    is SyncSuccess -> UiState.Success(data = result.itemsCount)
+                                },
+                        )
+                    }
                 }
             }
         }
 
         private fun setMimeType(mimeType: String) {
-            mediaListScreenViewModelState.update {
+            viewModelState.update {
                 it.copy(mimeType = mimeType)
             }
         }
 
         private fun setQuery(query: String) {
-            mediaListScreenViewModelState.update {
+            viewModelState.update {
                 it.copy(query = query)
             }
         }

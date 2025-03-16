@@ -21,7 +21,11 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.features.media_library.R
-import com.hotaku.media_library.MediaLibraryScreenActions.*
+import com.hotaku.media_library.MediaLibraryScreenActions.OnClearMedia
+import com.hotaku.media_library.MediaLibraryScreenActions.OnFavoriteFolderClick
+import com.hotaku.media_library.MediaLibraryScreenActions.OnSecureFolderClick
+import com.hotaku.media_library.MediaLibraryScreenActions.OnTrashFolderClick
+import com.hotaku.media_library.MediaLibraryScreenActions.OnUpdateMediaState
 import com.hotaku.media_library.composables.HorizontalLibraryFolders
 import com.hotaku.media_library.composables.LibraryFolderItem
 import com.hotaku.media_library.composables.VerticalLibraryFolders
@@ -50,8 +54,6 @@ private fun MediaLibraryScreenContent(
     onAction: (MediaLibraryScreenActions) -> Unit,
 ) {
     val mediaPagingItems = state.media?.collectAsLazyPagingItems()
-
-    val refreshState = mediaPagingItems?.loadState?.refresh
 
     val windowSize = currentWindowAdaptiveInfo().windowSizeClass
 

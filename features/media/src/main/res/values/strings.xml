@@ -5,11 +5,8 @@
     <string name="media_list_screen_media_sync_state_media_added">%1$s media added</string>
     <string name="media_list_screen_no_media">No media</string>
     <string name="media_list_screen_no_media_full_message">Looks like there\'s nothing to show here at the moment. Check back later or add something to get started!</string>
-    <string name="media_list_screen_error_loading_media_message">Ops!</string>
-    <string name="media_list_screen_error_loading_media_full_message">An error occurred while loading media, let\'s try one more time</string>
     <string name="media_list_screen_top_bar_title_all_media">All Media</string>
     <string name="media_list_screen_search_media">Search media</string>
     <string name="media_list_screen_empty_pane_message">Select a media to show preview</string>
     <string name="media_list_screen_menu_option_rename">Rename</string>
-    <string name="media_list_screen_error_loading_media_button_try_again">Try again</string>
 </resources>

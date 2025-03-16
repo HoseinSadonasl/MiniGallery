@@ -30,8 +30,22 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.common.Logger
 import com.hotaku.common.trashMediaRequest
 import com.hotaku.common.writeMediaRequest
-import com.hotaku.features.media_details.R.*
-import com.hotaku.media_details.MediaDetailScreenActions.*
+import com.hotaku.features.media_details.R.string
+import com.hotaku.media_details.MediaDetailScreenActions.OnClearMediaNameQuery
+import com.hotaku.media_details.MediaDetailScreenActions.OnHideDialog
+import com.hotaku.media_details.MediaDetailScreenActions.OnHideOptions
+import com.hotaku.media_details.MediaDetailScreenActions.OnHideOptionsMenu
+import com.hotaku.media_details.MediaDetailScreenActions.OnMediaNameChange
+import com.hotaku.media_details.MediaDetailScreenActions.OnMediaNameQueryChange
+import com.hotaku.media_details.MediaDetailScreenActions.OnPlayVideo
+import com.hotaku.media_details.MediaDetailScreenActions.OnRenameMediaItem
+import com.hotaku.media_details.MediaDetailScreenActions.OnSelectedIndexChanged
+import com.hotaku.media_details.MediaDetailScreenActions.OnShareMedia
+import com.hotaku.media_details.MediaDetailScreenActions.OnShowDetails
+import com.hotaku.media_details.MediaDetailScreenActions.OnShowOptions
+import com.hotaku.media_details.MediaDetailScreenActions.OnShowOptionsMenu
+import com.hotaku.media_details.MediaDetailScreenActions.OnShowRenameMediaDialog
+import com.hotaku.media_details.MediaDetailScreenActions.OnTrashMedia
 import com.hotaku.ui.MediaDialogs
 import com.hotaku.ui.MediaOptionsMenuItems
 import com.hotaku.ui.MediaType
@@ -59,61 +73,10 @@ fun MediaDetailScreen(
     modifier: Modifier = Modifier,
     navigateUp: () -> Unit,
 ) {
-    val mediaDetailViewModel = hiltViewModel<MediaDetailViewModel>()
-
-    MediaDetailScreenContent(
-        modifier = modifier,
-        mediaDetailViewModel = mediaDetailViewModel,
-        navigateUp = navigateUp,
-        onAction = mediaDetailViewModel::onAction,
-    )
-}
-
-@Composable
-private fun MediaDetailScreenContent(
-    modifier: Modifier = Modifier,
-    mediaDetailViewModel: MediaDetailViewModel,
-    navigateUp: () -> Unit,
-    onAction: (MediaDetailScreenActions) -> Unit,
-) {
     val context = LocalContext.current
-
+    val mediaDetailViewModel = hiltViewModel<MediaDetailViewModel>()
     val state by mediaDetailViewModel.mediaDetailUiState.collectAsStateWithLifecycle()
-
-    val pagingMediaItems = mediaDetailViewModel.mediaUiState.collectAsLazyPagingItems()
-
-    val refreshLoadState = pagingMediaItems.loadState.refresh
-
-    val windowWidth = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
-
-    val trashLauncher =
-        rememberLauncherForStartIntentSenderForResult {
-            state.selectedMediaIndex.let { index ->
-                pagingMediaItems.peek(index)?.let { media ->
-                    onAction(
-                        OnTrashMedia(
-                            mediaItem = media,
-                        ),
-                    )
-                }
-            }
-        }
-
-    val renameLauncher =
-        rememberLauncherForStartIntentSenderForResult {
-            state.selectedMediaIndex.let {
-                pagingMediaItems.peek(it)?.let { mediaItem ->
-                    onAction(OnRenameMediaItem(media = mediaItem))
-                }
-            }
-        }
-
-    LaunchedEffect(state.isOptionsVisible, state.isOptionsMenuVisible) {
-        if (state.isOptionsVisible && !state.isOptionsMenuVisible) {
-            delay(1500)
-            onAction(OnHideOptions)
-        }
-    }
+    val pagingMediaItems = state.media.collectAsLazyPagingItems()
 
     LaunchedEffect(mediaDetailViewModel.mediaDetailUiEvents) {
         mediaDetailViewModel.mediaDetailUiEvents.collectLatest { event ->
@@ -131,12 +94,64 @@ private fun MediaDetailScreenContent(
         }
     }
 
+    MediaDetailScreenContent(
+        modifier = modifier,
+        context = context,
+        state = state,
+        media = pagingMediaItems,
+        navigateUp = navigateUp,
+        onAction = mediaDetailViewModel::onAction,
+    )
+}
+
+@Composable
+private fun MediaDetailScreenContent(
+    modifier: Modifier = Modifier,
+    context: Context,
+    state: MediaDetailUiState,
+    media: LazyPagingItems<MediaUi>,
+    navigateUp: () -> Unit,
+    onAction: (MediaDetailScreenActions) -> Unit,
+) {
+    val windowWidth = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
+
+    val refreshLoadState = media.loadState.refresh
+
+    val trashLauncher =
+        rememberLauncherForStartIntentSenderForResult {
+            state.selectedMediaIndex.let { index ->
+                media.peek(index)?.let { media ->
+                    onAction(
+                        OnTrashMedia(
+                            mediaItem = media,
+                        ),
+                    )
+                }
+            }
+        }
+
+    val renameLauncher =
+        rememberLauncherForStartIntentSenderForResult {
+            state.selectedMediaIndex.let {
+                media.peek(it)?.let { mediaItem ->
+                    onAction(OnRenameMediaItem(media = mediaItem))
+                }
+            }
+        }
+
+    LaunchedEffect(state.isOptionsVisible, state.isOptionsMenuVisible) {
+        if (state.isOptionsVisible && !state.isOptionsMenuVisible) {
+            delay(1500)
+            onAction(OnHideOptions)
+        }
+    }
+
     when (state.dialog) {
         MediaDialogs.RenameMediaDialog -> {
             RenameDialog(
                 query = state.mediaNameQuery,
                 onAction = onAction,
-                mediaUriString = pagingMediaItems.peek(state.selectedMediaIndex)?.uriString,
+                mediaUriString = media.peek(state.selectedMediaIndex)?.uriString,
                 context = context,
                 renameLauncher = renameLauncher,
             )
@@ -145,11 +160,11 @@ private fun MediaDetailScreenContent(
     }
 
     LaunchedEffect(
-        key1 = pagingMediaItems.itemCount,
+        key1 = media.itemCount,
         key2 = state.selectedMediaIndex,
     ) {
-        if (pagingMediaItems.itemCount > 0 && state.selectedMediaIndex < pagingMediaItems.itemCount) {
-            pagingMediaItems.peek(state.selectedMediaIndex)?.displayName.orEmpty().let {
+        if (media.itemCount > 0 && state.selectedMediaIndex < media.itemCount) {
+            media.peek(state.selectedMediaIndex)?.displayName.orEmpty().let {
                 onAction(OnMediaNameChange(mediaName = it))
             }
         } else {
@@ -197,7 +212,7 @@ private fun MediaDetailScreenContent(
 
             MediaDetailPager(
                 state = state,
-                pagingMediaItems = pagingMediaItems,
+                pagingMediaItems = media,
                 onAction = onAction,
                 context = context,
                 trashLauncher = trashLauncher,

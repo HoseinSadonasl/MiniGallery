@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.hotaku.media_details.MediaDetailScreenActions.*
@@ -20,8 +19,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -43,16 +40,13 @@ internal class MediaDetailViewModel
         private val savedState: SavedStateHandle,
     ) : ViewModel() {
         private var mediaDetailViewModlState = MutableStateFlow(MediaDetailUiState())
-        val mediaDetailUiState: StateFlow<MediaDetailUiState> = mediaDetailViewModlState.asStateFlow()
-
-        private var mediaViewModelState = MutableStateFlow<PagingData<MediaUi>>(PagingData.empty())
-        val mediaUiState =
-            mediaViewModelState
+        val mediaDetailUiState: StateFlow<MediaDetailUiState> =
+            mediaDetailViewModlState
                 .onStart { updateMediaState() }
                 .stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5_000),
-                    initialValue = PagingData.empty(),
+                    initialValue = MediaDetailUiState(),
                 )
 
         private var mediaDetailViewModelEvents = Channel<MediaDetailScreenEvents>()
@@ -146,8 +140,12 @@ internal class MediaDetailViewModel
                             mapMediaAsMediaUi.map(it)
                         }
                     }
-                    .collectLatest { media ->
-                        mediaViewModelState.value = media
+                    .let { media ->
+                        mediaDetailViewModlState.update {
+                            it.copy(
+                                media = media,
+                            )
+                        }
                     }
             }
         }

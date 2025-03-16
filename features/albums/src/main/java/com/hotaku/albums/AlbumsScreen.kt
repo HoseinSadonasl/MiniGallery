@@ -80,8 +80,8 @@ fun AlbumsScreen(
     val state by albumsViewModel.state.collectAsStateWithLifecycle()
     val media = state.media.collectAsLazyPagingItems()
 
-    LaunchedEffect(albumsViewModel.albumsUiEvent) {
-        albumsViewModel.albumsUiEvent.collectLatest { event ->
+    LaunchedEffect(albumsViewModel.event) {
+        albumsViewModel.event.collectLatest { event ->
             when (event) {
                 is AlbumsScreenEvents.OnNavigateToMediaDetailScreen -> {
                     state.selectedAlbum?.displayName?.let { selectedAlbum ->

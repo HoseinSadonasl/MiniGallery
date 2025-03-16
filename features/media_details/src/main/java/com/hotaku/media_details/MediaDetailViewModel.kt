@@ -39,9 +39,9 @@ internal class MediaDetailViewModel
         private val mapMediaUiAsMedia: MapMediaUiAsMedia,
         private val savedState: SavedStateHandle,
     ) : ViewModel() {
-        private var mediaDetailViewModlState = MutableStateFlow(MediaDetailUiState())
-        val mediaDetailUiState: StateFlow<MediaDetailUiState> =
-            mediaDetailViewModlState
+        private var viewModelState = MutableStateFlow(MediaDetailUiState())
+        val state: StateFlow<MediaDetailUiState> =
+            viewModelState
                 .onStart { updateMediaState() }
                 .stateIn(
                     scope = viewModelScope,
@@ -49,8 +49,8 @@ internal class MediaDetailViewModel
                     initialValue = MediaDetailUiState(),
                 )
 
-        private var mediaDetailViewModelEvents = Channel<MediaDetailScreenEvents>()
-        val mediaDetailUiEvents = mediaDetailViewModelEvents.receiveAsFlow()
+        private var viewModelEvent = Channel<MediaDetailScreenEvents>()
+        val event = viewModelEvent.receiveAsFlow()
 
         init {
             getInitialDataFromSavedState()
@@ -77,7 +77,7 @@ internal class MediaDetailViewModel
         }
 
         private fun setMediaName(mediaName: String) {
-            mediaDetailViewModlState.update {
+            viewModelState.update {
                 it.copy(
                     mediaName = mediaName,
                 )
@@ -85,8 +85,8 @@ internal class MediaDetailViewModel
         }
 
         private fun renameLocalMediaItem(media: MediaUi) {
-            mediaDetailUiState.value.mediaNameQuery.isNotBlank().let { newName ->
-                val media = media.copy(displayName = mediaDetailUiState.value.mediaNameQuery)
+            state.value.mediaNameQuery.isNotBlank().let { newName ->
+                val media = media.copy(displayName = state.value.mediaNameQuery)
                 viewModelScope.launch {
                     renameMediaUseCase.invoke(
                         media = mapMediaUiAsMedia.map(media),
@@ -97,7 +97,7 @@ internal class MediaDetailViewModel
         }
 
         private fun showOptions(show: Boolean = true) {
-            mediaDetailViewModlState.update {
+            viewModelState.update {
                 it.copy(
                     isOptionsVisible = show,
                 )
@@ -105,7 +105,7 @@ internal class MediaDetailViewModel
         }
 
         private fun showOptionsMenu(show: Boolean = true) {
-            mediaDetailViewModlState.update {
+            viewModelState.update {
                 it.copy(
                     isOptionsMenuVisible = show,
                 )
@@ -118,7 +118,7 @@ internal class MediaDetailViewModel
 
         private fun getInitialDataFromSavedState() {
             savedState.toRoute<MediaDetailRoute>().let { initialState ->
-                mediaDetailViewModlState.update {
+                viewModelState.update {
                     it.copy(
                         selectedMediaIndex = initialState.initialItemIndex ?: 0,
                         selectedAlbumName = initialState.selectedAlbum.orEmpty(),
@@ -132,7 +132,7 @@ internal class MediaDetailViewModel
                 mediaUseCase.invoke(
                     mimeType = "",
                     query = "",
-                    albumName = mediaDetailUiState.value.selectedAlbumName,
+                    albumName = state.value.selectedAlbumName,
                 )
                     .cachedIn(viewModelScope)
                     .map { pagingData ->
@@ -141,7 +141,7 @@ internal class MediaDetailViewModel
                         }
                     }
                     .let { media ->
-                        mediaDetailViewModlState.update {
+                        viewModelState.update {
                             it.copy(
                                 media = media,
                             )
@@ -151,7 +151,7 @@ internal class MediaDetailViewModel
         }
 
         private fun setSelectedIndex(page: Int) {
-            mediaDetailViewModlState.update {
+            viewModelState.update {
                 it.copy(
                     selectedMediaIndex = page,
                 )
@@ -163,7 +163,7 @@ internal class MediaDetailViewModel
         }
 
         private fun openRenameDialog(mediaDialogs: MediaDialogs) {
-            mediaDetailViewModlState.update {
+            viewModelState.update {
                 it.copy(
                     isOptionsMenuVisible = false,
                     dialog = mediaDialogs,
@@ -183,7 +183,7 @@ internal class MediaDetailViewModel
         }
 
         private fun setNameQuery(query: String) {
-            mediaDetailViewModlState.update {
+            viewModelState.update {
                 it.copy(
                     mediaNameQuery = query,
                 )
@@ -192,7 +192,7 @@ internal class MediaDetailViewModel
 
         private fun sendEvent(event: MediaDetailScreenEvents) {
             viewModelScope.launch {
-                mediaDetailViewModelEvents.send(event)
+                viewModelEvent.send(event)
             }
         }
     }

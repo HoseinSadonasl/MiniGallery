@@ -96,8 +96,8 @@ fun MediaListScreen(
 
     val navigator = rememberSupportingPaneScaffoldNavigator<Int>()
 
-    LaunchedEffect(mediaListViewModel.mediaScreenEvent) {
-        mediaListViewModel.mediaScreenEvent.collectLatest { event ->
+    LaunchedEffect(mediaListViewModel.event) {
+        mediaListViewModel.event.collectLatest { event ->
             when (event) {
                 MediaListScreenEvents.OnCloseMediaListPreview -> {
                     navigator.navigateBack()

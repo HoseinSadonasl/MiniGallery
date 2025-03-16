@@ -81,8 +81,8 @@ internal class MediaListViewModel
                     initialValue = MediaListUiState(),
                 )
 
-        private var viewModelEvents = Channel<MediaListScreenEvents>()
-        val mediaScreenEvent = viewModelEvents.receiveAsFlow()
+        private var viewModelEvent = Channel<MediaListScreenEvents>()
+        val event = viewModelEvent.receiveAsFlow()
 
         @Suppress("complexity.LongMethod")
         fun onAction(action: MediaListScreenActions) {
@@ -299,7 +299,7 @@ internal class MediaListViewModel
 
         private fun sendEvent(event: MediaListScreenEvents) {
             viewModelScope.launch {
-                viewModelEvents.send(event)
+                viewModelEvent.send(event)
             }
         }
     }

@@ -50,8 +50,8 @@ internal class AlbumsViewModel
                     initialValue = AlbumsUiState(),
                 )
 
-        private val albumsDetailsViewModelEvent = Channel<AlbumsScreenEvents>()
-        val albumsUiEvent = albumsDetailsViewModelEvent.receiveAsFlow()
+        private val viewModelEvent = Channel<AlbumsScreenEvents>()
+        val event = viewModelEvent.receiveAsFlow()
 
         fun onAction(action: AlbumsScreenActions) {
             when (action) {
@@ -114,7 +114,7 @@ internal class AlbumsViewModel
 
         private fun sendEvent(event: AlbumsScreenEvents) {
             viewModelScope.launch {
-                albumsDetailsViewModelEvent.send(event)
+                viewModelEvent.send(event)
             }
         }
 

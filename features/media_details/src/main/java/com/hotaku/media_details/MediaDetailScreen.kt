@@ -75,11 +75,11 @@ fun MediaDetailScreen(
 ) {
     val context = LocalContext.current
     val mediaDetailViewModel = hiltViewModel<MediaDetailViewModel>()
-    val state by mediaDetailViewModel.mediaDetailUiState.collectAsStateWithLifecycle()
+    val state by mediaDetailViewModel.state.collectAsStateWithLifecycle()
     val pagingMediaItems = state.media.collectAsLazyPagingItems()
 
-    LaunchedEffect(mediaDetailViewModel.mediaDetailUiEvents) {
-        mediaDetailViewModel.mediaDetailUiEvents.collectLatest { event ->
+    LaunchedEffect(mediaDetailViewModel.event) {
+        mediaDetailViewModel.event.collectLatest { event ->
             when (event) {
                 MediaDetailScreenEvents.OnRefreshMedia -> {
                     pagingMediaItems.refresh()

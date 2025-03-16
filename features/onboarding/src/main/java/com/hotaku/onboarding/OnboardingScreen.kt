@@ -24,6 +24,7 @@ import com.hotaku.features.onboarding.R
 import com.hotaku.onboarding.OnboardingActions.*
 import com.hotaku.ui.PermissionUtils.requiredMediaPermissions
 import com.hotaku.ui.conposables.OnScreenMessage
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun OnboardingScreen(
@@ -31,24 +32,7 @@ fun OnboardingScreen(
     navigateToMediaListScreen: () -> Unit,
 ) {
     val onboardingViewModel = hiltViewModel<OnboardingViewModel>()
-    OnboardingScreenContent(
-        modifier = modifier,
-        viewModel = onboardingViewModel,
-        onAction = onboardingViewModel::onAction,
-        navigateToMediaListScreen = navigateToMediaListScreen,
-    )
-}
-
-@Composable
-private fun OnboardingScreenContent(
-    modifier: Modifier = Modifier,
-    viewModel: OnboardingViewModel,
-    onAction: (OnboardingActions) -> Unit,
-    navigateToMediaListScreen: () -> Unit,
-) {
-    val state by viewModel.onboardingState.collectAsStateWithLifecycle()
-
-    val windowWidth = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
+    val state by onboardingViewModel.state.collectAsStateWithLifecycle()
 
     val permissionLauncher =
         rememberLauncherForActivityResult(
@@ -56,7 +40,7 @@ private fun OnboardingScreenContent(
             onResult = { result ->
                 result.entries.forEach { entry ->
                     entry.value.let {
-                        viewModel.onAction(
+                        onboardingViewModel.onAction(
                             OnRemovePermissionItemState(permission = entry.key),
                         )
                     }
@@ -65,15 +49,7 @@ private fun OnboardingScreenContent(
         )
 
     LaunchedEffect(Unit) {
-        viewModel.onAction(OnAddPermissionsToRequest(requiredMediaPermissions.asList()))
-    }
-
-    LaunchedEffect(state.mediaPermissions) {
-        if (state.mediaPermissions?.isEmpty() == true) navigateToMediaListScreen()
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.onboardingScreenEvent.collect { event ->
+        onboardingViewModel.event.collectLatest { event ->
             when (event) {
                 OnboardingScreenEvents.RequestPermissions -> {
                     state.mediaPermissions?.toTypedArray()?.let { permissionsArray ->
@@ -84,6 +60,27 @@ private fun OnboardingScreenContent(
                 }
             }
         }
+    }
+
+    LaunchedEffect(state.mediaPermissions) {
+        if (state.mediaPermissions?.isEmpty() == true) navigateToMediaListScreen()
+    }
+
+    OnboardingScreenContent(
+        modifier = modifier,
+        onAction = onboardingViewModel::onAction,
+    )
+}
+
+@Composable
+private fun OnboardingScreenContent(
+    modifier: Modifier = Modifier,
+    onAction: (OnboardingActions) -> Unit,
+) {
+    val windowWidth = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
+
+    LaunchedEffect(Unit) {
+        onAction(OnAddPermissionsToRequest(requiredMediaPermissions.asList()))
     }
 
     Surface(

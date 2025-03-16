@@ -14,11 +14,11 @@ import javax.inject.Inject
 internal class OnboardingViewModel
     @Inject
     constructor() : ViewModel() {
-        private val onboardingViewModelState = MutableStateFlow(OnboardingScreenState())
-        val onboardingState = onboardingViewModelState.asStateFlow()
+        private val viewModelState = MutableStateFlow(OnboardingScreenState())
+        val state = viewModelState.asStateFlow()
 
-        private var mainViewModelEvent = Channel<OnboardingScreenEvents>()
-        val onboardingScreenEvent = mainViewModelEvent.receiveAsFlow()
+        private var viewModelEvent = Channel<OnboardingScreenEvents>()
+        val event = viewModelEvent.receiveAsFlow()
 
         fun onAction(action: OnboardingActions) =
             when (action) {
@@ -28,7 +28,7 @@ internal class OnboardingViewModel
             }
 
         private fun addPermissions(requiredMediaPermissions: List<String>) {
-            onboardingViewModelState.update {
+            viewModelState.update {
                 it.copy(
                     mediaPermissions = requiredMediaPermissions,
                 )
@@ -37,12 +37,12 @@ internal class OnboardingViewModel
 
         private fun requestPermissions() {
             viewModelScope.launch {
-                mainViewModelEvent.send(OnboardingScreenEvents.RequestPermissions)
+                viewModelEvent.send(OnboardingScreenEvents.RequestPermissions)
             }
         }
 
         private fun clearPermissionState(grantedPermission: String) {
-            onboardingViewModelState.update {
+            viewModelState.update {
                 it.copy(
                     mediaPermissions = it.mediaPermissions?.filterNot { permission -> permission == grantedPermission },
                 )

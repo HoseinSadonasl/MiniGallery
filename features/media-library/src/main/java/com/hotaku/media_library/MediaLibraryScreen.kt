@@ -22,14 +22,12 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.features.media_library.R
 import com.hotaku.media_library.MediaLibraryScreenActions.OnClearMedia
-import com.hotaku.media_library.MediaLibraryScreenActions.OnFavoriteFolderClick
-import com.hotaku.media_library.MediaLibraryScreenActions.OnSecureFolderClick
-import com.hotaku.media_library.MediaLibraryScreenActions.OnTrashFolderClick
+import com.hotaku.media_library.MediaLibraryScreenActions.OnFolderClick
 import com.hotaku.media_library.MediaLibraryScreenActions.OnUpdateMediaState
 import com.hotaku.media_library.composables.HorizontalLibraryFolders
 import com.hotaku.media_library.composables.LibraryFolderItem
 import com.hotaku.media_library.composables.VerticalLibraryFolders
-import com.hotaku.media_library.utils.LibraryItemsEnum
+import com.hotaku.ui.asString
 import com.hotaku.ui.conposables.DynamicTopAppBarColumn
 import com.hotaku.ui.conposables.MediaGrid
 import com.hotaku.ui.conposables.TopAppBar
@@ -74,7 +72,7 @@ private fun MediaLibraryScreenContent(
     DynamicTopAppBarColumn(
         modifier = modifier.fillMaxSize(),
         animatableTopContent = {
-            TopAppBar(title = stringResource(id = R.string.media_library_top_bar_title))
+            TopAppBar(title = state.screenTitle?.asString() ?: stringResource(id = R.string.media_library_top_bar_title))
         },
         content = {
             AnimatedContent(
@@ -98,7 +96,7 @@ private fun MediaLibraryScreenContent(
                                     isCompact = isCompact,
                                     item = item,
                                     onItemClick = {
-                                        onFolderItemClick(item = item.item, onAction = onAction)
+                                        onAction(OnFolderClick(folderItem = item))
                                     },
                                 )
                             }
@@ -109,7 +107,7 @@ private fun MediaLibraryScreenContent(
                                     isCompact = isCompact,
                                     item = item,
                                     onItemClick = {
-                                        onFolderItemClick(item = item.item, onAction = onAction)
+                                        onAction(OnFolderClick(folderItem = item))
                                     },
                                 )
                             }
@@ -119,17 +117,6 @@ private fun MediaLibraryScreenContent(
             }
         },
     )
-}
-
-private fun onFolderItemClick(
-    item: LibraryItemsEnum,
-    onAction: (MediaLibraryScreenActions) -> Unit,
-) {
-    when (item) {
-        LibraryItemsEnum.FAVORITE_FOLDER -> onAction(OnFavoriteFolderClick)
-        LibraryItemsEnum.TRASH_FOLDER -> onAction(OnTrashFolderClick)
-        LibraryItemsEnum.SECURE_FOLDER -> onAction(OnSecureFolderClick)
-    }
 }
 
 @PreviewScreenSizes

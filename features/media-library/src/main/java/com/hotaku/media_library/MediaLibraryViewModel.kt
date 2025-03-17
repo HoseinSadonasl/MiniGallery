@@ -6,6 +6,7 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_library.MediaLibraryScreenActions.*
+import com.hotaku.media_library.utils.LibraryFolderItem
 import com.hotaku.media_library.utils.LibraryItemsEnum
 import com.hotaku.ui.mappers.MapMediaAsMediaUi
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,26 +32,18 @@ internal class MediaLibraryViewModel
         fun onAction(action: MediaLibraryScreenActions) {
             when (action) {
                 OnUpdateMediaState -> updateMediaState()
-                OnClearMedia -> onClearMedia()
-                OnFavoriteFolderClick -> setSelectedFolder(folder = LibraryItemsEnum.FAVORITE_FOLDER)
-                OnSecureFolderClick -> setSelectedFolder(folder = LibraryItemsEnum.SECURE_FOLDER)
-                OnTrashFolderClick -> setSelectedFolder(folder = LibraryItemsEnum.TRASH_FOLDER)
-                OnCloseSelectedFolder -> setSelectedFolder(folder = null)
+                OnClearMedia -> setSelectedFolder(folderItem = null)
+                is OnFolderClick -> setSelectedFolder(folderItem = action.folderItem)
             }
         }
 
-        private fun onClearMedia() {
+        private fun setSelectedFolder(folderItem: LibraryFolderItem?) {
+            // Return because this feature not implemented yet...
+            if (folderItem?.item == LibraryItemsEnum.SECURE_FOLDER) return
             mediaLibraryViewModelState.update {
                 it.copy(
-                    media = null,
-                )
-            }
-        }
-
-        private fun setSelectedFolder(folder: LibraryItemsEnum?) {
-            mediaLibraryViewModelState.update {
-                it.copy(
-                    selectedFolder = folder,
+                    screenTitle = folderItem?.label,
+                    selectedFolder = folderItem?.item,
                 )
             }
         }

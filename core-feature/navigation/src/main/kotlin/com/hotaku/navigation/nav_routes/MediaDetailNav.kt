@@ -4,14 +4,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
+import com.hotaku.media_details.MediaDetailRoute
 import com.hotaku.media_details.MediaDetailScreen
-import kotlinx.serialization.Serializable
-
-@Serializable
-data class MediaDetailRoute(
-    val initialItemIndex: Int?,
-    val selectedAlbum: String? = null,
-)
 
 fun NavGraphBuilder.mediaDetailsNav(navHostController: NavHostController) =
     composable<MediaDetailRoute> {
@@ -25,12 +19,16 @@ fun NavGraphBuilder.mediaDetailsNav(navHostController: NavHostController) =
 fun NavHostController.navigateToMediaDetailScreen(
     initialIndex: Int?,
     selectedAlbum: String? = null,
+    matchTrash: Boolean = false,
+    matchFavorite: Boolean = false,
     navOptions: NavOptionsBuilder.() -> Unit = {},
 ) {
     navigate(
         MediaDetailRoute(
             initialItemIndex = initialIndex,
             selectedAlbum = selectedAlbum,
+            matchTrash = matchTrash,
+            matchFavorite = matchFavorite,
         ),
     ) {
         navOptions()

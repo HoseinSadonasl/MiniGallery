@@ -278,6 +278,9 @@ private fun MediaDetailPager(
                                 onAction(OnShareMedia)
                             },
                             onTrashMedia = {
+                                // Because we don't implement delete files yet, so we hav to ignore trash file button
+                                // functionality for now ...
+                                if (state.matchTrash) return@MediaOptions
                                 media.uriString.trashMediaRequest(
                                     context = context,
                                     trashLauncher = trashLauncher,

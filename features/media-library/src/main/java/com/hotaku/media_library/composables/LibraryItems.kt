@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.media_library.utils.LibraryFolderItem
-import com.hotaku.media_library.utils.LibraryItemsEnum
+import com.hotaku.media_library.utils.LibraryFolderType
 import com.hotaku.media_library.utils.libraryFolderItems
 import com.hotaku.ui.asString
 
@@ -61,7 +61,7 @@ internal fun LibraryFolderItem(
     modifier: Modifier = Modifier,
     isCompact: Boolean,
     item: LibraryFolderItem,
-    onItemClick: (LibraryItemsEnum) -> Unit,
+    onItemClick: (LibraryFolderType) -> Unit,
 ) {
     if (isCompact) {
         Row(
@@ -70,7 +70,7 @@ internal fun LibraryFolderItem(
                     .fillMaxWidth()
                     .clip(MaterialTheme.shapes.large)
                     .background(item.color.copy(alpha = .2f))
-                    .clickable { onItemClick(item.item) }
+                    .clickable { onItemClick(item.type) }
                     .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -95,7 +95,7 @@ internal fun LibraryFolderItem(
                     .aspectRatio(1f)
                     .clip(MaterialTheme.shapes.large)
                     .background(item.color.copy(alpha = .2f))
-                    .clickable { onItemClick(item.item) }
+                    .clickable { onItemClick(item.type) }
                     .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,

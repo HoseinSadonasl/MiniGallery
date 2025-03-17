@@ -15,4 +15,6 @@ internal data class MediaDetailUiState(
     val isOptionsVisible: Boolean = false,
     val isOptionsMenuVisible: Boolean = false,
     val dialog: MediaDialogs = MediaDialogs.Idle,
+    val matchTrash: Boolean = false,
+    val matchFavorite: Boolean = false,
 )

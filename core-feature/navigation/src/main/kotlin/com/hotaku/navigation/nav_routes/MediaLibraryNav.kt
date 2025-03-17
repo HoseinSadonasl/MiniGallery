@@ -7,6 +7,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.hotaku.media_library.MediaLibraryRoute
 import com.hotaku.media_library.MediaLibraryScreen
+import com.hotaku.media_library.utils.LibraryFolderType.FAVORITE_FOLDER
+import com.hotaku.media_library.utils.LibraryFolderType.TRASH_FOLDER
 
 fun NavGraphBuilder.mediaLibraryNav(navHostController: NavHostController) =
     composable<MediaLibraryRoute>(
@@ -23,5 +25,15 @@ fun NavGraphBuilder.mediaLibraryNav(navHostController: NavHostController) =
             )
         },
     ) {
-        MediaLibraryScreen()
+        MediaLibraryScreen(
+            navigateToMediaDetailScreen = { index, folderType ->
+                navHostController.navigateToMediaDetailScreen(
+                    initialIndex = index,
+                    matchTrash = folderType == TRASH_FOLDER,
+                    matchFavorite = folderType == FAVORITE_FOLDER,
+                ) {
+                    launchSingleTop = true
+                }
+            },
+        )
     }

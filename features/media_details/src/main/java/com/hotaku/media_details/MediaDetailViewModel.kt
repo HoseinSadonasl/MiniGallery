@@ -138,6 +138,8 @@ internal class MediaDetailViewModel
                     it.copy(
                         selectedMediaIndex = initialState.initialItemIndex ?: 0,
                         selectedAlbumName = initialState.selectedAlbum.orEmpty(),
+                        matchFavorite = initialState.matchFavorite,
+                        matchTrash = initialState.matchTrash,
                     )
                 }
             }
@@ -149,6 +151,8 @@ internal class MediaDetailViewModel
                     mimeType = "",
                     query = "",
                     albumName = state.value.selectedAlbumName,
+                    matchTrash = state.value.matchTrash,
+                    matchFavorite = state.value.matchFavorite,
                 )
                     .cachedIn(viewModelScope)
                     .map { pagingData ->

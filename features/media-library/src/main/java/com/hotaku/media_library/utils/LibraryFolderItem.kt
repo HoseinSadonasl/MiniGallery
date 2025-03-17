@@ -8,18 +8,18 @@ import com.hotaku.ui.blue
 import com.hotaku.ui.red
 import com.hotaku.ui.yellow
 
-internal data class LibraryFolderItem(
-    val label: UiText,
-    @DrawableRes val icon: Int,
-    val color: Color,
-    val item: LibraryItemsEnum,
-)
-
-internal enum class LibraryItemsEnum {
+enum class LibraryFolderType {
     FAVORITE_FOLDER,
     TRASH_FOLDER,
     SECURE_FOLDER,
 }
+
+internal data class LibraryFolderItem(
+    val label: UiText,
+    @DrawableRes val icon: Int,
+    val color: Color,
+    val type: LibraryFolderType,
+)
 
 internal val libraryFolderItems
     get() =
@@ -28,18 +28,18 @@ internal val libraryFolderItems
                 label = UiText.StringResource(R.string.library_screen_favorites_label),
                 icon = R.drawable.media_library_items_favorite,
                 color = yellow,
-                item = LibraryItemsEnum.FAVORITE_FOLDER,
+                type = LibraryFolderType.FAVORITE_FOLDER,
             ),
             LibraryFolderItem(
                 label = UiText.StringResource(R.string.library_screen_trash_label),
                 icon = R.drawable.media_library_items_trash,
                 color = red,
-                item = LibraryItemsEnum.TRASH_FOLDER,
+                type = LibraryFolderType.TRASH_FOLDER,
             ),
             LibraryFolderItem(
                 label = UiText.StringResource(R.string.library_screen_secure_label),
                 icon = R.drawable.media_library_items_secure,
                 color = blue,
-                item = LibraryItemsEnum.SECURE_FOLDER,
+                type = LibraryFolderType.SECURE_FOLDER,
             ),
         )

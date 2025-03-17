@@ -7,7 +7,7 @@ import androidx.paging.map
 import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_library.MediaLibraryScreenActions.*
 import com.hotaku.media_library.utils.LibraryFolderItem
-import com.hotaku.media_library.utils.LibraryItemsEnum
+import com.hotaku.media_library.utils.LibraryFolderType
 import com.hotaku.ui.mappers.MapMediaAsMediaUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,11 +39,11 @@ internal class MediaLibraryViewModel
 
         private fun setSelectedFolder(folderItem: LibraryFolderItem?) {
             // Return because this feature not implemented yet...
-            if (folderItem?.item == LibraryItemsEnum.SECURE_FOLDER) return
+            if (folderItem?.type == LibraryFolderType.SECURE_FOLDER) return
             mediaLibraryViewModelState.update {
                 it.copy(
                     screenTitle = folderItem?.label,
-                    selectedFolder = folderItem?.item,
+                    selectedFolder = folderItem?.type,
                 )
             }
         }
@@ -78,12 +78,12 @@ internal class MediaLibraryViewModel
         private val matchTrash
             get() =
                 mediaLibraryViewModelState.value.selectedFolder?.let { folder ->
-                    folder == LibraryItemsEnum.TRASH_FOLDER
+                    folder == LibraryFolderType.TRASH_FOLDER
                 } ?: false
 
         private val matchFavorite
             get() =
                 mediaLibraryViewModelState.value.selectedFolder?.let { folder ->
-                    folder == LibraryItemsEnum.FAVORITE_FOLDER
+                    folder == LibraryFolderType.FAVORITE_FOLDER
                 } ?: false
     }

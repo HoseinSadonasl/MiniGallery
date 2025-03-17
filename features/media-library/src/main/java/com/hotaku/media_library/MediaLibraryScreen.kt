@@ -27,13 +27,17 @@ import com.hotaku.media_library.MediaLibraryScreenActions.OnUpdateMediaState
 import com.hotaku.media_library.composables.HorizontalLibraryFolders
 import com.hotaku.media_library.composables.LibraryFolderItem
 import com.hotaku.media_library.composables.VerticalLibraryFolders
+import com.hotaku.media_library.utils.LibraryFolderType
 import com.hotaku.ui.asString
 import com.hotaku.ui.conposables.DynamicTopAppBarColumn
 import com.hotaku.ui.conposables.MediaGrid
 import com.hotaku.ui.conposables.TopAppBar
 
 @Composable
-fun MediaLibraryScreen(modifier: Modifier = Modifier) {
+fun MediaLibraryScreen(
+    modifier: Modifier = Modifier,
+    navigateToMediaDetailScreen: (Int, LibraryFolderType) -> Unit,
+) {
     val mediaLibraryViewModel = hiltViewModel<MediaLibraryViewModel>()
 
     val screenState by mediaLibraryViewModel.mediaLibraryScreenUiState.collectAsStateWithLifecycle()
@@ -42,6 +46,7 @@ fun MediaLibraryScreen(modifier: Modifier = Modifier) {
         modifier = modifier,
         state = screenState,
         onAction = { mediaLibraryViewModel.onAction(it) },
+        navigateToMediaDetailScreen = navigateToMediaDetailScreen,
     )
 }
 
@@ -50,12 +55,12 @@ private fun MediaLibraryScreenContent(
     modifier: Modifier = Modifier,
     state: MediaLibraryUiState,
     onAction: (MediaLibraryScreenActions) -> Unit,
+    navigateToMediaDetailScreen: (Int, LibraryFolderType) -> Unit,
 ) {
-    val mediaPagingItems = state.media?.collectAsLazyPagingItems()
-
     val windowSize = currentWindowAdaptiveInfo().windowSizeClass
-
     val isCompact = windowSize.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
+
+    val mediaPagingItems = state.media?.collectAsLazyPagingItems()
 
     BackHandler(state.selectedFolder != null) {
         onAction(OnClearMedia)
@@ -82,7 +87,9 @@ private fun MediaLibraryScreenContent(
                     MediaGrid(
                         pagingMediaItems = mediaPagingItems,
                         onScrolled = {},
-                        onItemClick = {},
+                        onItemClick = { index ->
+                            navigateToMediaDetailScreen(index, state.selectedFolder!!)
+                        },
                         onItemLongClick = {},
                     )
                 } else {
@@ -126,6 +133,7 @@ private fun MediaLibraryScreenContentPreview() {
         MediaLibraryScreenContent(
             state = MediaLibraryUiState(),
             onAction = {},
+            navigateToMediaDetailScreen = { _, _ -> },
         )
     }
 }

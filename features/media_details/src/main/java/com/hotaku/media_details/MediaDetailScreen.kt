@@ -83,9 +83,6 @@ fun MediaDetailScreen(
     LaunchedEffect(mediaDetailViewModel.event) {
         mediaDetailViewModel.event.collectLatest { event ->
             when (event) {
-                MediaDetailScreenEvents.OnRefreshMedia -> {
-                    pagingMediaItems.refresh()
-                }
                 MediaDetailScreenEvents.OnShareMedia -> {
                     pagingMediaItems.peek(state.selectedMediaIndex)?.sendShareIntent(context = context)
                 }

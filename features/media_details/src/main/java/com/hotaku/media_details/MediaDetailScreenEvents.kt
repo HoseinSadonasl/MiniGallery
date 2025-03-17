@@ -1,7 +1,7 @@
 package com.hotaku.media_details
 
 internal interface MediaDetailScreenEvents {
-    data object OnRefreshMedia : MediaDetailScreenEvents
+    data object OnShowSnackBar : MediaDetailScreenEvents
 
     data object OnShareMedia : MediaDetailScreenEvents
 

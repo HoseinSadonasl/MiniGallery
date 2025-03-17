@@ -6,7 +6,22 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import androidx.paging.cachedIn
 import androidx.paging.map
-import com.hotaku.media_details.MediaDetailScreenActions.*
+import com.hotaku.media_details.MediaDetailScreenActions.OnClearMediaNameQuery
+import com.hotaku.media_details.MediaDetailScreenActions.OnHideDialog
+import com.hotaku.media_details.MediaDetailScreenActions.OnHideOptions
+import com.hotaku.media_details.MediaDetailScreenActions.OnHideOptionsMenu
+import com.hotaku.media_details.MediaDetailScreenActions.OnItemIsFavoriteChange
+import com.hotaku.media_details.MediaDetailScreenActions.OnMediaNameChange
+import com.hotaku.media_details.MediaDetailScreenActions.OnMediaNameQueryChange
+import com.hotaku.media_details.MediaDetailScreenActions.OnPlayVideo
+import com.hotaku.media_details.MediaDetailScreenActions.OnRenameMediaItem
+import com.hotaku.media_details.MediaDetailScreenActions.OnSelectedIndexChanged
+import com.hotaku.media_details.MediaDetailScreenActions.OnShareMedia
+import com.hotaku.media_details.MediaDetailScreenActions.OnShowDetails
+import com.hotaku.media_details.MediaDetailScreenActions.OnShowOptions
+import com.hotaku.media_details.MediaDetailScreenActions.OnShowOptionsMenu
+import com.hotaku.media_details.MediaDetailScreenActions.OnShowRenameMediaDialog
+import com.hotaku.media_details.MediaDetailScreenActions.OnTrashMedia
 import com.hotaku.media_domain.usecase.FavoriteMediaUseCase
 import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_domain.usecase.RenameMediaUseCase
@@ -108,7 +123,7 @@ internal class MediaDetailViewModel
                         media = mapMediaUiAsMedia.map(media),
                     )
                 }
-                sendEvent(event = MediaDetailScreenEvents.OnRefreshMedia)
+//                sendEvent(event = MediaDetailScreenEvents.OnRefreshMedia)
             }
         }
 
@@ -194,11 +209,7 @@ internal class MediaDetailViewModel
         private fun trashMedia(media: MediaUi) {
             val mediaUriToDelete = mapMediaUiAsMedia.map(media).copy(isTrash = true)
             viewModelScope.launch {
-                trashMediaUseCase.invoke(media = listOf(mediaUriToDelete)).let { isSuccess ->
-                    if (isSuccess) {
-                        sendEvent(MediaDetailScreenEvents.OnRefreshMedia)
-                    }
-                }
+                trashMediaUseCase.invoke(media = listOf(mediaUriToDelete))
             }
         }
 

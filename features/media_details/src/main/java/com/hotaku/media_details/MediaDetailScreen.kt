@@ -215,17 +215,17 @@ private fun MediaDetailScreenContent(
                     LoadMediaItemError()
                 }
 
-                else -> Unit
+                else -> {
+                    MediaDetailPager(
+                        state = state,
+                        pagingMediaItems = media,
+                        onAction = onAction,
+                        context = context,
+                        trashLauncher = trashLauncher,
+                        favoriteLauncher = favoriteLauncher,
+                    )
+                }
             }
-
-            MediaDetailPager(
-                state = state,
-                pagingMediaItems = media,
-                onAction = onAction,
-                context = context,
-                trashLauncher = trashLauncher,
-                favoriteLauncher = favoriteLauncher,
-            )
         },
     )
 }

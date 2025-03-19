@@ -24,14 +24,6 @@ This project is built using [Clean Architecture](https://blog.cleancoder.com/unc
 ## 📱 Presentation Pattern
 This project employs the Model-View-Intent (MVI) pattern in its presentation modules. MVI's benefits include a single, immutable state for data consistency, a clear unidirectional data flow for easier debugging, and enhanced testability.
 
-## 📋 To Do List
-- [ ] Writing tests and modifying existing tests for the implemented part of the project
-- [ ] Library feature (Includes Trash, Favorite, Secured folder)
-- [ ] Trashed media
-- [ ] Favorite media
-- [ ] Pinch to zoom
-- [ ] Add Media Player
-
 ## 👥 Contributing
 I sincerely welcome your contributions to the MiniGallery project! I would love to have your help in making MiniGallery better. My main goal with this project is to learn and share knowledge in the field of Android development. Please note that this project may have technical debt, but this is an excellent opportunity to learn and help improve the project.
 

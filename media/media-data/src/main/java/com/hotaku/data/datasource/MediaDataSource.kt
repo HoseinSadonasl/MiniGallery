@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface MediaDataSource {
     fun getMedia(
+        initialKey: Int,
         mimeType: String,
         query: String,
         albumName: String,

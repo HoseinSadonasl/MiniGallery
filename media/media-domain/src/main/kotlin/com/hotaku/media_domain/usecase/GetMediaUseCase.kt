@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface GetMediaUseCase {
     operator fun invoke(
+        initialKey: Int = 0,
         mimeType: String,
         query: String,
         albumName: String,

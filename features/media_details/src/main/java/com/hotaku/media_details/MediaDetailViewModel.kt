@@ -59,7 +59,10 @@ internal class MediaDetailViewModel
         private var viewModelState = MutableStateFlow(MediaDetailUiState())
         val state: StateFlow<MediaDetailUiState> =
             viewModelState
-                .onStart { updateMediaState() }
+                .onStart {
+                    getInitialDataFromSavedState()
+                    updateMediaState()
+                }
                 .stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5_000),
@@ -68,10 +71,6 @@ internal class MediaDetailViewModel
 
         private var viewModelEvent = Channel<MediaDetailScreenEvents>()
         val event = viewModelEvent.receiveAsFlow()
-
-        init {
-            getInitialDataFromSavedState()
-        }
 
         fun onAction(action: MediaDetailScreenActions) {
             when (action) {
@@ -123,7 +122,6 @@ internal class MediaDetailViewModel
                         media = mapMediaUiAsMedia.map(media),
                     )
                 }
-//                sendEvent(event = MediaDetailScreenEvents.OnRefreshMedia)
             }
         }
 
@@ -163,6 +161,7 @@ internal class MediaDetailViewModel
         private fun updateMediaState() {
             viewModelScope.launch {
                 mediaUseCase.invoke(
+                    initialKey = state.value.selectedMediaIndex,
                     mimeType = "",
                     query = "",
                     albumName = state.value.selectedAlbumName,

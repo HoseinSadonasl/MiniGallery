@@ -35,6 +35,7 @@ import androidx.compose.material3.adaptive.navigation.rememberSupportingPaneScaf
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -69,6 +70,7 @@ import com.hotaku.ui.conposables.TopAppBar
 import com.hotaku.ui.conposables.VideoThumbnail
 import com.hotaku.ui.models.MediaUi
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @Composable
 fun AlbumsScreen(
@@ -112,9 +114,13 @@ private fun AlbumsScreenContent(
     val focusManager = LocalFocusManager.current
     val windowSize = currentWindowAdaptiveInfo().windowSizeClass
 
+    val scope = rememberCoroutineScope()
+
     BackHandler(navigator.canNavigateBack()) {
         onAction(OnClearSelectedAlbum)
-        navigator.navigateBack()
+        scope.launch {
+            navigator.navigateBack()
+        }
     }
 
     BackHandler(state.isSearchFocused) {
@@ -164,7 +170,9 @@ private fun AlbumsScreenContent(
                             IconButton(
                                 onClick = {
                                     onAction(OnClearSelectedAlbum)
-                                    navigator.navigateBack()
+                                    scope.launch {
+                                        navigator.navigateBack()
+                                    }
                                 },
                             ) {
                                 Icon(
@@ -195,7 +203,7 @@ private fun AlbumsScreenContent(
                 },
                 supportingPane = {
                     AnimatedPane {
-                        navigator.currentDestination?.content?.let { albumName ->
+                        navigator.currentDestination?.contentKey?.let { albumName ->
                             MediaGrid(
                                 pagingMediaItems = pagingMediaItems,
                                 onScrolled = {},

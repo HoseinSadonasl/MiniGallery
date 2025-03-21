@@ -27,6 +27,7 @@ internal class MediaRepositoryImpl
         @Dispatcher(MiniGalleryDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
     ) : MediaRepository {
         override fun getMedia(
+            initialKey: Int,
             mimeType: String,
             query: String,
             albumName: String,
@@ -34,6 +35,7 @@ internal class MediaRepositoryImpl
             matchFavorite: Boolean,
         ): Flow<PagingData<Media>> =
             mediaDataSource.getMedia(
+                initialKey = initialKey,
                 mimeType = mimeType,
                 query = query,
                 albumName = albumName,

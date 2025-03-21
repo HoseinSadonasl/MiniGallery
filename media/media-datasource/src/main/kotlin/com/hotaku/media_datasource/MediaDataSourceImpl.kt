@@ -21,6 +21,7 @@ internal class MediaDataSourceImpl
         private val mediaDao: MediaDao,
     ) : MediaDataSource {
         override fun getMedia(
+            initialKey: Int,
             mimeType: String,
             query: String,
             albumName: String,
@@ -29,6 +30,7 @@ internal class MediaDataSourceImpl
         ): Flow<PagingData<MediaData>> =
             Pager(
                 config = pagingConfig,
+                initialKey = initialKey,
                 pagingSourceFactory = {
                     mediaDao.getAll(
                         mimeType = mimeType,
@@ -57,11 +59,10 @@ internal class MediaDataSourceImpl
                 PagingConfig(
                     initialLoadSize = INITIAL_LOAD_SIZE,
                     pageSize = PAGE_SIZE,
-                    enablePlaceholders = false,
                 )
 
-        companion object {
+        private companion object {
             private const val INITIAL_LOAD_SIZE = 40
-            private const val PAGE_SIZE = 40
+            private const val PAGE_SIZE = 20
         }
     }

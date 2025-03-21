@@ -12,6 +12,7 @@ internal class GetMediaUseCaseImpl
         private val mediaRepository: MediaRepository,
     ) : GetMediaUseCase {
         override operator fun invoke(
+            initialKey: Int,
             mimeType: String,
             query: String,
             albumName: String,
@@ -19,6 +20,7 @@ internal class GetMediaUseCaseImpl
             matchFavorite: Boolean,
         ): Flow<PagingData<Media>> =
             mediaRepository.getMedia(
+                initialKey = initialKey,
                 mimeType = mimeType,
                 query = query,
                 albumName = albumName,

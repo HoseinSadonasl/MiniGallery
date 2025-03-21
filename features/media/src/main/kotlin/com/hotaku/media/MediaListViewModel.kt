@@ -191,6 +191,7 @@ internal class MediaListViewModel
         private fun updateMediaState() {
             viewModelScope.launch {
                 mediaUseCase.invoke(
+                    initialKey = state.value.selectedMediaIndex ?: 0,
                     mimeType = state.value.mimeType,
                     query = state.value.query,
                     albumName = state.value.albumName,

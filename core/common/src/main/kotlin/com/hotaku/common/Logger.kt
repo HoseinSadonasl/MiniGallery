@@ -26,6 +26,15 @@ object Logger {
         }
     }
 
+    fun debugWarningLog(
+        tag: String,
+        message: String,
+    ) {
+        if (isDebug) {
+            Log.i(tag, message)
+        }
+    }
+
     fun Throwable.debugWarningLog(kClass: KClass<*>) {
         if (isDebug) {
             Log.i(kClass.java.name, localizedMessage ?: message ?: "Unknown error")

@@ -114,8 +114,6 @@ private fun MediaDetailScreenContent(
 ) {
     val windowWidth = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
 
-    val refreshLoadState = media.loadState.refresh
-
     val trashLauncher =
         rememberLauncherForStartIntentSenderForResult {
             state.selectedMediaIndex.let { index ->
@@ -147,10 +145,26 @@ private fun MediaDetailScreenContent(
             }
         }
 
-    LaunchedEffect(state.isOptionsVisible, state.isOptionsMenuVisible) {
+    LaunchedEffect(
+        key1 = state.isOptionsVisible,
+        key2 = state.isOptionsMenuVisible,
+    ) {
         if (state.isOptionsVisible && !state.isOptionsMenuVisible) {
             delay(1500)
             onAction(OnHideOptions)
+        }
+    }
+
+    LaunchedEffect(
+        key1 = media.itemCount,
+        key2 = state.selectedMediaIndex,
+    ) {
+        if (media.itemCount > 0 && state.selectedMediaIndex < media.itemCount) {
+            media.peek(state.selectedMediaIndex)?.displayName.orEmpty().let {
+                onAction(OnMediaNameChange(mediaName = it))
+            }
+        } else {
+            Logger.debugWarningLog(kClass = this@LaunchedEffect::class, message = "Media item count is 0")
         }
     }
 
@@ -165,19 +179,6 @@ private fun MediaDetailScreenContent(
             )
         }
         MediaDialogs.Idle -> Unit
-    }
-
-    LaunchedEffect(
-        key1 = media.itemCount,
-        key2 = state.selectedMediaIndex,
-    ) {
-        if (media.itemCount > 0 && state.selectedMediaIndex < media.itemCount) {
-            media.peek(state.selectedMediaIndex)?.displayName.orEmpty().let {
-                onAction(OnMediaNameChange(mediaName = it))
-            }
-        } else {
-            Logger.debugWarningLog(kClass = this@LaunchedEffect::class, message = "Media item count is 0")
-        }
     }
 
     MediaDetailSurface(
@@ -204,9 +205,28 @@ private fun MediaDetailScreenContent(
             }
         },
         content = {
-            when (refreshLoadState) {
+            when (media.loadState.append) {
                 is LoadState.Loading -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+
+                is LoadState.Error -> {
+                    LoadMediaItemError()
+                }
+
+                else -> {}
+            }
+            when (media.loadState.refresh) {
+                is LoadState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
                         CircularProgressIndicator()
                     }
                 }

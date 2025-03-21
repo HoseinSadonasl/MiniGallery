@@ -7,6 +7,7 @@ import kotlin.Boolean
 
 interface MediaRepository {
     fun getMedia(
+        initialKey: Int,
         mimeType: String,
         query: String,
         albumName: String,

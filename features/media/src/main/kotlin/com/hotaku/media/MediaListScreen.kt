@@ -322,7 +322,7 @@ private fun MediaListScreenContent(
                     },
                     supportingPane = {
                         AnimatedPane {
-                            navigator.currentDestination?.content?.let { mediaItemIndex ->
+                            navigator.currentDestination?.contentKey?.let { mediaItemIndex ->
                                 SupportingPaneContent(
                                     windowWidth = windowWidth,
                                     pagingMediaItems = pagingMediaItems,

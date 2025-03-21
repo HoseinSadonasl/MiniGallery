@@ -10,6 +10,7 @@ import com.hotaku.albums.AlbumsScreenActions.OnMediaItemClick
 import com.hotaku.albums.AlbumsScreenActions.OnSearchFocusChanged
 import com.hotaku.albums.AlbumsScreenActions.OnSearchQueryChange
 import com.hotaku.albums.AlbumsScreenActions.OnUpdateMediaList
+import com.hotaku.albums.AlbumsScreenEvents.*
 import com.hotaku.albums.mapper.MapAlbumAsAlbumUi
 import com.hotaku.albums.model.AlbumUi
 import com.hotaku.domain.utils.DataResult
@@ -56,7 +57,7 @@ internal class AlbumsViewModel
         fun onAction(action: AlbumsScreenActions) {
             when (action) {
                 OnUpdateMediaList -> updateMediaState()
-                is OnAlbumClick -> getAlbumMedia(album = action.album)
+                is OnAlbumClick -> setSelectedAlbum(album = action.album)
                 OnClearSelectedAlbum -> closeAlbum()
                 is OnMediaItemClick -> openMediaInDetail(mediaItemIndex = action.mediaItemIndex)
                 is OnSearchQueryChange -> setQuery(query = action.query)
@@ -83,6 +84,7 @@ internal class AlbumsViewModel
         private fun updateMediaState() {
             viewModelScope.launch {
                 mediaUseCase.invoke(
+                    initialKey = viewModelState.value.selectedMediaIndex ?: 0,
                     mimeType = viewModelState.value.mimeType,
                     query = viewModelState.value.query,
                     albumName = viewModelState.value.selectedAlbum?.displayName.orEmpty(),
@@ -109,7 +111,7 @@ internal class AlbumsViewModel
                     selectedMediaIndex = mediaItemIndex,
                 )
             }
-            sendEvent(AlbumsScreenEvents.OnNavigateToMediaDetailScreen)
+            sendEvent(OnNavigateToMediaDetailScreen)
         }
 
         private fun sendEvent(event: AlbumsScreenEvents) {
@@ -119,7 +121,7 @@ internal class AlbumsViewModel
         }
 
         private fun closeAlbum() {
-            getAlbumMedia(album = null)
+            setSelectedAlbum(album = null)
             viewModelState.update {
                 it.copy(
                     media = emptyFlow(),
@@ -127,12 +129,13 @@ internal class AlbumsViewModel
             }
         }
 
-        private fun getAlbumMedia(album: AlbumUi?) {
+        private fun setSelectedAlbum(album: AlbumUi?) {
             viewModelState.update {
                 it.copy(
                     selectedAlbum = album,
                 )
             }
+            sendEvent(OnOpenAlbum)
         }
 
         private fun updateAlbums() {

@@ -85,7 +85,14 @@ fun AlbumsScreen(
     LaunchedEffect(albumsViewModel.event) {
         albumsViewModel.event.collectLatest { event ->
             when (event) {
-                is AlbumsScreenEvents.OnNavigateToMediaDetailScreen -> {
+                AlbumsScreenEvents.OnOpenAlbum -> {
+                    state.selectedAlbum?.let {
+                        albumsViewModel.onAction(OnUpdateMediaList)
+                        navigator.navigateTo(ThreePaneScaffoldRole.Secondary, it.displayName)
+                    }
+                }
+
+                AlbumsScreenEvents.OnNavigateToMediaDetailScreen -> {
                     state.selectedAlbum?.displayName?.let { selectedAlbum ->
                         navigateToMediaDetailScreen(state.selectedMediaIndex, selectedAlbum)
                     }
@@ -126,13 +133,6 @@ private fun AlbumsScreenContent(
     BackHandler(state.isSearchFocused) {
         onAction(OnSearchQueryChange(query = ""))
         focusManager.clearFocus()
-    }
-
-    LaunchedEffect(state.selectedAlbum) {
-        state.selectedAlbum?.let {
-            onAction(OnUpdateMediaList)
-            navigator.navigateTo(ThreePaneScaffoldRole.Secondary, it.displayName)
-        }
     }
 
     LaunchedEffect(state.query) {
@@ -208,7 +208,7 @@ private fun AlbumsScreenContent(
                                 pagingMediaItems = pagingMediaItems,
                                 onScrolled = {},
                                 onItemClick = { itemIndex ->
-                                    onAction(OnMediaItemClick(itemIndex))
+                                    onAction(OnMediaItemClick(mediaItemIndex = itemIndex))
                                 },
                                 onItemLongClick = {},
                             )

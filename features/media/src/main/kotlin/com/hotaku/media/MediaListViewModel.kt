@@ -30,6 +30,7 @@ import com.hotaku.media.MediaListScreenActions.OnShowOptionsMenu
 import com.hotaku.media.MediaListScreenActions.OnTrashMediaItem
 import com.hotaku.media.MediaListScreenActions.OnUpdateUpdateMedia
 import com.hotaku.media.MediaListScreenActions.ShowDetails
+import com.hotaku.media.MediaListScreenEvents.*
 import com.hotaku.media_domain.usecase.FavoriteMediaUseCase
 import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_domain.usecase.RenameMediaUseCase
@@ -97,7 +98,8 @@ internal class MediaListViewModel
                 OnRetrySynchronizeMedia -> retrySync()
                 OnHideSyncSection -> setyncSectionStateFalse()
                 is OnSetTopBarVisibility -> setTopBarVisibility(visibility = action.visible)
-                is OnMediaListItemClick -> previewMedia(mediaItemIndex = action.mediaItemIndex)
+                is MediaListScreenActions.OnMediaItemChange -> setSelectedItem(mediaItemIndex = action.mediaItemIndex)
+                is OnMediaListItemClick -> setSelectedItem(mediaItemIndex = action.mediaItemIndex, navigate = action.navigate)
                 is OnSelectedMediaNameChange -> setSelectedMediaName(mediaName = action.mediaName)
                 is OnItemIsFavoriteChange -> markMediaAsFavorite(mediaUi = action.mediaItem)
                 OnMediaListItemLongClick -> {}
@@ -151,7 +153,7 @@ internal class MediaListViewModel
                         media = mapMediaUiAsMedia.map(media),
                     ).let { success ->
                         if (success) {
-                            sendEvent(event = MediaListScreenEvents.OnRefreshList)
+                            sendEvent(event = OnRefreshList)
                         }
                     }
                 }
@@ -219,8 +221,6 @@ internal class MediaListViewModel
                         isFavorite = !mediaUi.isFavorite,
                     )
                 favoriteMediaUseCase.invoke(media = media).let { success ->
-                    if (success) {
-                    }
                 }
             }
         }
@@ -239,17 +239,17 @@ internal class MediaListViewModel
                 }.let { media ->
                     trashMediaUseCase.invoke(media = media)
                 }.let { success ->
-                    if (success) sendEvent(event = MediaListScreenEvents.OnRefreshList)
+                    if (success) sendEvent(event = OnRefreshList)
                 }
             }
         }
 
         private fun showOpenDetails() {
-            sendEvent(event = MediaListScreenEvents.OnNavigateToMediaDetail)
+            sendEvent(event = OnNavigateToMediaDetailScreen)
         }
 
         private fun shareMedia() {
-            sendEvent(event = MediaListScreenEvents.OnShareMediaList)
+            sendEvent(event = OnShareMediaList)
         }
 
         private fun clearSelectedMedia() {
@@ -258,14 +258,20 @@ internal class MediaListViewModel
                     selectedMediaIndex = null,
                 )
             }
-            sendEvent(event = MediaListScreenEvents.OnCloseMediaListPreview)
+            sendEvent(event = OnCloseMediaListPreview)
         }
 
-        private fun previewMedia(mediaItemIndex: Int) {
+        private fun setSelectedItem(
+            mediaItemIndex: Int,
+            navigate: Boolean = false,
+        ) {
             viewModelState.update {
                 it.copy(
                     selectedMediaIndex = mediaItemIndex,
                 )
+            }
+            if (navigate) {
+                sendEvent(NavigateToMediaDetail)
             }
         }
 

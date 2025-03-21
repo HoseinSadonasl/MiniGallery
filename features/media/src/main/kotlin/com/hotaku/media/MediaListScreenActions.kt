@@ -17,7 +17,9 @@ internal sealed interface MediaListScreenActions {
 
     data class OnSetTopBarVisibility(val visible: Boolean) : MediaListScreenActions
 
-    data class OnMediaListItemClick(val mediaItemIndex: Int) : MediaListScreenActions
+    data class OnMediaItemChange(val mediaItemIndex: Int) : MediaListScreenActions
+
+    data class OnMediaListItemClick(val mediaItemIndex: Int, val navigate: Boolean = false) : MediaListScreenActions
 
     data class OnSelectedMediaNameChange(val mediaName: String) : MediaListScreenActions
 

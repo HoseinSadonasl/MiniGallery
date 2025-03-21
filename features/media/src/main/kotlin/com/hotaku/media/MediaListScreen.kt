@@ -94,6 +94,8 @@ fun MediaListScreen(
     val state by mediaListViewModel.state.collectAsStateWithLifecycle()
     val media = state.media.collectAsLazyPagingItems()
 
+    val windowWidth = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
+
     val navigator = rememberSupportingPaneScaffoldNavigator<Int>()
 
     LaunchedEffect(mediaListViewModel.event) {
@@ -103,13 +105,23 @@ fun MediaListScreen(
                     navigator.navigateBack()
                 }
 
+                MediaListScreenEvents.NavigateToMediaDetail -> {
+                    state.selectedMediaIndex?.let { index ->
+                        if (windowWidth != WindowWidthSizeClass.COMPACT) {
+                            navigator.navigateTo(ThreePaneScaffoldRole.Secondary, state.selectedMediaIndex)
+                        } else {
+                            navigateToMediaDetailScreen(state.selectedMediaIndex)
+                        }
+                    }
+                }
+
                 MediaListScreenEvents.OnShareMediaList -> {
                     state.selectedMediaIndex?.let {
                         media[it]?.sendShareIntent(context = context)
                     }
                 }
 
-                MediaListScreenEvents.OnNavigateToMediaDetail -> {
+                MediaListScreenEvents.OnNavigateToMediaDetailScreen -> {
                     navigateToMediaDetailScreen(state.selectedMediaIndex)
                 }
 
@@ -131,10 +143,10 @@ fun MediaListScreen(
         context = context,
         state = state,
         pagingMediaItems = media,
-        onAction = mediaListViewModel::onAction,
         navigator = navigator,
-        navigateToMediaDetailScreen = navigateToMediaDetailScreen,
+        onAction = mediaListViewModel::onAction,
         navigateToOnboardingScreen = navigateToOnboardingScreen,
+        windowWidth = windowWidth,
     )
 }
 
@@ -142,15 +154,14 @@ fun MediaListScreen(
 private fun MediaListScreenContent(
     modifier: Modifier = Modifier,
     context: Context,
+    windowWidth: WindowWidthSizeClass,
     state: MediaListUiState,
     pagingMediaItems: LazyPagingItems<MediaUi>,
     navigator: ThreePaneScaffoldNavigator<Int>,
-    navigateToMediaDetailScreen: (Int?) -> Unit,
     onAction: (MediaListScreenActions) -> Unit,
     navigateToOnboardingScreen: () -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
-    val windowWidth = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass
 
     val trashLauncher =
         rememberLauncherForStartIntentSenderForResult {
@@ -207,18 +218,6 @@ private fun MediaListScreenContent(
 
     LaunchedEffect(state.query) {
         onAction(OnUpdateUpdateMedia)
-    }
-
-    LaunchedEffect(state.selectedMediaIndex) {
-        state.selectedMediaIndex?.let {
-            onAction(OnSetTopBarVisibility(visible = false))
-            if (windowWidth == WindowWidthSizeClass.COMPACT) {
-                navigateToMediaDetailScreen(state.selectedMediaIndex)
-                onAction(OnClearSelectedMedia)
-            } else {
-                navigator.navigateTo(ThreePaneScaffoldRole.Secondary, it)
-            }
-        }
     }
 
     LaunchedEffect(
@@ -309,7 +308,8 @@ private fun MediaListScreenContent(
                                     onItemClick = { itemIndex ->
                                         onAction(
                                             OnMediaListItemClick(
-                                                itemIndex,
+                                                mediaItemIndex = itemIndex,
+                                                navigate = !navigator.canNavigateBack(),
                                             ),
                                         )
                                     },
@@ -443,7 +443,7 @@ private fun SupportingPaneContent(
                 pagerMediaItems = pagingMediaItems,
                 onCurrentPageChanged = { currentIndex ->
                     onAction(
-                        OnMediaListItemClick(
+                        OnMediaItemChange(
                             mediaItemIndex = currentIndex,
                         ),
                     )

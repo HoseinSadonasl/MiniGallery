@@ -1,7 +1,5 @@
 package com.hotaku.navigation.nav_routes
 
-import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
-import androidx.compose.animation.core.tween
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
@@ -11,20 +9,7 @@ import com.hotaku.media.MediaListScreenRRoute
 import com.hotaku.onboarding.OnboardingRoute
 
 fun NavGraphBuilder.mediaListNav(navHostController: NavHostController) =
-    composable<MediaListScreenRRoute>(
-        enterTransition = {
-            slideIntoContainer(
-                SlideDirection.Right,
-                animationSpec = tween(500),
-            )
-        },
-        exitTransition = {
-            slideOutOfContainer(
-                SlideDirection.Left,
-                animationSpec = tween(500),
-            )
-        },
-    ) {
+    composable<MediaListScreenRRoute> {
         MediaListScreen(
             navigateToMediaDetailScreen = { selectedMediaIndex ->
                 navHostController.navigateToMediaDetailScreen(initialIndex = selectedMediaIndex) {

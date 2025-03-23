@@ -3,11 +3,12 @@
 package com.hotaku.albums
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,10 +20,8 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
@@ -66,6 +65,7 @@ import com.hotaku.ui.conposables.ImageThumbnail
 import com.hotaku.ui.conposables.MediaGrid
 import com.hotaku.ui.conposables.MediaPlaceHolder
 import com.hotaku.ui.conposables.OnScreenMessage
+import com.hotaku.ui.conposables.TextField
 import com.hotaku.ui.conposables.TopAppBar
 import com.hotaku.ui.conposables.VideoThumbnail
 import com.hotaku.ui.models.MediaUi
@@ -144,45 +144,42 @@ private fun AlbumsScreenContent(
         modifier = modifier,
         show = state.isTopBarVisible,
         animatableTopContent = {
-            AnimatedContent(targetState = state.selectedAlbum) { selectedAlbum ->
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
                 TopAppBar(
                     title =
                         state.selectedAlbum?.displayName
                             ?: stringResource(R.string.albums_screen_top_app_bar_title),
-                    actions = {
-                        selectedAlbum?.let {
-                            IconButton(
-                                onClick = {
-                                    onAction(OnClearSelectedAlbum)
-                                    scope.launch {
-                                        navigator.navigateBack()
-                                    }
-                                },
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Close,
-                                    contentDescription = null,
-                                )
+                    onNavBack =
+                        state.selectedAlbum?.let {
+                            {
+                                onAction(OnClearSelectedAlbum)
+                                scope.launch {
+                                    navigator.navigateBack()
+                                }
                             }
-                        }
-                    },
+                        },
                 )
-//                selectedAlbum?.let {
-//                    TextField(
-//                        modifier =
-//                            Modifier
-//                                .fillMaxWidth()
-//                                .onFocusChanged {
-//                                    onAction(OnSearchFocusChanged(hasFocus = it.hasFocus))
-//                                },
-//                        value = state.query,
-//                        onValueChange = { query ->
-//                            onAction(OnSearchQueryChange(query = query))
-//                        },
-//                        hint = stringResource(R.string.albums_screen_search_media),
-//                        endIcon = Icons.Outlined.Search,
-//                    )
-//                }
+                AnimatedVisibility(
+                    visible = state.selectedAlbum != null,
+                ) {
+                    TextField(
+                        modifier =
+                            Modifier
+                                .padding(8.dp)
+                                .fillMaxWidth(
+                                    if (isCompact) 1f else .6f,
+                                ),
+                        value = state.query,
+                        onValueChange = { query ->
+                            onAction(OnSearchQueryChange(query = query))
+                        },
+                        hint = stringResource(com.hotaku.core_feature.ui.R.string.snimated_search_hint),
+                        endIcon = Icons.Outlined.Search,
+                    )
+                }
             }
         },
         content = {

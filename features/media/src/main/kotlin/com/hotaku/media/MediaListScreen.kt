@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
@@ -31,9 +32,9 @@ import androidx.compose.material3.adaptive.navigation.rememberSupportingPaneScaf
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -49,7 +50,32 @@ import com.hotaku.common.Logger
 import com.hotaku.common.trashMediaRequest
 import com.hotaku.common.writeMediaRequest
 import com.hotaku.features.media.R
-import com.hotaku.media.MediaListScreenActions.*
+import com.hotaku.media.MediaListScreenActions.OnClearSelectedMedia
+import com.hotaku.media.MediaListScreenActions.OnHideDiaDialog
+import com.hotaku.media.MediaListScreenActions.OnHideOptions
+import com.hotaku.media.MediaListScreenActions.OnHideOptionsMenu
+import com.hotaku.media.MediaListScreenActions.OnHideSyncSection
+import com.hotaku.media.MediaListScreenActions.OnItemIsFavoriteChange
+import com.hotaku.media.MediaListScreenActions.OnListIsScrolling
+import com.hotaku.media.MediaListScreenActions.OnMediaItemChange
+import com.hotaku.media.MediaListScreenActions.OnMediaListItemClick
+import com.hotaku.media.MediaListScreenActions.OnMediaListItemLongClick
+import com.hotaku.media.MediaListScreenActions.OnMediaNameClearQuery
+import com.hotaku.media.MediaListScreenActions.OnMediaNameQueryChange
+import com.hotaku.media.MediaListScreenActions.OnOpenMediaDetails
+import com.hotaku.media.MediaListScreenActions.OnOpenRenameMediaDialog
+import com.hotaku.media.MediaListScreenActions.OnPlayVideo
+import com.hotaku.media.MediaListScreenActions.OnRenameMediaItem
+import com.hotaku.media.MediaListScreenActions.OnRetrySynchronizeMedia
+import com.hotaku.media.MediaListScreenActions.OnSearchQueryChange
+import com.hotaku.media.MediaListScreenActions.OnSelectedMediaNameChange
+import com.hotaku.media.MediaListScreenActions.OnSetTopBarVisibility
+import com.hotaku.media.MediaListScreenActions.OnShareMedia
+import com.hotaku.media.MediaListScreenActions.OnShowOptions
+import com.hotaku.media.MediaListScreenActions.OnShowOptionsMenu
+import com.hotaku.media.MediaListScreenActions.OnTrashMediaItem
+import com.hotaku.media.MediaListScreenActions.OnUpdateUpdateMedia
+import com.hotaku.media.MediaListScreenActions.ShowDetails
 import com.hotaku.media.components.MediaSyncLabel
 import com.hotaku.ui.MediaDialogs.Idle
 import com.hotaku.ui.MediaDialogs.RenameMediaDialog
@@ -59,6 +85,7 @@ import com.hotaku.ui.PermissionUtils
 import com.hotaku.ui.PermissionUtils.requiredMediaPermissions
 import com.hotaku.ui.UiState
 import com.hotaku.ui.asString
+import com.hotaku.ui.conposables.AnimatedFloatSearch
 import com.hotaku.ui.conposables.AnimatedMediaDetailCompactTopBar
 import com.hotaku.ui.conposables.AnimatedMediaDetailExpendedTopBar
 import com.hotaku.ui.conposables.DynamicTopAppBarColumn
@@ -257,23 +284,26 @@ private fun MediaListScreenContent(
         modifier = modifier,
         show = state.isTopBarVisible,
         animatableTopContent = {
-            TopAppBar(
-                title = stringResource(R.string.media_list_screen_top_bar_title_all_media),
-                content = {
-                    TextField(
-                        modifier =
-                            Modifier.fillMaxWidth().onFocusChanged {
-                                onAction(OnSearchFocusChanged(hasFocus = it.hasFocus))
-                            },
-                        value = state.query,
-                        onValueChange = { query ->
-                            onAction(OnSearchQueryChange(query = query))
-                        },
-                        placeHolderText = stringResource(R.string.media_list_screen_search_media),
-                        endIcon = Icons.Outlined.Search,
-                    )
-                },
-            )
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                TopAppBar(
+                    title = stringResource(R.string.media_list_screen_top_bar_title_all_media),
+                )
+                TextField(
+                    modifier =
+                        Modifier.padding(8.dp).fillMaxWidth(
+                            if (windowWidth == WindowWidthSizeClass.COMPACT) 1f else .6f,
+                        ),
+                    hint = stringResource(id = com.hotaku.core_feature.ui.R.string.snimated_search_hint),
+                    value = state.query,
+                    onValueChange = { query ->
+                        onAction(OnSearchQueryChange(query = query))
+                    },
+                    endIcon = Icons.Outlined.Search,
+                )
+            }
         },
         content = {
             if (state.synchronize is UiState.Success && pagingMediaItems.itemCount == 0) {
@@ -287,37 +317,12 @@ private fun MediaListScreenContent(
                     value = navigator.scaffoldValue,
                     mainPane = {
                         AnimatedPane {
-                            Column(
-                                Modifier.fillMaxSize(),
-                            ) {
-                                AnimatedVisibility(
-                                    visible = state.showSyncSection,
-                                ) {
-                                    state.synchronize?.let { SyncSection(synchronizeState = it, onAction = onAction) }
-                                }
-                                MediaGrid(
-                                    modifier = Modifier.weight(1f),
-                                    pagingMediaItems = pagingMediaItems,
-                                    onScrolled = { scrolled ->
-                                        onAction(
-                                            OnSetTopBarVisibility(
-                                                visible = !scrolled,
-                                            ),
-                                        )
-                                    },
-                                    onItemClick = { itemIndex ->
-                                        onAction(
-                                            OnMediaListItemClick(
-                                                mediaItemIndex = itemIndex,
-                                                navigate = !navigator.canNavigateBack(),
-                                            ),
-                                        )
-                                    },
-                                    onItemLongClick = {
-                                        onAction(OnMediaListItemLongClick)
-                                    },
-                                )
-                            }
+                            MainPaneContent(
+                                state = state,
+                                onAction = onAction,
+                                pagingMediaItems = pagingMediaItems,
+                                navigator = navigator,
+                            )
                         }
                     },
                     supportingPane = {
@@ -348,6 +353,69 @@ private fun MediaListScreenContent(
             }
         },
     )
+}
+
+@Composable
+private fun MainPaneContent(
+    state: MediaListUiState,
+    onAction: (MediaListScreenActions) -> Unit,
+    pagingMediaItems: LazyPagingItems<MediaUi>,
+    navigator: ThreePaneScaffoldNavigator<Int>,
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        Column(
+            Modifier
+                .fillMaxSize(),
+        ) {
+            AnimatedVisibility(
+                visible = state.showSyncSection,
+            ) {
+                state.synchronize?.let { SyncSection(synchronizeState = it, onAction = onAction) }
+            }
+            MediaGrid(
+                modifier = Modifier.weight(1f),
+                pagingMediaItems = pagingMediaItems,
+                onScrolled = { isScrolling ->
+                    onAction(
+                        OnListIsScrolling(
+                            isScrolling = isScrolling,
+                        ),
+                    )
+                },
+                isFirstItemVisible = { isVisible ->
+                    onAction(
+                        OnSetTopBarVisibility(
+                            visible = isVisible,
+                        ),
+                    )
+                },
+                onItemClick = { itemIndex ->
+                    onAction(
+                        OnMediaListItemClick(
+                            mediaItemIndex = itemIndex,
+                            navigate = !navigator.canNavigateBack(),
+                        ),
+                    )
+                },
+                onItemLongClick = {
+                    onAction(OnMediaListItemLongClick)
+                },
+            )
+        }
+        AnimatedFloatSearch(
+            modifier =
+                Modifier
+                    .statusBarsPadding()
+                    .padding(16.dp),
+            visible = !state.isScrolling && !state.isTopBarVisible,
+            value = state.query,
+            onValueChange = { query ->
+                onAction(OnSearchQueryChange(query = query))
+            },
+        )
+    }
 }
 
 @Composable

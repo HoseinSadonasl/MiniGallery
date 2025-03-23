@@ -77,7 +77,9 @@ private fun MediaLibraryScreenContent(
     DynamicTopAppBarColumn(
         modifier = modifier.fillMaxSize(),
         animatableTopContent = {
-            TopAppBar(title = state.screenTitle?.asString() ?: stringResource(id = R.string.media_library_top_bar_title))
+            TopAppBar(
+                title = state.screenTitle?.asString() ?: stringResource(id = R.string.media_library_top_bar_title),
+            )
         },
         content = {
             AnimatedContent(
@@ -86,7 +88,6 @@ private fun MediaLibraryScreenContent(
                 if (selectedFolder && mediaPagingItems != null) {
                     MediaGrid(
                         pagingMediaItems = mediaPagingItems,
-                        onScrolled = {},
                         onItemClick = { index ->
                             navigateToMediaDetailScreen(index, state.selectedFolder!!)
                         },

@@ -89,7 +89,7 @@ private fun InputDialogImpl(
                 Spacer(Modifier.height(16.dp))
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
-                    placeHolderText = inputPlaceHolder,
+                    hint = inputPlaceHolder,
                     value = inputValue,
                     onValueChange = onInputChange,
                 )

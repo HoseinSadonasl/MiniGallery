@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -20,7 +21,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -39,7 +39,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -51,21 +50,22 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.albums.AlbumsScreenActions.OnAlbumClick
 import com.hotaku.albums.AlbumsScreenActions.OnClearSelectedAlbum
+import com.hotaku.albums.AlbumsScreenActions.OnListIsScrolling
 import com.hotaku.albums.AlbumsScreenActions.OnMediaItemClick
-import com.hotaku.albums.AlbumsScreenActions.OnSearchFocusChanged
 import com.hotaku.albums.AlbumsScreenActions.OnSearchQueryChange
+import com.hotaku.albums.AlbumsScreenActions.OnSetTopBarVisibility
 import com.hotaku.albums.AlbumsScreenActions.OnUpdateMediaList
 import com.hotaku.albums.model.AlbumUi
 import com.hotaku.features.albums.R
 import com.hotaku.ui.MediaType
 import com.hotaku.ui.UiState
+import com.hotaku.ui.conposables.AnimatedFloatSearch
 import com.hotaku.ui.conposables.DynamicTopAppBarColumn
 import com.hotaku.ui.conposables.EmptyPaneMessage
 import com.hotaku.ui.conposables.ImageThumbnail
 import com.hotaku.ui.conposables.MediaGrid
 import com.hotaku.ui.conposables.MediaPlaceHolder
 import com.hotaku.ui.conposables.OnScreenMessage
-import com.hotaku.ui.conposables.TextField
 import com.hotaku.ui.conposables.TopAppBar
 import com.hotaku.ui.conposables.VideoThumbnail
 import com.hotaku.ui.models.MediaUi
@@ -120,6 +120,7 @@ private fun AlbumsScreenContent(
 ) {
     val focusManager = LocalFocusManager.current
     val windowSize = currentWindowAdaptiveInfo().windowSizeClass
+    val isCompact = windowSize.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
 
     val scope = rememberCoroutineScope()
 
@@ -141,30 +142,13 @@ private fun AlbumsScreenContent(
 
     DynamicTopAppBarColumn(
         modifier = modifier,
+        show = state.isTopBarVisible,
         animatableTopContent = {
             AnimatedContent(targetState = state.selectedAlbum) { selectedAlbum ->
                 TopAppBar(
                     title =
                         state.selectedAlbum?.displayName
                             ?: stringResource(R.string.albums_screen_top_app_bar_title),
-                    content = {
-                        selectedAlbum?.let {
-                            TextField(
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .onFocusChanged {
-                                            onAction(OnSearchFocusChanged(hasFocus = it.hasFocus))
-                                        },
-                                value = state.query,
-                                onValueChange = { query ->
-                                    onAction(OnSearchQueryChange(query = query))
-                                },
-                                placeHolderText = stringResource(R.string.albums_screen_search_media),
-                                endIcon = Icons.Outlined.Search,
-                            )
-                        }
-                    },
                     actions = {
                         selectedAlbum?.let {
                             IconButton(
@@ -183,6 +167,22 @@ private fun AlbumsScreenContent(
                         }
                     },
                 )
+//                selectedAlbum?.let {
+//                    TextField(
+//                        modifier =
+//                            Modifier
+//                                .fillMaxWidth()
+//                                .onFocusChanged {
+//                                    onAction(OnSearchFocusChanged(hasFocus = it.hasFocus))
+//                                },
+//                        value = state.query,
+//                        onValueChange = { query ->
+//                            onAction(OnSearchQueryChange(query = query))
+//                        },
+//                        hint = stringResource(R.string.albums_screen_search_media),
+//                        endIcon = Icons.Outlined.Search,
+//                    )
+//                }
             }
         },
         content = {
@@ -196,7 +196,7 @@ private fun AlbumsScreenContent(
                     AnimatedPane {
                         AlbumsGridList(
                             albumsListState = state.albums,
-                            isCompact = windowSize.windowWidthSizeClass == WindowWidthSizeClass.COMPACT,
+                            isCompact = isCompact,
                             onAction = onAction,
                         )
                     }
@@ -204,14 +204,14 @@ private fun AlbumsScreenContent(
                 supportingPane = {
                     AnimatedPane {
                         navigator.currentDestination?.contentKey?.let { albumName ->
-                            MediaGrid(
-                                pagingMediaItems = pagingMediaItems,
-                                onScrolled = {},
-                                onItemClick = { itemIndex ->
-                                    onAction(OnMediaItemClick(mediaItemIndex = itemIndex))
-                                },
-                                onItemLongClick = {},
-                            )
+                            state.selectedAlbum?.let {
+                                SupportingPaneContent(
+                                    pagingMediaItems = pagingMediaItems,
+                                    onAction = onAction,
+                                    isCompact = isCompact,
+                                    state = state,
+                                )
+                            }
                         } ?: Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center,
@@ -226,6 +226,45 @@ private fun AlbumsScreenContent(
             )
         },
     )
+}
+
+@Composable
+private fun SupportingPaneContent(
+    pagingMediaItems: LazyPagingItems<MediaUi>,
+    onAction: (AlbumsScreenActions) -> Unit,
+    isCompact: Boolean,
+    state: AlbumsUiState,
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        MediaGrid(
+            pagingMediaItems = pagingMediaItems,
+            onScrolled = { isScrolling ->
+                onAction(OnListIsScrolling(isScrolling = isScrolling))
+            },
+            isFirstItemVisible = { isVisible ->
+                if (isCompact) {
+                    onAction(OnSetTopBarVisibility(visible = isVisible))
+                }
+            },
+            onItemClick = { itemIndex ->
+                onAction(OnMediaItemClick(mediaItemIndex = itemIndex))
+            },
+            onItemLongClick = {},
+        )
+        AnimatedFloatSearch(
+            modifier =
+                Modifier
+                    .statusBarsPadding()
+                    .padding(16.dp),
+            visible = !state.isScrolling && !state.isTopBarVisible,
+            value = state.query,
+            onValueChange = { query ->
+                onAction(OnSearchQueryChange(query = query))
+            },
+        )
+    }
 }
 
 @Composable

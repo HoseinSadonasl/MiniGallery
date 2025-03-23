@@ -16,4 +16,5 @@
     <string name="media_list_error_loading_media_message">Ops!</string>
     <string name="media_list_error_loading_media_full_message">An error occurred while loading media, let\'s try one more time</string>
     <string name="media_list_error_loading_media_button_try_again">Try again</string>
+    <string name="snimated_search_hint">Search something</string>
 </resources>

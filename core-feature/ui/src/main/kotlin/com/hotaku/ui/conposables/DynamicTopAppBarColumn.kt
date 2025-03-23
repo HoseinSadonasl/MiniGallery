@@ -71,12 +71,6 @@ private fun DynamicTopAppBarColumnPreview() {
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Spacer(Modifier.weight(1f))
-                    TextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = "",
-                        onValueChange = {},
-                        placeHolderText = "Search album",
-                    )
                 }
             },
             content = { },

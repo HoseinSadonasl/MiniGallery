@@ -14,4 +14,8 @@ internal sealed interface AlbumsScreenActions {
     data class OnSearchQueryChange(val query: String) : AlbumsScreenActions
 
     data class OnSearchFocusChanged(val hasFocus: Boolean) : AlbumsScreenActions
+
+    data class OnListIsScrolling(val isScrolling: Boolean) : AlbumsScreenActions
+
+    data class OnSetTopBarVisibility(val visible: Boolean) : AlbumsScreenActions
 }

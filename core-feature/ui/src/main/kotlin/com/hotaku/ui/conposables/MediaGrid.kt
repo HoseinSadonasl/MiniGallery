@@ -38,7 +38,8 @@ import kotlin.random.Random
 fun MediaGrid(
     modifier: Modifier = Modifier,
     pagingMediaItems: LazyPagingItems<MediaUi>,
-    onScrolled: (Boolean) -> Unit,
+    onScrolled: (Boolean) -> Unit = {},
+    isFirstItemVisible: (Boolean) -> Unit = {},
     onItemClick: (Int) -> Unit,
     onItemLongClick: () -> Unit,
     onReloadClick: () -> Unit = {},
@@ -47,6 +48,7 @@ fun MediaGrid(
         modifier = modifier,
         pagingMediaItems = pagingMediaItems,
         onScrolled = onScrolled,
+        isFirstItemVisible = isFirstItemVisible,
         onItemClick = onItemClick,
         onItemLongClick = onItemLongClick,
         onReloadClick = onReloadClick,
@@ -58,6 +60,7 @@ private fun MediaGridImpl(
     modifier: Modifier = Modifier,
     pagingMediaItems: LazyPagingItems<MediaUi>,
     onScrolled: (Boolean) -> Unit,
+    isFirstItemVisible: (Boolean) -> Unit,
     onItemClick: (Int) -> Unit,
     onItemLongClick: () -> Unit,
     onReloadClick: () -> Unit = {},
@@ -65,12 +68,16 @@ private fun MediaGridImpl(
     val loadState: LoadState = pagingMediaItems.loadState.refresh
 
     val lazyGridState: LazyGridState = rememberLazyGridState()
-    val scrolled by remember {
-        derivedStateOf { lazyGridState.firstVisibleItemIndex > 0 }
+    val isFirstItem by remember {
+        derivedStateOf { lazyGridState.firstVisibleItemIndex == 0 }
     }
 
-    LaunchedEffect(scrolled) {
-        onScrolled(scrolled)
+    LaunchedEffect(lazyGridState.isScrollInProgress) {
+        onScrolled(lazyGridState.isScrollInProgress)
+    }
+
+    LaunchedEffect(isFirstItem) {
+        isFirstItemVisible(isFirstItem)
     }
 
     if (loadState is LoadState.Error) {

@@ -12,6 +12,7 @@ internal data class MediaListUiState(
     val media: Flow<PagingData<MediaUi>> = emptyFlow(),
     val isSearchExpanded: Boolean = false,
     val showSyncSection: Boolean = true,
+    val isScrolling: Boolean = false,
     val isTopBarVisible: Boolean = true,
     val isOptionsVisible: Boolean = false,
     val isOptionsMenuVisible: Boolean = false,

@@ -13,6 +13,8 @@ internal data class AlbumsUiState(
     val selectedAlbum: AlbumUi? = null,
     val selectedMediaIndex: Int? = null,
     val isSearchFocused: Boolean = false,
+    val isTopBarVisible: Boolean = true,
+    val isScrolling: Boolean = false,
     val mimeType: String = "",
     val query: String = "",
 )

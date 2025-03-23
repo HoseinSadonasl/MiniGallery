@@ -10,6 +10,7 @@ import com.hotaku.media.MediaListScreenActions.OnHideOptions
 import com.hotaku.media.MediaListScreenActions.OnHideOptionsMenu
 import com.hotaku.media.MediaListScreenActions.OnHideSyncSection
 import com.hotaku.media.MediaListScreenActions.OnItemIsFavoriteChange
+import com.hotaku.media.MediaListScreenActions.OnListIsScrolling
 import com.hotaku.media.MediaListScreenActions.OnMediaListItemClick
 import com.hotaku.media.MediaListScreenActions.OnMediaListItemLongClick
 import com.hotaku.media.MediaListScreenActions.OnMediaNameClearQuery
@@ -97,6 +98,7 @@ internal class MediaListViewModel
                 is OnSearchFocusChanged -> setSearchFocus(hasFocus = action.hasFocus)
                 OnRetrySynchronizeMedia -> retrySync()
                 OnHideSyncSection -> setyncSectionStateFalse()
+                is OnListIsScrolling -> setScrollState(isScrolling = action.isScrolling)
                 is OnSetTopBarVisibility -> setTopBarVisibility(visibility = action.visible)
                 is MediaListScreenActions.OnMediaItemChange -> setSelectedItem(mediaItemIndex = action.mediaItemIndex)
                 is OnMediaListItemClick -> setSelectedItem(mediaItemIndex = action.mediaItemIndex, navigate = action.navigate)
@@ -118,6 +120,14 @@ internal class MediaListViewModel
                 OnMediaNameClearQuery -> setMediaNameQuery(query = "")
                 is OnRenameMediaItem -> renameLocalMediaItem(media = action.media)
                 ShowDetails -> showDetails()
+            }
+        }
+
+        private fun setScrollState(isScrolling: Boolean) {
+            viewModelState.update {
+                it.copy(
+                    isScrolling = isScrolling,
+                )
             }
         }
 

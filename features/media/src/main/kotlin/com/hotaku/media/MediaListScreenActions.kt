@@ -15,6 +15,8 @@ internal sealed interface MediaListScreenActions {
 
     data object OnHideSyncSection : MediaListScreenActions
 
+    data class OnListIsScrolling(val isScrolling: Boolean) : MediaListScreenActions
+
     data class OnSetTopBarVisibility(val visible: Boolean) : MediaListScreenActions
 
     data class OnMediaItemChange(val mediaItemIndex: Int) : MediaListScreenActions

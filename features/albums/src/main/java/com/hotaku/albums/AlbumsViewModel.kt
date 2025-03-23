@@ -4,12 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import androidx.paging.map
-import com.hotaku.albums.AlbumsScreenActions.OnAlbumClick
-import com.hotaku.albums.AlbumsScreenActions.OnClearSelectedAlbum
-import com.hotaku.albums.AlbumsScreenActions.OnMediaItemClick
-import com.hotaku.albums.AlbumsScreenActions.OnSearchFocusChanged
-import com.hotaku.albums.AlbumsScreenActions.OnSearchQueryChange
-import com.hotaku.albums.AlbumsScreenActions.OnUpdateMediaList
+import com.hotaku.albums.AlbumsScreenActions.*
 import com.hotaku.albums.AlbumsScreenEvents.*
 import com.hotaku.albums.mapper.MapAlbumAsAlbumUi
 import com.hotaku.albums.model.AlbumUi
@@ -62,6 +57,24 @@ internal class AlbumsViewModel
                 is OnMediaItemClick -> openMediaInDetail(mediaItemIndex = action.mediaItemIndex)
                 is OnSearchQueryChange -> setQuery(query = action.query)
                 is OnSearchFocusChanged -> setSearchFocus(hasFocus = action.hasFocus)
+                is OnSetTopBarVisibility -> setTopBarVisibility(isVisible = action.visible)
+                is OnListIsScrolling -> setScrollState(isScrolling = action.isScrolling)
+            }
+        }
+
+        private fun setScrollState(isScrolling: Boolean) {
+            viewModelState.update {
+                it.copy(
+                    isScrolling = isScrolling,
+                )
+            }
+        }
+
+        private fun setTopBarVisibility(isVisible: Boolean) {
+            viewModelState.update {
+                it.copy(
+                    isTopBarVisible = isVisible,
+                )
             }
         }
 

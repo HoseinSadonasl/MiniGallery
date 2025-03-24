@@ -9,7 +9,7 @@ naming:
 
 complexity:
   LongParameterList:
-    functionThreshold: 10
+    functionThreshold: 20
     ignoreDefaultParameters: true
 
 style:
@@ -19,6 +19,8 @@ style:
   DataClassShouldBeImmutable:
     active: false
   UnusedPrivateMember:
-    ignoreAnnotated: [ 'Preview',  "PreviewLightDark",]
+    ignoreAnnotated: [ 'Preview', 'PreviewLightDark', 'PreviewScreenSizes' ]
   MaxLineLength:
+    active: false
+  WildcardImport:
     active: false

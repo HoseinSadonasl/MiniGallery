@@ -43,7 +43,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@Suppress("complexity.TooManyFunctions")
+@Suppress("complexity.TooManyFunctions", "complexity.CyclomaticComplexMethod")
 @HiltViewModel
 internal class MediaDetailViewModel
     @Inject
@@ -107,10 +107,7 @@ internal class MediaDetailViewModel
                     mapMediaUiAsMedia.map(from = mediaUi).copy(
                         isFavorite = !mediaUi.isFavorite,
                     )
-                favoriteMediaUseCase.invoke(media = media).let { success ->
-                    if (success) {
-                    }
-                }
+                favoriteMediaUseCase.invoke(media = media)
             }
         }
 

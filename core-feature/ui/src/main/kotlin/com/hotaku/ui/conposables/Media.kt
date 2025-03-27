@@ -22,6 +22,7 @@ import com.hotaku.ui.asThumbnailImageBitmap
 internal fun Video(
     modifier: Modifier = Modifier,
     itemUri: String,
+    scale: ContentScale = ContentScale.FillWidth,
 ) {
     val thumbnail = itemUri.toUri().asThumbnailImageBitmap()
 
@@ -32,7 +33,7 @@ internal fun Video(
             bitmap = thumbnail,
             contentDescription = null,
             modifier = modifier.matchParentSize(),
-            contentScale = ContentScale.Crop,
+            contentScale = scale,
         )
         Icon(
             modifier =

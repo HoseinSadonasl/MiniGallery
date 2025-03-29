@@ -39,10 +39,8 @@ import com.hotaku.media_details.MediaDetailScreenActions.OnHideOptionsMenu
 import com.hotaku.media_details.MediaDetailScreenActions.OnItemIsFavoriteChange
 import com.hotaku.media_details.MediaDetailScreenActions.OnMediaNameChange
 import com.hotaku.media_details.MediaDetailScreenActions.OnMediaNameQueryChange
-import com.hotaku.media_details.MediaDetailScreenActions.OnPlayVideo
 import com.hotaku.media_details.MediaDetailScreenActions.OnRenameMediaItem
 import com.hotaku.media_details.MediaDetailScreenActions.OnSelectedIndexChanged
-import com.hotaku.media_details.MediaDetailScreenActions.OnShareMedia
 import com.hotaku.media_details.MediaDetailScreenActions.OnShowDetails
 import com.hotaku.media_details.MediaDetailScreenActions.OnShowOptions
 import com.hotaku.media_details.MediaDetailScreenActions.OnShowOptionsMenu
@@ -68,7 +66,6 @@ import com.hotaku.ui.rememberLauncherForStartIntentSenderForResult
 import com.hotaku.ui.sendPlayIntent
 import com.hotaku.ui.sendShareIntent
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun MediaDetailScreen(
@@ -79,19 +76,6 @@ fun MediaDetailScreen(
     val mediaDetailViewModel = hiltViewModel<MediaDetailViewModel>()
     val state by mediaDetailViewModel.state.collectAsStateWithLifecycle()
     val pagingMediaItems = state.media.collectAsLazyPagingItems()
-
-    LaunchedEffect(mediaDetailViewModel.event) {
-        mediaDetailViewModel.event.collectLatest { event ->
-            when (event) {
-                MediaDetailScreenEvents.OnShareMedia -> {
-                    pagingMediaItems.peek(state.selectedMediaIndex)?.sendShareIntent(context = context)
-                }
-                MediaDetailScreenEvents.OnPlayVideo -> {
-                    pagingMediaItems.peek(state.selectedMediaIndex)?.sendPlayIntent(context = context)
-                }
-            }
-        }
-    }
 
     MediaDetailScreenContent(
         modifier = modifier,
@@ -292,7 +276,7 @@ private fun MediaDetailPager(
                                 )
                             },
                             onShareMedia = {
-                                onAction(OnShareMedia)
+                                media.sendShareIntent(context = context)
                             },
                             onTrashMedia = {
                                 // Because we don't implement delete files yet, so we hav to ignore trash file button
@@ -307,7 +291,7 @@ private fun MediaDetailPager(
                                 if (media.mimeType == MediaType.VIDEO) {
                                     IconButton(
                                         onClick = {
-                                            onAction(OnPlayVideo)
+                                            media.sendPlayIntent(context = context)
                                         },
                                     ) {
                                         Icon(

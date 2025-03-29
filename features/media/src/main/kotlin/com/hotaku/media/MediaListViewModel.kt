@@ -18,20 +18,21 @@ import com.hotaku.media.MediaListScreenActions.OnMediaNameQueryChange
 import com.hotaku.media.MediaListScreenActions.OnMimeTypeChange
 import com.hotaku.media.MediaListScreenActions.OnOpenMediaDetails
 import com.hotaku.media.MediaListScreenActions.OnOpenRenameMediaDialog
-import com.hotaku.media.MediaListScreenActions.OnPlayVideo
 import com.hotaku.media.MediaListScreenActions.OnRenameMediaItem
 import com.hotaku.media.MediaListScreenActions.OnRetrySynchronizeMedia
-import com.hotaku.media.MediaListScreenActions.OnSearchFocusChanged
 import com.hotaku.media.MediaListScreenActions.OnSearchQueryChange
 import com.hotaku.media.MediaListScreenActions.OnSelectedMediaNameChange
 import com.hotaku.media.MediaListScreenActions.OnSetTopBarVisibility
-import com.hotaku.media.MediaListScreenActions.OnShareMedia
 import com.hotaku.media.MediaListScreenActions.OnShowOptions
 import com.hotaku.media.MediaListScreenActions.OnShowOptionsMenu
 import com.hotaku.media.MediaListScreenActions.OnTrashMediaItem
 import com.hotaku.media.MediaListScreenActions.OnUpdateUpdateMedia
 import com.hotaku.media.MediaListScreenActions.ShowDetails
-import com.hotaku.media.MediaListScreenEvents.*
+import com.hotaku.media.MediaListScreenEvents.NavigateToMediaDetail
+import com.hotaku.media.MediaListScreenEvents.OnCloseMediaListPreview
+import com.hotaku.media.MediaListScreenEvents.OnNavigateToMediaDetailScreen
+import com.hotaku.media.MediaListScreenEvents.OnPlayVideo
+import com.hotaku.media.MediaListScreenEvents.OnRefreshList
 import com.hotaku.media_domain.usecase.FavoriteMediaUseCase
 import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_domain.usecase.RenameMediaUseCase
@@ -94,7 +95,6 @@ internal class MediaListViewModel
                 OnUpdateUpdateMedia -> updateMediaState()
                 is OnSearchQueryChange -> setQuery(query = action.query)
                 is OnMimeTypeChange -> setMimeType(mimeType = action.mimeType)
-                is OnSearchFocusChanged -> setSearchFocus(hasFocus = action.hasFocus)
                 OnRetrySynchronizeMedia -> retrySync()
                 OnHideSyncSection -> setyncSectionStateFalse()
                 is OnListIsScrolling -> setScrollState(isScrolling = action.isScrolling)
@@ -107,7 +107,6 @@ internal class MediaListViewModel
                 OnClearSelectedMedia -> clearSelectedMedia()
                 OnOpenMediaDetails -> showOpenDetails()
                 OnPlayVideo -> playVideo()
-                OnShareMedia -> shareMedia()
                 is OnTrashMediaItem -> trashMediaItem(mediaUi = action.mediaItem)
                 OnShowOptions -> showOptions()
                 OnHideOptions -> showOptions(show = false)
@@ -126,14 +125,6 @@ internal class MediaListViewModel
             viewModelState.update {
                 it.copy(
                     isScrolling = isScrolling,
-                )
-            }
-        }
-
-        private fun setSearchFocus(hasFocus: Boolean) {
-            viewModelState.update {
-                it.copy(
-                    isSearchFocused = hasFocus,
                 )
             }
         }
@@ -196,7 +187,7 @@ internal class MediaListViewModel
         }
 
         private fun playVideo() {
-            sendEvent(event = MediaListScreenEvents.OnPlayVideo)
+            sendEvent(event = OnPlayVideo)
         }
 
         private fun updateMediaState() {
@@ -255,10 +246,6 @@ internal class MediaListViewModel
 
         private fun showOpenDetails() {
             sendEvent(event = OnNavigateToMediaDetailScreen)
-        }
-
-        private fun shareMedia() {
-            sendEvent(event = OnShareMediaList)
         }
 
         private fun clearSelectedMedia() {

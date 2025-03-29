@@ -13,10 +13,8 @@ import com.hotaku.media_details.MediaDetailScreenActions.OnHideOptionsMenu
 import com.hotaku.media_details.MediaDetailScreenActions.OnItemIsFavoriteChange
 import com.hotaku.media_details.MediaDetailScreenActions.OnMediaNameChange
 import com.hotaku.media_details.MediaDetailScreenActions.OnMediaNameQueryChange
-import com.hotaku.media_details.MediaDetailScreenActions.OnPlayVideo
 import com.hotaku.media_details.MediaDetailScreenActions.OnRenameMediaItem
 import com.hotaku.media_details.MediaDetailScreenActions.OnSelectedIndexChanged
-import com.hotaku.media_details.MediaDetailScreenActions.OnShareMedia
 import com.hotaku.media_details.MediaDetailScreenActions.OnShowDetails
 import com.hotaku.media_details.MediaDetailScreenActions.OnShowOptions
 import com.hotaku.media_details.MediaDetailScreenActions.OnShowOptionsMenu
@@ -75,8 +73,6 @@ internal class MediaDetailViewModel
         fun onAction(action: MediaDetailScreenActions) {
             when (action) {
                 is OnSelectedIndexChanged -> setSelectedIndex(action.index)
-                OnPlayVideo -> playVideo()
-                OnShareMedia -> shareMedia()
                 is OnTrashMedia -> trashMedia(media = action.mediaItem)
                 is OnItemIsFavoriteChange -> markMediaAsFavorite(mediaUi = action.mediaItem)
                 is OnMediaNameChange -> setMediaName(mediaName = action.mediaName)
@@ -138,10 +134,6 @@ internal class MediaDetailViewModel
             }
         }
 
-        private fun playVideo() {
-            sendEvent(MediaDetailScreenEvents.OnPlayVideo)
-        }
-
         private fun getInitialDataFromSavedState() {
             savedState.toRoute<MediaDetailRoute>().let { initialState ->
                 viewModelState.update {
@@ -187,10 +179,6 @@ internal class MediaDetailViewModel
                     selectedMediaIndex = page,
                 )
             }
-        }
-
-        private fun shareMedia() {
-            sendEvent(event = MediaDetailScreenEvents.OnShareMedia)
         }
 
         private fun openRenameDialog(mediaDialogs: MediaDialogs) {

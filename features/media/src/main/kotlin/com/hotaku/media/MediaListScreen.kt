@@ -32,7 +32,6 @@ import androidx.compose.material3.adaptive.navigation.rememberSupportingPaneScaf
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -64,13 +63,11 @@ import com.hotaku.media.MediaListScreenActions.OnMediaNameClearQuery
 import com.hotaku.media.MediaListScreenActions.OnMediaNameQueryChange
 import com.hotaku.media.MediaListScreenActions.OnOpenMediaDetails
 import com.hotaku.media.MediaListScreenActions.OnOpenRenameMediaDialog
-import com.hotaku.media.MediaListScreenActions.OnPlayVideo
 import com.hotaku.media.MediaListScreenActions.OnRenameMediaItem
 import com.hotaku.media.MediaListScreenActions.OnRetrySynchronizeMedia
 import com.hotaku.media.MediaListScreenActions.OnSearchQueryChange
 import com.hotaku.media.MediaListScreenActions.OnSelectedMediaNameChange
 import com.hotaku.media.MediaListScreenActions.OnSetTopBarVisibility
-import com.hotaku.media.MediaListScreenActions.OnShareMedia
 import com.hotaku.media.MediaListScreenActions.OnShowOptions
 import com.hotaku.media.MediaListScreenActions.OnShowOptionsMenu
 import com.hotaku.media.MediaListScreenActions.OnTrashMediaItem
@@ -144,7 +141,7 @@ fun MediaListScreen(
 
                 MediaListScreenEvents.OnShareMediaList -> {
                     state.selectedMediaIndex?.let {
-                        media[it]?.sendShareIntent(context = context)
+                        media.get(it)?.sendShareIntent(context = context)
                     }
                 }
 
@@ -158,7 +155,7 @@ fun MediaListScreen(
 
                 MediaListScreenEvents.OnPlayVideo -> {
                     state.selectedMediaIndex?.let {
-                        media[it]?.sendPlayIntent(context = context)
+                        media.peek(it)?.sendPlayIntent(context = context)
                     }
                 }
             }
@@ -533,9 +530,7 @@ private fun SupportingPaneContent(
                                         )
                                     },
                                     onShareMedia = {
-                                        onAction(
-                                            OnShareMedia,
-                                        )
+                                        media.sendShareIntent(context = context)
                                     },
                                     onTrashMedia = {
                                         media.uriString.trashMediaRequest(
@@ -548,9 +543,7 @@ private fun SupportingPaneContent(
                                             MediaType.VIDEO -> {
                                                 IconButton(
                                                     onClick = {
-                                                        onAction(
-                                                            OnPlayVideo,
-                                                        )
+                                                        media.sendPlayIntent(context = context)
                                                     },
                                                 ) {
                                                     Icon(

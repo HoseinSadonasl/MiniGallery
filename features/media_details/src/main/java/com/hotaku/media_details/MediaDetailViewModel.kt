@@ -20,6 +20,7 @@ import com.hotaku.media_details.MediaDetailScreenActions.OnShowOptions
 import com.hotaku.media_details.MediaDetailScreenActions.OnShowOptionsMenu
 import com.hotaku.media_details.MediaDetailScreenActions.OnShowRenameMediaDialog
 import com.hotaku.media_details.MediaDetailScreenActions.OnTrashMedia
+import com.hotaku.media_domain.usecase.DeleteMediaUseCase
 import com.hotaku.media_domain.usecase.FavoriteMediaUseCase
 import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_domain.usecase.RenameMediaUseCase
@@ -51,6 +52,7 @@ internal class MediaDetailViewModel
         private val favoriteMediaUseCase: FavoriteMediaUseCase,
         private val mapMediaAsMediaUi: MapMediaAsMediaUi,
         private val trashMediaUseCase: TrashMediaUseCase,
+        private val deleteMediaUseCase: DeleteMediaUseCase,
         private val mapMediaUiAsMedia: MapMediaUiAsMedia,
         private val savedState: SavedStateHandle,
     ) : ViewModel() {
@@ -86,6 +88,18 @@ internal class MediaDetailViewModel
                 is OnMediaNameQueryChange -> setNameQuery(query = action.query)
                 OnClearMediaNameQuery -> setNameQuery(query = "")
                 is OnRenameMediaItem -> renameLocalMediaItem(media = action.media)
+                is MediaDetailScreenActions.OnDeleteMedia -> deleteMediaItem(media = action.mediaItem)
+            }
+        }
+
+        private fun deleteMediaItem(media: MediaUi) {
+            viewModelScope.launch {
+                deleteMediaUseCase.invoke(
+                    media =
+                        listOf(
+                            mapMediaUiAsMedia.map(media),
+                        ),
+                )
             }
         }
 

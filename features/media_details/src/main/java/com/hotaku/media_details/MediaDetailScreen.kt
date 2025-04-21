@@ -19,8 +19,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
@@ -28,11 +30,14 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.hotaku.common.Logger
+import com.hotaku.common.deleteMediaRequest
 import com.hotaku.common.trashMediaRequest
 import com.hotaku.common.writeMediaRequest
 import com.hotaku.core_feature.ui.R
+import com.hotaku.features.media_details.R.drawable.all_restore_trashed
 import com.hotaku.features.media_details.R.string
 import com.hotaku.media_details.MediaDetailScreenActions.OnClearMediaNameQuery
+import com.hotaku.media_details.MediaDetailScreenActions.OnDeleteMedia
 import com.hotaku.media_details.MediaDetailScreenActions.OnHideDialog
 import com.hotaku.media_details.MediaDetailScreenActions.OnHideOptions
 import com.hotaku.media_details.MediaDetailScreenActions.OnHideOptionsMenu
@@ -104,6 +109,19 @@ private fun MediaDetailScreenContent(
                 media.peek(index)?.let { media ->
                     onAction(
                         OnTrashMedia(
+                            mediaItem = media,
+                        ),
+                    )
+                }
+            }
+        }
+
+    val deleteLauncher =
+        rememberLauncherForStartIntentSenderForResult {
+            state.selectedMediaIndex.let { index ->
+                media.peek(index)?.let { media ->
+                    onAction(
+                        OnDeleteMedia(
                             mediaItem = media,
                         ),
                     )
@@ -226,6 +244,7 @@ private fun MediaDetailScreenContent(
                         onAction = onAction,
                         context = context,
                         trashLauncher = trashLauncher,
+                        deleteLauncher = deleteLauncher,
                         favoriteLauncher = favoriteLauncher,
                     )
                 }
@@ -251,6 +270,7 @@ private fun MediaDetailPager(
     onAction: (MediaDetailScreenActions) -> Unit,
     context: Context,
     trashLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
+    deleteLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
     favoriteLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
 ) {
     MediaDetailPager(
@@ -279,13 +299,17 @@ private fun MediaDetailPager(
                                 media.sendShareIntent(context = context)
                             },
                             onTrashMedia = {
-                                // Because we don't implement delete files yet, so we hav to ignore trash file button
-                                // functionality for now ...
-                                if (state.matchTrash) return@MediaOptions
-                                media.uriString.trashMediaRequest(
-                                    context = context,
-                                    trashLauncher = trashLauncher,
-                                )
+                                if (state.matchTrash) {
+                                    media.uriString.deleteMediaRequest(
+                                        context = context,
+                                        deleteLauncher = deleteLauncher,
+                                    )
+                                } else {
+                                    media.uriString.trashMediaRequest(
+                                        context = context,
+                                        trashLauncher = trashLauncher,
+                                    )
+                                }
                             },
                             extraActions = {
                                 if (media.mimeType == MediaType.VIDEO) {
@@ -297,6 +321,22 @@ private fun MediaDetailPager(
                                         Icon(
                                             imageVector = Icons.Filled.PlayArrow,
                                             contentDescription = "Play Video",
+                                        )
+                                    }
+                                }
+                                if (state.matchTrash) {
+                                    IconButton(
+                                        onClick = {
+                                            media.uriString.trashMediaRequest(
+                                                context = context,
+                                                trashLauncher = trashLauncher,
+                                                trash = false,
+                                            )
+                                        },
+                                    ) {
+                                        Icon(
+                                            imageVector = ImageVector.vectorResource(id = all_restore_trashed),
+                                            contentDescription = "Restore trashed item",
                                         )
                                     }
                                 }

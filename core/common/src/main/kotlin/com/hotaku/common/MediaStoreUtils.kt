@@ -13,25 +13,29 @@ import androidx.core.net.toUri
 fun String.trashMediaRequest(
     context: Context,
     trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
+    trash: Boolean = true,
 ) {
     listOf(this).trashMediaRequest(
         context = context,
         trashLauncher = trashLauncher,
+        trash = trash,
     )
 }
 
 fun List<String>.trashGroupOfMediaRequest(
     context: Context,
     trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
+    trash: Boolean = true,
 ) = trashMediaRequest(
     context = context,
     trashLauncher = trashLauncher,
+    trash = trash,
 )
 
 private fun List<String>.trashMediaRequest(
     context: Context,
     trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
-    trash: Boolean = true,
+    trash: Boolean,
 ) {
     val resolver = context.contentResolver
 

@@ -30,4 +30,6 @@ internal sealed interface MediaDetailScreenActions {
     data object OnClearMediaNameQuery : MediaDetailScreenActions
 
     data class OnRenameMediaItem(val media: MediaUi) : MediaDetailScreenActions
+
+    data class OnDeleteMedia(val mediaItem: MediaUi) : MediaDetailScreenActions
 }

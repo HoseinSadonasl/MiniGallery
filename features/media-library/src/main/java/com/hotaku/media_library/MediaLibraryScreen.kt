@@ -98,11 +98,11 @@ private fun MediaLibraryScreenContent(
                 actions =
                     state.selectedFolder?.let { folder ->
                         {
-                            if (folder == LibraryFolderType.TRASH_FOLDER) {
+                            if (folder == LibraryFolderType.TRASH_FOLDER && mediaPagingItems != null && mediaPagingItems.itemCount > 0) {
                                 TonalButton(
                                     text = stringResource(id = R.string.media_library_empty_trash),
                                     onClick = {
-                                        mediaPagingItems?.itemSnapshotList?.items?.map { it.uriString }
+                                        mediaPagingItems.itemSnapshotList.items.map { it.uriString }
                                             ?.deleteGroupOfMediaRequest(
                                                 context = context,
                                                 deleteLauncher = deleteLauncher,

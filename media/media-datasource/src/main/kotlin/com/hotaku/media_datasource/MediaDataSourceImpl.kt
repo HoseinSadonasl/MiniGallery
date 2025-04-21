@@ -50,7 +50,7 @@ internal class MediaDataSourceImpl
             mapMediaDataAsMediaEntity.map(from = mediaData)
                 .let { mediaEntity -> mediaDao.upsertMedia(media = mediaEntity) }
 
-        override suspend fun deleteMedia(mediaData: List<MediaData>) =
+        override suspend fun deleteMedia(mediaData: List<MediaData>): Int =
             mediaData.map { mapMediaDataAsMediaEntity.map(from = it) }
                 .let { mediaDao.deleteMedia(media = it) }
 

@@ -81,4 +81,12 @@ internal class MediaRepositoryImpl
                     isSccess
                 }
             }
+
+        override suspend fun deleteMedia(media: List<Media>): Boolean =
+            withContext(NonCancellable) {
+                val mediaToDelete = media.map { mapMediaAsMediaData.map(from = it) }
+                withContext(ioDispatcher) {
+                    mediaDataSource.deleteMedia(mediaData = mediaToDelete) == mediaToDelete.size
+                }
+            }
     }

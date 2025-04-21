@@ -3,6 +3,7 @@ package com.hotaku.common
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.provider.MediaStore.createDeleteRequest
 import android.provider.MediaStore.createTrashRequest
 import android.provider.MediaStore.createWriteRequest
 import androidx.activity.result.ActivityResultLauncher
@@ -81,43 +82,37 @@ private fun List<String>.writeMediaRequest(
 
 fun String.deleteMediaRequest(
     context: Context,
-    trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
-    trash: Boolean,
+    deleteLauncher: ActivityResultLauncher<IntentSenderRequest>,
 ) {
     listOf(this).deleteMediaRequest(
         context = context,
-        trashLauncher = trashLauncher,
-        trash = trash,
+        deleteLauncher = deleteLauncher,
     )
 }
 
 fun List<String>.deleteGroupOfMediaRequest(
     context: Context,
-    trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
-    trash: Boolean,
+    deleteLauncher: ActivityResultLauncher<IntentSenderRequest>,
 ) {
     deleteMediaRequest(
         context = context,
-        trashLauncher = trashLauncher,
-        trash = trash,
+        deleteLauncher = deleteLauncher,
     )
 }
 
 private fun List<String>.deleteMediaRequest(
     context: Context,
-    trashLauncher: ActivityResultLauncher<IntentSenderRequest>,
-    trash: Boolean,
+    deleteLauncher: ActivityResultLauncher<IntentSenderRequest>,
 ) {
     val resolver = context.contentResolver
     val deleteRequest =
-        createTrashRequest(
+        createDeleteRequest(
             resolver,
             this.map { it.toUri() },
-            trash,
         )
 
     val intentSenderRequest = deleteRequest.createRequest()
-    trashLauncher.launch(intentSenderRequest)
+    deleteLauncher.launch(intentSenderRequest)
 }
 
 private fun PendingIntent.createRequest() =

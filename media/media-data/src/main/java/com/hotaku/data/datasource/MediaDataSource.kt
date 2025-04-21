@@ -16,5 +16,5 @@ interface MediaDataSource {
 
     suspend fun updateMedia(mediaData: MediaData)
 
-    suspend fun deleteMedia(mediaData: List<MediaData>)
+    suspend fun deleteMedia(mediaData: List<MediaData>): Int
 }

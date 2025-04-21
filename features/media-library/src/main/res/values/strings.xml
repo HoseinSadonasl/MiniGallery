@@ -4,4 +4,5 @@
     <string name="library_screen_favorites_label">Favorites</string>
     <string name="library_screen_trash_label">Trash</string>
     <string name="library_screen_secure_label">Secure</string>
+    <string name="media_library_empty_trash">Empty trash</string>
 </resources>

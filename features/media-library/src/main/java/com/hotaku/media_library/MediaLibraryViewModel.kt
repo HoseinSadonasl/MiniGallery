@@ -4,11 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import androidx.paging.map
+import com.hotaku.media_domain.usecase.DeleteMediaUseCase
 import com.hotaku.media_domain.usecase.GetMediaUseCase
 import com.hotaku.media_library.MediaLibraryScreenActions.*
 import com.hotaku.media_library.utils.LibraryFolderItem
 import com.hotaku.media_library.utils.LibraryFolderType
 import com.hotaku.ui.mappers.MapMediaAsMediaUi
+import com.hotaku.ui.mappers.MapMediaUiAsMedia
+import com.hotaku.ui.models.MediaUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,7 +26,9 @@ internal class MediaLibraryViewModel
     @Inject
     constructor(
         private val mediaUseCase: GetMediaUseCase,
+        private val deleteMediaUseCase: DeleteMediaUseCase,
         private val mapMediaAsMediaUi: MapMediaAsMediaUi,
+        private val mapMediaUiAsMedia: MapMediaUiAsMedia,
     ) : ViewModel() {
         private var mediaLibraryViewModelState = MutableStateFlow(MediaLibraryUiState())
         val mediaLibraryScreenUiState: StateFlow<MediaLibraryUiState> =
@@ -34,6 +39,29 @@ internal class MediaLibraryViewModel
                 OnUpdateMediaState -> updateMediaState()
                 OnClearMedia -> setSelectedFolder(folderItem = null)
                 is OnFolderClick -> setSelectedFolder(folderItem = action.folderItem)
+                is OnEmptyTrashClick -> deleteTrashedMedia(media = action.media)
+            }
+        }
+
+        private fun deleteTrashedMedia(media: List<MediaUi>) {
+            val mediaToDelete = media.map { mapMediaUiAsMedia.map(it) }
+            viewModelScope.launch {
+                deleteMediaUseCase.invoke(
+                    media = mediaToDelete,
+                ).let { isSccess ->
+                    if (isSccess) {
+                        resetScreen()
+                    }
+                }
+            }
+        }
+
+        private fun resetScreen() {
+            mediaLibraryViewModelState.update {
+                it.copy(
+                    media = null,
+                    selectedFolder = null,
+                )
             }
         }
 

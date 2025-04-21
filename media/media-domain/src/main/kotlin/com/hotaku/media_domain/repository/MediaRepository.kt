@@ -20,4 +20,6 @@ interface MediaRepository {
     suspend fun trashMedia(media: List<Media>): Boolean
 
     suspend fun markMediaAsFavorite(media: Media): Boolean
+
+    suspend fun deleteMedia(media: List<Media>): Boolean
 }

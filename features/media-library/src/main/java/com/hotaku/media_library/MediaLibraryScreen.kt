@@ -12,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
@@ -19,9 +20,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.window.core.layout.WindowWidthSizeClass
+import com.hotaku.common.deleteGroupOfMediaRequest
 import com.hotaku.designsystem.theme.MiniGalleryTheme
 import com.hotaku.features.media_library.R
 import com.hotaku.media_library.MediaLibraryScreenActions.OnClearMedia
+import com.hotaku.media_library.MediaLibraryScreenActions.OnEmptyTrashClick
 import com.hotaku.media_library.MediaLibraryScreenActions.OnFolderClick
 import com.hotaku.media_library.MediaLibraryScreenActions.OnUpdateMediaState
 import com.hotaku.media_library.composables.HorizontalLibraryFolders
@@ -31,7 +34,9 @@ import com.hotaku.media_library.utils.LibraryFolderType
 import com.hotaku.ui.asString
 import com.hotaku.ui.conposables.DynamicTopAppBarColumn
 import com.hotaku.ui.conposables.MediaGrid
+import com.hotaku.ui.conposables.TonalButton
 import com.hotaku.ui.conposables.TopAppBar
+import com.hotaku.ui.rememberLauncherForStartIntentSenderForResult
 
 @Composable
 fun MediaLibraryScreen(
@@ -57,6 +62,7 @@ private fun MediaLibraryScreenContent(
     onAction: (MediaLibraryScreenActions) -> Unit,
     navigateToMediaDetailScreen: (Int, LibraryFolderType) -> Unit,
 ) {
+    val context = LocalContext.current
     val windowSize = currentWindowAdaptiveInfo().windowSizeClass
     val isCompact = windowSize.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
 
@@ -74,11 +80,38 @@ private fun MediaLibraryScreenContent(
         }
     }
 
+    val deleteLauncher =
+        rememberLauncherForStartIntentSenderForResult {
+            mediaPagingItems?.let { mediaPagingItems ->
+                val media = mediaPagingItems.itemSnapshotList.items
+                onAction(OnEmptyTrashClick(media = media))
+            }
+        }
+
     DynamicTopAppBarColumn(
         modifier = modifier.fillMaxSize(),
         animatableTopContent = {
             TopAppBar(
-                title = state.screenTitle?.asString() ?: stringResource(id = R.string.media_library_top_bar_title),
+                title =
+                    state.screenTitle?.asString()
+                        ?: stringResource(id = R.string.media_library_top_bar_title),
+                actions =
+                    state.selectedFolder?.let { folder ->
+                        {
+                            if (folder == LibraryFolderType.TRASH_FOLDER) {
+                                TonalButton(
+                                    text = stringResource(id = R.string.media_library_empty_trash),
+                                    onClick = {
+                                        mediaPagingItems?.itemSnapshotList?.items?.map { it.uriString }
+                                            ?.deleteGroupOfMediaRequest(
+                                                context = context,
+                                                deleteLauncher = deleteLauncher,
+                                            )
+                                    },
+                                )
+                            }
+                        }
+                    },
             )
         },
         content = {

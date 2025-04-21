@@ -17,7 +17,7 @@ interface MediaDao {
     fun upsertMedia(media: MediaEntity)
 
     @Delete
-    suspend fun deleteMedia(media: List<MediaEntity>)
+    suspend fun deleteMedia(media: List<MediaEntity>): Int
 
     @Query(
         "SELECT * FROM media " +

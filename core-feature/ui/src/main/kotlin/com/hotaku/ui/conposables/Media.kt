@@ -8,11 +8,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import coil3.compose.AsyncImage
@@ -24,17 +31,27 @@ internal fun Video(
     itemUri: String,
     scale: ContentScale = ContentScale.FillWidth,
 ) {
-    val thumbnail = itemUri.toUri().asThumbnailImageBitmap()
+    val context = LocalContext.current
+
+    var thumbnail by remember {
+        mutableStateOf<ImageBitmap?>(null)
+    }
+
+    LaunchedEffect(itemUri) {
+        thumbnail = itemUri.toUri().asThumbnailImageBitmap(context = context).getOrNull()
+    }
 
     Box(
         modifier = Modifier.fillMaxSize(),
     ) {
-        Image(
-            bitmap = thumbnail,
-            contentDescription = null,
-            modifier = modifier.matchParentSize(),
-            contentScale = scale,
-        )
+        thumbnail?.let { imaggeBitmap ->
+            Image(
+                bitmap = imaggeBitmap,
+                contentDescription = null,
+                modifier = modifier.matchParentSize(),
+                contentScale = scale,
+            )
+        }
         Icon(
             modifier =
                 Modifier

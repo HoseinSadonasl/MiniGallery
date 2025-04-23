@@ -16,12 +16,19 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -103,14 +110,23 @@ fun VideoThumbnail(
     modifier: Modifier = Modifier,
     itemUri: String,
 ) {
-    val thumbnail = itemUri.toUri().asThumbnailImageBitmap()
+    val context = LocalContext.current
+    var thumbnail by remember {
+        mutableStateOf<ImageBitmap?>(null)
+    }
 
-    Image(
-        bitmap = thumbnail,
-        contentDescription = null,
-        modifier =
-            modifier
-                .aspectRatio(1f),
-        contentScale = ContentScale.Crop,
-    )
+    LaunchedEffect(itemUri) {
+        thumbnail = itemUri.toUri().asThumbnailImageBitmap(context = context).getOrNull()
+    }
+
+    thumbnail?.let { imageBitmap ->
+        Image(
+            bitmap = imageBitmap,
+            contentDescription = null,
+            modifier =
+                modifier
+                    .aspectRatio(1f),
+            contentScale = ContentScale.Crop,
+        )
+    }
 }

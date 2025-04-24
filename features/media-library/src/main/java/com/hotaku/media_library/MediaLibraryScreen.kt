@@ -106,7 +106,7 @@ private fun MediaLibraryScreenContent(
                                     text = stringResource(id = R.string.media_library_empty_trash),
                                     onClick = {
                                         mediaPagingItems.itemSnapshotList.items.map { it.uriString }
-                                            ?.deleteGroupOfMediaRequest(
+                                            .deleteGroupOfMediaRequest(
                                                 context = context,
                                                 deleteLauncher = deleteLauncher,
                                             )

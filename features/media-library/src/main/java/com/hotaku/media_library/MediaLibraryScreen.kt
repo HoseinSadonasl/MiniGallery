@@ -35,6 +35,7 @@ import com.hotaku.media_library.utils.LibraryFolderType.TRASH_FOLDER
 import com.hotaku.ui.asString
 import com.hotaku.ui.conposables.DynamicTopAppBarColumn
 import com.hotaku.ui.conposables.MediaGrid
+import com.hotaku.ui.conposables.OnScreenMessage
 import com.hotaku.ui.conposables.TonalButton
 import com.hotaku.ui.conposables.TopAppBar
 import com.hotaku.ui.rememberLauncherForStartIntentSenderForResult
@@ -121,13 +122,17 @@ private fun MediaLibraryScreenContent(
                 targetState = state.selectedFolder != null,
             ) { selectedFolder ->
                 if (selectedFolder && mediaPagingItems != null) {
-                    MediaGrid(
-                        pagingMediaItems = mediaPagingItems,
-                        onItemClick = { index ->
-                            navigateToMediaDetailScreen(index, state.selectedFolder!!)
-                        },
-                        onItemLongClick = {},
-                    )
+                    if (mediaPagingItems.itemCount > 0) {
+                        MediaGrid(
+                            pagingMediaItems = mediaPagingItems,
+                            onItemClick = { index ->
+                                navigateToMediaDetailScreen(index, state.selectedFolder!!)
+                            },
+                            onItemLongClick = {},
+                        )
+                    } else {
+                        NoMedia()
+                    }
                 } else {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
@@ -159,6 +164,15 @@ private fun MediaLibraryScreenContent(
                 }
             }
         },
+    )
+}
+
+@Composable
+private fun NoMedia() {
+    OnScreenMessage(
+        modifier = Modifier.fillMaxSize(),
+        title = stringResource(id = R.string.media_library_screen_no_media),
+        fulMessage = stringResource(id = R.string.media_library_screen_no_media_full_message),
     )
 }
 

@@ -5,4 +5,6 @@
     <string name="library_screen_trash_label">Trash</string>
     <string name="library_screen_secure_label">Secure</string>
     <string name="media_library_empty_trash">Empty trash</string>
+    <string name="media_library_screen_no_media">No Media</string>
+    <string name="media_library_screen_no_media_full_message">Looks like there\\\'s nothing to show here at the moment.</string>
 </resources>

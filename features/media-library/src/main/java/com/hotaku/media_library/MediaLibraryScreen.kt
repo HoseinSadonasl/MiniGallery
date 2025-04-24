@@ -31,6 +31,7 @@ import com.hotaku.media_library.composables.HorizontalLibraryFolders
 import com.hotaku.media_library.composables.LibraryFolderItem
 import com.hotaku.media_library.composables.VerticalLibraryFolders
 import com.hotaku.media_library.utils.LibraryFolderType
+import com.hotaku.media_library.utils.LibraryFolderType.TRASH_FOLDER
 import com.hotaku.ui.asString
 import com.hotaku.ui.conposables.DynamicTopAppBarColumn
 import com.hotaku.ui.conposables.MediaGrid
@@ -95,10 +96,11 @@ private fun MediaLibraryScreenContent(
                 title =
                     state.screenTitle?.asString()
                         ?: stringResource(id = R.string.media_library_top_bar_title),
+                onNavBack = state.selectedFolder?.let { { onAction(OnClearMedia) } },
                 actions =
                     state.selectedFolder?.let { folder ->
                         {
-                            if (folder == LibraryFolderType.TRASH_FOLDER && mediaPagingItems != null && mediaPagingItems.itemCount > 0) {
+                            if (folder == TRASH_FOLDER && mediaPagingItems != null && mediaPagingItems.itemCount > 0) {
                                 TonalButton(
                                     text = stringResource(id = R.string.media_library_empty_trash),
                                     onClick = {
